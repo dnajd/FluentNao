@@ -37,9 +37,12 @@ class FluentMotion():
         # We prepare a collection of floats
         return [angle] * numBodies
           
-    def move(self, chain, angleList, speed):
+    def moveWithDegrees(self, chain, angleList, speed):
         # convert to radians        
         angleList = [ x * almath.TO_RAD for x in angleList]
+        self.move(chain, angleList, speed)
+
+    def move(self, chain, angleList, speed):
         
         # Ask motion to do this with a blocking call
         taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleList, speed)    
@@ -52,7 +55,7 @@ class FluentMotion():
     def zero(self):
         # MoveChain(chain, angle, speed)
         chain = self.chains.Body
-        self.move(chain, self.getTargetAnglesForChain(chain,0.0), 0.3)
+        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain,0.0), 0.3)
         return self;
 
     ###################################
@@ -64,11 +67,11 @@ class FluentMotion():
         return self;
 
     def lArmOut(self):     
-        self.move(self.joints.LArm.LShoulderRoll, [60], 0.3)
+        self.moveWithDegrees(self.joints.LArm.LShoulderRoll, [60], 0.3)
         return self;
         
     def rArmOut(self):
-        self.move(self.joints.RArm.RShoulderRoll, [-60], 0.3)  
+        self.moveWithDegrees(self.joints.RArm.RShoulderRoll, [-60], 0.3)  
         return self;
 
     ###################################
@@ -80,13 +83,29 @@ class FluentMotion():
         return self;
 
     def lArmUp(self):     
-        self.move(self.joints.LArm.LShoulderPitch, [-60], 0.3)
+        self.moveWithDegrees(self.joints.LArm.LShoulderPitch, [-60], 0.3)
         return self;
         
     def rArmUp(self):
-        self.move(self.joints.RArm.RShoulderPitch, [-60], 0.3)  
+        self.moveWithDegrees(self.joints.RArm.RShoulderPitch, [-60], 0.3)  
+        return self;
+
+    ###################################
+    # Hands Open
+    ###################################
+    def handsOpen(self):     
+        self.lHandOpen()
+        self.rHandOpen()
+        return self;
+
+    def lHandOpen(self):     
+        self.move(self.joints.LArm.LHand, [1], 0.3)
+        return self;
+        
+    def rHandOpen(self):
+        self.move(self.joints.RArm.RHand, [1], 0.3)  
         return self;
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]
-    #self.move(self.Chains.RArm, angleList, 0.3)
+    #self.moveWithDegrees(self.Chains.RArm, angleList, 0.3)
