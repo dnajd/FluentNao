@@ -1,6 +1,8 @@
 import almath
 from multiprocessing import Process
 from fluentJoints import FluentJoints
+from fluentArms import FluentArms
+from fluentHands import FluentHands
 
 class FluentMotion():
 
@@ -17,15 +19,19 @@ class FluentMotion():
         # joints
         self.joints = FluentJoints()
         self.chains = self.joints.Chains
-        
- 
+
+        # arms & hands
+        self.arms = FluentArms(self, self.joints, self.chains, self.log) 
+        self.hands = FluentHands(self, self.joints, self.chains, self.log) 
+
 
     ###################################
     # wait for tasks to finish
     ###################################
     def go(self):
         for taskId in self.jobs:
-            self.motionProxy.wait(taskId, 0)            
+            self.motionProxy.wait(taskId, 0)   
+        return self         
             
     ###################################
     # helpers
@@ -56,54 +62,6 @@ class FluentMotion():
         # MoveChain(chain, angle, speed)
         chain = self.chains.Body
         self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain,0.0), 0.3)
-        return self;
-
-    ###################################
-    # Arms Out
-    ###################################
-    def armsOut(self):     
-        self.rArmOut()
-        self.lArmOut()
-        return self;
-
-    def lArmOut(self):     
-        self.moveWithDegrees(self.joints.LArm.LShoulderRoll, [60], 0.3)
-        return self;
-        
-    def rArmOut(self):
-        self.moveWithDegrees(self.joints.RArm.RShoulderRoll, [-60], 0.3)  
-        return self;
-
-    ###################################
-    # Arms Up
-    ###################################
-    def armsUp(self):     
-        self.rArmUp()
-        self.lArmUp()
-        return self;
-
-    def lArmUp(self):     
-        self.moveWithDegrees(self.joints.LArm.LShoulderPitch, [-60], 0.3)
-        return self;
-        
-    def rArmUp(self):
-        self.moveWithDegrees(self.joints.RArm.RShoulderPitch, [-60], 0.3)  
-        return self;
-
-    ###################################
-    # Hands Open
-    ###################################
-    def handsOpen(self):     
-        self.lHandOpen()
-        self.rHandOpen()
-        return self;
-
-    def lHandOpen(self):     
-        self.move(self.joints.LArm.LHand, [1], 0.3)
-        return self;
-        
-    def rHandOpen(self):
-        self.move(self.joints.RArm.RHand, [1], 0.3)  
         return self;
 
     # example of chain
