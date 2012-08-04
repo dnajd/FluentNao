@@ -7,7 +7,7 @@ Control Nao's movements using python code; Here is what the code would look like
 
     	# Create Motion Class
     	motionProxy = ALProxy("ALMotion")
-    	nao = FluentMotion(motionProxy, self.log)
+    	nao = fluentMotion.FluentMotion(motionProxy, self.log)
 
      	# zero out joints
      	nao.zero().go()
@@ -29,7 +29,7 @@ I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"
 
 GitHub
 -----------
-My examples below assume you have cloned the repo to ~/development/Fluent-Motion-API
+My examples below assume you have cloned the repo to /development/Fluent-Motion-API/
 
 Choregraphe
 -----------
@@ -39,7 +39,7 @@ To make development fast and easy, include this in your Choregraphe script box
     	import fluentMotion
     except:
     	import sys
-        sys.path.append("~/development/Fluent-Motion-API/core")
+        sys.path.append("/development/Fluent-Motion-API/core")
         import fluentMotion
 
         reload(fluentMotion)
@@ -63,7 +63,7 @@ With this the robot will be able to find and import the python classes.  Here is
 
     # Create Motion Class
     motionProxy = ALProxy("ALMotion")
-    nao = FluentMotion(motionProxy, self.log)
+    nao = fluentMotion.FluentMotion(motionProxy, self.log)
 
     # zero out joints & put arms up
     nao.zero().go()
