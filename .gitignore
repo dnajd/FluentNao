@@ -25,3 +25,9 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#sublime text 2
+*.pyc
+*.tmTheme.cache
+*.sublime-workspace
+*.sublime-project
