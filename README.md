@@ -48,7 +48,7 @@ This code helps python reference the Fluent-Motion-API classes and reloads them 
 
 On The Robot
 ------------
-In your Choregraphe Project, include the Fluent-Motion-API python class files in your Project References Panel.  Change the import code above to the following.
+To push the behavior to the robot you must include the Fluent-Motion-API python class files in your Project References Panel, in Choregraphe.  Then in your script box update the import code above to the following.
 
 	try:
     	import fluentMotion
@@ -59,7 +59,7 @@ In your Choregraphe Project, include the Fluent-Motion-API python class files in
 
         reload(fluentMotion)
 
- Now the robot can find and import the python classes.  After that import code you can include this to zero out all nao's joints and then make him raise his arms up:
+With this the robot will be able to find and import the python classes.  Here is a simple example that zeros out all nao's joints and then make him raise his arms up:
 
     # Create Motion Class
     motionProxy = ALProxy("ALMotion")
