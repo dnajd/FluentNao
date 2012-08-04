@@ -1,6 +1,6 @@
 import almath
 from multiprocessing import Process
-from joints import FluentJoints
+from fluentJoints import FluentJoints
 
 class FluentMotion():
 
