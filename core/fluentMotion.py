@@ -25,7 +25,6 @@ class FluentMotion():
     ###################################
     def go(self):
         for taskId in self.jobs:
-            #self.log("waiting for: " + str(taskId))
             self.motionProxy.wait(taskId, 0)            
             
     ###################################
@@ -45,6 +44,7 @@ class FluentMotion():
         # Ask motion to do this with a blocking call
         taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleList, speed)    
         self.jobs.append(taskId)
+        self.log("setting " + chain + " to " + str(angleList))
 
     ###################################
     # Whole Body
@@ -81,12 +81,10 @@ class FluentMotion():
 
     def lArmUp(self):     
         self.move(self.joints.LArm.LShoulderPitch, [-60], 0.3)
-        self.move(self.joints.LArm.LShoulderRoll, [0.0], 0.3)
         return self;
         
     def rArmUp(self):
         self.move(self.joints.RArm.RShoulderPitch, [-60], 0.3)  
-        self.move(self.joints.RArm.RShoulderRoll, [0.0], 0.3)  
         return self;
 
     # example of chain
