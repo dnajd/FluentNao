@@ -1,4 +1,4 @@
-class NaoJoints():
+class FluentJoints():
 
     # init method
     def __init__(self):

@@ -1,8 +1,8 @@
 import almath
 from multiprocessing import Process
-from joints import NaoJoints
+from joints import FluentJoints
 
-class NaoMotion():
+class FluentMotion():
 
     # init method
     def __init__(self, motionProxy, log):
@@ -15,7 +15,7 @@ class NaoMotion():
         self.log = log
 
         # joints
-        self.joints = NaoJoints()
+        self.joints = FluentJoints()
         self.chains = self.joints.Chains
         
  
