@@ -3,6 +3,7 @@ from multiprocessing import Process
 from fluentJoints import FluentJoints
 from fluentArms import FluentArms
 from fluentHands import FluentHands
+from fluentElbows import FluentElbows
 
 class FluentMotion():
 
@@ -23,7 +24,7 @@ class FluentMotion():
         # arms & hands
         self.arms = FluentArms(self, self.joints, self.chains, self.log) 
         self.hands = FluentHands(self, self.joints, self.chains, self.log) 
-
+        self.elbows = FluentElbows(self, self.joints, self.chains, self.log) 
 
     ###################################
     # wait for tasks to finish
