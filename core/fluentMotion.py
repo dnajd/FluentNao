@@ -56,6 +56,29 @@ class FluentMotion():
         self.jobs.append(taskId)
         self.log("setting " + chain + " to " + str(angleList))
 
+    @staticmethod
+    def initModulesForDevelopment(pathToCore):
+        try:
+            import fluentMotion
+            import fluentArms
+            import fluentJoints
+            import fluentHands
+            import fluentElbows
+        except:
+            import sys
+            sys.path.append(pathToCore)
+            import fluentMotion
+            import fluentArms
+            import fluentJoints
+            import fluentHands
+            import fluentElbows
+
+        reload(fluentMotion)
+        reload(fluentArms)
+        reload(fluentJoints)
+        reload(fluentHands)
+        reload(fluentElbows)
+
     ###################################
     # Whole Body
     ###################################

@@ -35,43 +35,38 @@ Choregraphe
 -----------
 To make development fast and easy, include this in your Choregraphe script box
 
+    pathToCore = "/development/Fluent-Motion-API/core/"
     try:
-     	import fluentMotion
-        import fluentArms
-        import fluentJoints
-        import fluentHands
-        import fluentElbows
+    	import fluentMotion
+    	from fluentMotion import FluentMotion
     except:
-        import sys
-        sys.path.append("/development/Fluent-Motion-API/core/")
-        import fluentMotion
-        import fluentArms
-        import fluentJoints
-        import fluentHands
-        import fluentElbows
-
+    	import sys
+    	sys.path.append(pathToCore)
+    	#sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
+    	import fluentMotion
+    	from fluentMotion import FluentMotion
+            
     reload(fluentMotion)
-    reload(fluentArms)
-    reload(fluentJoints)
-    reload(fluentHands)
-    reload(fluentElbows)
+    FluentMotion.initModulesForDevelopment(pathToCore)
 
-This code helps python reference the Fluent-Motion-API classes and reloads them every time so changes will go into affect as you develop
+This code helps python reference the Fluent-Motion-API classes and reload them each time you run your code. This has your python changes go into affect asap without restarting python.
 
 On The Robot
 ------------
 To push the behavior to the robot you must include the Fluent-Motion-API python class files in your Project References Panel, in Choregraphe.  Then in your script box update the import code above to the following.
 
     try:
-     	import fluentMotion
+    	import fluentMotion
+    	from fluentMotion import FluentMotion
     except:
-        import sys
-        sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
-        import fluentMotion
+    	import sys
+    	sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
+    	import fluentMotion
+    	from fluentMotion import FluentMotion
 
-    reload(fluentMotion)
+With this the robot will be able to find and import the python classes.  Note that the robot will have to be rebooted if you provide it with updated python files. 
 
-With this the robot will be able to find and import the python classes.  Here is a example where nao will jazzercise. lol.
+Here is a example where nao will jazzercise. lol.
 
     # Create Motion Class
     motionProxy = ALProxy("ALMotion")
@@ -79,7 +74,7 @@ With this the robot will be able to find and import the python classes.  Here is
 
     # make nao jazzercise
     nao.zero().go()
-    nao.armsUp().go()
     nao.arms.up().hands.open().go()
     nao.arms.out().go()
     nao.arms.forward().hands.close().go()
+
