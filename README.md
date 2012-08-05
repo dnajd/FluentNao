@@ -7,7 +7,7 @@ Control Nao's movements using python code; Here is what the code would look like
 
     	# Create Motion Class
     	motionProxy = ALProxy("ALMotion")
-    	nao = fluentMotion.FluentMotion(motionProxy, self.log)
+    	nao = FluentMotion(motionProxy, self.log)
 
     	# zero out joints
     	nao.zero().go()
@@ -43,7 +43,7 @@ Here is a example where nao will jazzercise. lol.
 
     # Create Motion Class
     motionProxy = ALProxy("ALMotion")
-    nao = fluentMotion.FluentMotion(motionProxy, self.log)
+    nao = FluentMotion(motionProxy, self.log)
 
     # make nao jazzercise
     nao.zero().go()
