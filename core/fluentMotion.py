@@ -1,4 +1,5 @@
 import almath
+import math
 from multiprocessing import Process
 from fluentJoints import FluentJoints
 from fluentArms import FluentArms
@@ -35,26 +36,68 @@ class FluentMotion():
         return self         
             
     ###################################
+    # move
+    ###################################
+    def move(self, chain, angleListInRadians, fractionMaxSpeed):
+        # motion w/ blocking call
+        taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
+
+        # save task id
+        self.jobs.append(taskId)
+        self.log("setting " + chain + " to " + str(angleListInRadians))
+
+    def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed):
+        # convert to radians        
+        angleListInRadians = [ x * almath.TO_RAD for x in angleListInDegrees]
+
+        # move
+        self.move(chain, angleListInRadians, fractionMaxSpeed)
+
+    def moveWithDegreesAndDurration(self, jointName, angleInDegrees, durationInSeconds):
+        # fraction of max speed
+        fractionMaxSpeed = self.fluentMotion.getFractionMaxSpeed(jointName, angleInDegrees, durationInSeconds)
+
+        # convert to radians
+        angleInRadians = angleInDegrees * almath.TO_RAD
+
+        # move
+        self.move(jointName, [angleInRadians], fractionMaxSpeed)
+
+    ###################################
     # helpers
     ###################################
+
     def getTargetAnglesForChain(self, chain, angle):
         # Get the Number of Joints
         numBodies = len(self.motionProxy.getJointNames(chain))
     
         # We prepare a collection of floats
         return [angle] * numBodies
-          
-    def moveWithDegrees(self, chain, angleList, speed):
-        # convert to radians        
-        angleList = [ x * almath.TO_RAD for x in angleList]
-        self.move(chain, angleList, speed)
 
-    def move(self, chain, angleList, speed):
-        
-        # Ask motion to do this with a blocking call
-        taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleList, speed)    
-        self.jobs.append(taskId)
-        self.log("setting " + chain + " to " + str(angleList))
+    def getMaxDegreesPerSecond(self, jointName):
+        limits = self.motionProxy.getLimits(jointName);
+        minAngle = limits[0][0]
+        maxAngle = limits[0][1]
+        maxChange = limits[0][2]  #what does this mean: rad.s-1
+
+        self.log("maxChange: " + str(maxChange) + " for " + jointName)
+        return math.degrees(maxChange)
+
+    def getFractionMaxSpeed(self, jointName, desiredPositionInDegrees, executionTimeInSeconds):
+        # current position in degrees
+        useSensors = False;
+        currentPositionInDegrees = math.degrees(self.motionProxy.getAngles(jointName, useSensors)[0]);
+        self.log("pos in deg: " + str(currentPositionInDegrees))
+
+        # distance
+        distanceInDegrees = abs(currentPositionInDegrees - desiredPositionInDegrees)
+        self.log("distance: " + str(distanceInDegrees))
+
+        # max speed
+        maxDegreesPerSecond = self.getMaxDegreesPerSecond(jointName)
+
+        # fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
+        return (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
 
     @staticmethod
     def initModulesForDevelopment(pathToCore):

@@ -8,6 +8,7 @@ class FluentArms():
         self.fluentMotion = fluentMotion
         self.joints = joints
         self.chains = chains
+        self.log = log
 
     ###################################
     # Arms Forward
@@ -52,7 +53,12 @@ class FluentArms():
         return self.fluentMotion;
 
     def lUp(self):     
-        self.fluentMotion.moveWithDegrees(self.joints.LArm.LShoulderPitch, [-90], 0.3)
+        jointName = self.joints.LArm.LShoulderPitch
+        desiredPositionInDegrees = -90
+        executionTimeInSeconds = 2
+        fractionMaxSpeed = self.fluentMotion.getFractionMaxSpeed(jointName, desiredPositionInDegrees, executionTimeInSeconds)
+        self.fluentMotion.moveWithDegrees(jointName, [desiredPositionInDegrees], fractionMaxSpeed)
+
         return self.fluentMotion;
         
     def rUp(self):

@@ -8,6 +8,7 @@ class FluentElbows():
         self.fluentMotion = fluentMotion
         self.joints = joints
         self.chains = chains
+        self.log = log
 
     ###################################
     # Bent
