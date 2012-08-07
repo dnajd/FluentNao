@@ -46,7 +46,7 @@ class FluentMotion():
 
         # save task id
         self.jobs.append(taskId)
-        self.log("setting " + chain + " to " + str(angleListInRadians))
+        self.log("setting %s to %s" % (chain, angleListInRadians))
 
     def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
         # convert to radians        
@@ -80,26 +80,30 @@ class FluentMotion():
         limits = self.motionProxy.getLimits(jointName);
         minAngle = limits[0][0]
         maxAngle = limits[0][1]
-        maxChange = limits[0][2]  #what does this mean: rad.s-1
+        maxChange = limits[0][2]  # in rad.s-1
 
-        self.log("maxChange: " + str(maxChange) + " for " + jointName)
+        #self.log("maxChange: " + str(maxChange) + " for " + jointName)
         return math.degrees(maxChange)
 
     def getFractionMaxSpeed(self, jointName, desiredPositionInDegrees, executionTimeInSeconds):
         # current position in degrees
         useSensors = False;
         currentPositionInDegrees = math.degrees(self.motionProxy.getAngles(jointName, useSensors)[0]);
-        self.log("pos in deg: " + str(currentPositionInDegrees))
+        #self.log("pos in deg: " + str(currentPositionInDegrees))
 
         # distance
         distanceInDegrees = abs(currentPositionInDegrees - desiredPositionInDegrees)
-        self.log("distance: " + str(distanceInDegrees))
+        #self.log("distance: " + str(distanceInDegrees))
 
         # max speed
         maxDegreesPerSecond = self.getMaxDegreesPerSecond(jointName)
 
         # fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
-        return (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
+        fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
+
+        if fractionOfMaxSpeed > maxDegreesPerSecond:
+            return maxDegreesPerSecond
+        return fractionOfMaxSpeed
 
     @staticmethod
     def initModulesForDevelopment(pathToCore):

@@ -11,7 +11,7 @@ class FluentArms():
         self.log = log
 
     ###################################
-    # Arms Forward
+    # Forward
     ###################################
     def forward(self, duration = 1):     
         self.rForward(duration)
@@ -29,7 +29,7 @@ class FluentArms():
         return self.fluentMotion;
 
     ###################################
-    # Arms Out
+    # Out
     ###################################
     def out(self, duration = 1):     
         self.rOut(duration)
@@ -47,7 +47,7 @@ class FluentArms():
         return self.fluentMotion;
 
     ###################################
-    # Arms Up
+    # Up
     ###################################
     def up(self, duration = 1):     
         self.rUp(duration)
@@ -65,7 +65,7 @@ class FluentArms():
         return self.fluentMotion;
 
     ###################################
-    # Arms Down
+    # Down
     ###################################
     def down(self, duration = 1):     
         self.rDown(duration)
@@ -79,5 +79,24 @@ class FluentArms():
         
     def rDown(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 90, duration) 
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
+        return self.fluentMotion;
+
+
+    ###################################
+    # Back
+    ###################################
+    def back(self, duration = 1):     
+        self.rBack(duration)
+        self.lBack(duration)
+        return self.fluentMotion;
+
+    def lBack(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 119.5, duration)
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
+        return self.fluentMotion;
+        
+    def rBack(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 119.5, duration) 
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self.fluentMotion;
