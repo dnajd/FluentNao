@@ -13,33 +13,33 @@ class FluentElbows():
     ###################################
     # Bent
     ###################################
-    def bent(self):
-        self.rBent()
-        self.lBent()
+    def bent(self, duration = 1):
+        self.rBent(duration)
+        self.lBent(duration)
         return self.fluentMotion
 
-    def rBent(self):
-        self.fluentMotion.moveWithDegrees(self.joints.RArm.RElbowRoll, [89], 0.3)
+    def rBent(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, 89, duration)
         return self.fluentMotion
 
 
-    def lBent(self):
-        self.fluentMotion.moveWithDegrees(self.joints.LArm.LElbowRoll, [-89], 0.3)
+    def lBent(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, -89, duration)
         return self.fluentMotion
 
     ###################################
     # Straight
     ###################################
-    def straight(self):
-        self.rStraight()
-        self.lStraight()
+    def straight(self, duration = 1):
+        self.rStraight(duration)
+        self.lStraight(duration)
         return self.fluentMotion
 
-    def rStraight(self):
-        self.fluentMotion.moveWithDegrees(self.joints.RArm.RElbowRoll, [0.5], 0.3)
+    def rStraight(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, 0.5, duration)
         return self.fluentMotion
 
 
-    def lStraight(self):
-        self.fluentMotion.moveWithDegrees(self.joints.LArm.LElbowRoll, [0.5], 0.3)
+    def lStraight(self, duration = 1):
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, 0.5, duration)
         return self.fluentMotion

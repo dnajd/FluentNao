@@ -51,6 +51,16 @@ Here is a example where nao will jazzercise. lol.
     nao.arms.out().go()
     nao.arms.forward().hands.close().go()
 
+Duration of Movement
+--------------------
+You can now specify a number of seconds to take for each command
+
+    # open hands in 2 seconds
+    nao.hands.open(2)
+
+    # put arms out in 4 seconds
+    nao.arms.out(4)
+
 
 Contributing
 ============

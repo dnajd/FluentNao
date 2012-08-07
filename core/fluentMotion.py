@@ -23,9 +23,9 @@ class FluentMotion():
         self.chains = self.joints.Chains
 
         # arms & hands
-        self.arms = FluentArms(self, self.joints, self.chains, self.log) 
-        self.hands = FluentHands(self, self.joints, self.chains, self.log) 
-        self.elbows = FluentElbows(self, self.joints, self.chains, self.log) 
+        self.arms = FluentArms(self, self.joints, self.chains, log) 
+        self.hands = FluentHands(self, self.joints, self.chains, log) 
+        self.elbows = FluentElbows(self, self.joints, self.chains, log) 
 
     ###################################
     # wait for tasks to finish
@@ -38,7 +38,7 @@ class FluentMotion():
     ###################################
     # move
     ###################################
-    def move(self, chain, angleListInRadians, fractionMaxSpeed):
+    def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
         # motion w/ blocking call
         taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
 
@@ -46,16 +46,16 @@ class FluentMotion():
         self.jobs.append(taskId)
         self.log("setting " + chain + " to " + str(angleListInRadians))
 
-    def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed):
+    def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
         # convert to radians        
         angleListInRadians = [ x * almath.TO_RAD for x in angleListInDegrees]
 
         # move
         self.move(chain, angleListInRadians, fractionMaxSpeed)
 
-    def moveWithDegreesAndDurration(self, jointName, angleInDegrees, durationInSeconds):
+    def moveWithDegreesAndDuration(self, jointName, angleInDegrees, durationInSeconds):
         # fraction of max speed
-        fractionMaxSpeed = self.fluentMotion.getFractionMaxSpeed(jointName, angleInDegrees, durationInSeconds)
+        fractionMaxSpeed = self.getFractionMaxSpeed(jointName, angleInDegrees, durationInSeconds)
 
         # convert to radians
         angleInRadians = angleInDegrees * almath.TO_RAD
@@ -128,7 +128,8 @@ class FluentMotion():
     def zero(self):
         # MoveChain(chain, angle, speed)
         chain = self.chains.Body
-        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain,0.0), 0.3)
+        angleInDegrees = 0.0
+        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
         return self;
 
     # example of chain
