@@ -46,53 +46,53 @@ class FluentElbows():
 
 
     ###################################
-    # Rotate Up
+    # Up
     ###################################
-    def rotateUp(self, duration = 1, ):
-        self.rRotateUp(duration)
-        self.lRotateUp(duration)
+    def turnUp(self, duration = 1, ):
+        self.rTurnUp(duration)
+        self.lTurnUp(duration)
         return self.fluentMotion
 
-    def rRotateUp(self, duration = 1):
+    def rTurnUp(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, 90, duration)
         return self.fluentMotion
 
 
-    def lRotateUp(self, duration = 1):
+    def lTurnUp(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, -90, duration)
         return self.fluentMotion
 
     ###################################
-    # Rotate Down
+    # Turn Down
     ###################################
-    def rotateDown(self, duration = 1, ):
-        self.rRotateDown(duration)
-        self.lRotateDown(duration)
+    def turnDown(self, duration = 1, ):
+        self.rTurnDown(duration)
+        self.lTurnDown(duration)
         return self.fluentMotion
 
-    def rRotateDown(self, duration = 1):
+    def rTurnDown(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, -90, duration)
         return self.fluentMotion
 
 
-    def lRotateDown(self, duration = 1):
+    def lTurnDown(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, 90, duration)
         return self.fluentMotion
 
 
     ###################################
-    # Rotate In
+    # In
     ###################################
-    def rotateIn(self, duration = 1, ):
-        self.rRotateIn(duration)
-        self.lRotateIn(duration)
+    def turnIn(self, duration = 1, ):
+        self.rTurnIn(duration)
+        self.lTurnIn(duration)
         return self.fluentMotion
 
-    def rRotateIn(self, duration = 1):
+    def rTurnIn(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, 0, duration)
         return self.fluentMotion
 
 
-    def lRotateIn(self, duration = 1):
+    def lTurnIn(self, duration = 1):
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, 0, duration)
         return self.fluentMotion

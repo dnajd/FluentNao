@@ -5,6 +5,7 @@ from fluentJoints import FluentJoints
 from fluentArms import FluentArms
 from fluentHands import FluentHands
 from fluentElbows import FluentElbows
+from fluentWrists import FluentWrists
 
 class FluentMotion():
 
@@ -26,6 +27,7 @@ class FluentMotion():
         self.arms = FluentArms(self, self.joints, self.chains, log) 
         self.hands = FluentHands(self, self.joints, self.chains, log) 
         self.elbows = FluentElbows(self, self.joints, self.chains, log) 
+        self.wrists = FluentWrists(self, self.joints, self.chains, log) 
 
     ###################################
     # wait for tasks to finish
@@ -107,6 +109,7 @@ class FluentMotion():
             import fluentJoints
             import fluentHands
             import fluentElbows
+            import fluentWrists
         except:
             import sys
             sys.path.append(pathToCore)
@@ -115,12 +118,14 @@ class FluentMotion():
             import fluentJoints
             import fluentHands
             import fluentElbows
+            import fluentWrists
 
         reload(fluentMotion)
         reload(fluentArms)
         reload(fluentJoints)
         reload(fluentHands)
         reload(fluentElbows)
+        reload(fluentWrists)
 
     ###################################
     # Whole Body
