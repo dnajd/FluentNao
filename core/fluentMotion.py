@@ -34,7 +34,10 @@ class FluentMotion():
     ###################################
     def go(self):
         for taskId in self.jobs:
-            self.motionProxy.wait(taskId, 0)   
+            self.motionProxy.wait(taskId, 5000)   
+
+        self.log("done")
+        
         return self         
             
     ###################################
