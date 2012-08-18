@@ -20,17 +20,17 @@ class FluentWrists():
     def center(self, duration=0):     
         self.lCenter(duration)
         self.rCenter(duration)
-        return self.fluentMotion;
+        return self;
 
     def lCenter(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, 0.0, duration)
-        return self.fluentMotion;
+        return self;
         
     def rCenter(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, 0.0, duration)
-        return self.fluentMotion;
+        return self;
 
     ###################################
     # Out
@@ -38,17 +38,17 @@ class FluentWrists():
     def turnOut(self, duration=0):     
         self.lTurnOut(duration)
         self.rTurnOut(duration)
-        return self.fluentMotion;
+        return self;
 
     def lTurnOut(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, 90, duration)
-        return self.fluentMotion;
+        return self;
         
     def rTurnOut(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, -90, duration)
-        return self.fluentMotion;
+        return self;
 
     ###################################
     # In
@@ -56,14 +56,14 @@ class FluentWrists():
     def turnIn(self, duration=0):     
         self.lTurnIn(duration)
         self.rTurnIn(duration)
-        return self.fluentMotion;
+        return self;
 
     def lTurnIn(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, -90, duration)
-        return self.fluentMotion;
+        return self;
         
     def rTurnIn(self, duration=0):
         duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, 90, duration)
-        return self.fluentMotion;
+        return self;
