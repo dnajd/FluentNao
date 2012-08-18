@@ -29,9 +29,33 @@ class FluentMotion():
         self.elbows = FluentElbows(self) 
         self.wrists = FluentWrists(self) 
 
+        # global duration
+        self.setDuration(1)
+
+    ###################################
+    # Motion
+    ###################################
+    def zero(self):
+        # MoveChain(chain, angle, speed)
+        chain = self.chains.Body
+        angleInDegrees = 0.0
+        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
+        return self;
+
+    def setDuration(self, durationInSeconds):
+        self.globalDuration = durationInSeconds
+        return self;
+
+    def determineDuration(self, durationInSeconds):
+        if durationInSeconds > 0:
+            return durationInSeconds
+
+        return self.globalDuration
+
     ###################################
     # wait for tasks to finish
     ###################################
+    
     def go(self):
         for taskId in self.jobs:
             self.log("trying: %s" % (taskId))
@@ -46,6 +70,7 @@ class FluentMotion():
     ###################################
     # move
     ###################################
+
     def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
         # motion w/ blocking call
         taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
@@ -138,15 +163,6 @@ class FluentMotion():
         reload(fluentElbows)
         reload(fluentWrists)
 
-    ###################################
-    # Whole Body
-    ###################################
-    def zero(self):
-        # MoveChain(chain, angle, speed)
-        chain = self.chains.Body
-        angleInDegrees = 0.0
-        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
-        return self;
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]

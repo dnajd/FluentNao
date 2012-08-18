@@ -14,31 +14,35 @@ class FluentHands():
     ###################################
     # Hands Open
     ###################################
-    def open(self, duration = 1):     
+    def open(self, duration=0):     
         self.lOpen(duration)
         self.rOpen(duration)
         return self.fluentMotion;
 
-    def lOpen(self, duration = 1):     
+    def lOpen(self, duration=0):
+        duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
         return self.fluentMotion;
         
-    def rOpen(self, duration = 1):
+    def rOpen(self, duration=0):
+        duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
         return self.fluentMotion;
 
     ###################################
     # Hands Close
     ###################################
-    def close(self, duration = 1):     
+    def close(self, duration=0):     
         self.lClose(duration)
         self.rClose(duration)
         return self.fluentMotion;
 
-    def lClose(self, duration = 1):     
+    def lClose(self, duration=0):
+        duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
         return self.fluentMotion;
         
-    def rClose(self, duration = 1):
+    def rClose(self, duration=0):
+        duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
         return self.fluentMotion;
