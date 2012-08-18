@@ -41,7 +41,7 @@ With this the robot will be able to find and import the python classes.
 
 Scripting with the API
 ----------------------
-Here is a example where nao fight.
+Here is an example to make nao fight.
 
     # ALTextToSpeech
     speechProxy = ALProxy("ALTextToSpeech")
@@ -86,19 +86,19 @@ Here is a example where nao fight.
 
 Duration of Movement
 --------------------
-You can now specify a number of seconds to take for each command or stanza
+You can specify a number of seconds to take for each command or stanza. We use the setDuration() to set the duration globally for every function that follows
 
-Here we set the duration for each command
-    # open hands in 2 seconds
-    nao.hands.open(2)
+    # sets duration to half a second 
+    nao.setDuration(.5)
+
+We can override the default duration in each motion function
+
+    # open hands in half a second
+    nao.hands.open()
 
     # put arms out in 4 seconds
     nao.arms.out(4)
-
-We can use the setDuration() to set the duration globally for every function that follows
-
-    # sets duration for all functions
-    nao.setDuration(1)
+    nao.go()
 
 Contributing
 ============
