@@ -24,10 +24,10 @@ class FluentMotion():
         self.chains = self.joints.Chains
 
         # arms & hands
-        self.arms = FluentArms(self, self.joints, self.chains, log) 
-        self.hands = FluentHands(self, self.joints, self.chains, log) 
-        self.elbows = FluentElbows(self, self.joints, self.chains, log) 
-        self.wrists = FluentWrists(self, self.joints, self.chains, log) 
+        self.arms = FluentArms(self) 
+        self.hands = FluentHands(self) 
+        self.elbows = FluentElbows(self) 
+        self.wrists = FluentWrists(self) 
 
     ###################################
     # wait for tasks to finish

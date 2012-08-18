@@ -4,13 +4,13 @@ from fluentJoints import FluentJoints
 class FluentWrists():
 
     # init method
-    def __init__(self, fluentMotion, joints, chains, log):
+    def __init__(self, fluentMotion):
         
         # jobs for threading
         self.fluentMotion = fluentMotion
-        self.joints = joints
-        self.chains = chains
-        self.log = log
+        self.joints = fluentMotion.joints
+        self.chains = fluentMotion.chains
+        self.log = fluentMotion.log
 
     ###################################
     # Center
