@@ -2,8 +2,12 @@ from fluentJoints import FluentJoints
 class FluentArms():
 
     # init method
-    def __init__(self, fluentMotion):
+    def __init__(self, fluentMotion, elbows, wrists, hands):
         
+        self.elbows = elbows
+        self.wrists = wrists
+        self.hands = hands
+
         # jobs for threading
         self.fluentMotion = fluentMotion
         self.joints = fluentMotion.joints

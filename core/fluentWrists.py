@@ -4,8 +4,10 @@ from fluentJoints import FluentJoints
 class FluentWrists():
 
     # init method
-    def __init__(self, fluentMotion):
+    def __init__(self, fluentMotion, hands):
         
+        self.hands = hands
+
         # jobs for threading
         self.fluentMotion = fluentMotion
         self.joints = fluentMotion.joints

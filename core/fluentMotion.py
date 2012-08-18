@@ -24,11 +24,11 @@ class FluentMotion():
         self.chains = self.joints.Chains
 
         # arms & hands
-        self.arms = FluentArms(self) 
         self.hands = FluentHands(self) 
-        self.elbows = FluentElbows(self) 
-        self.wrists = FluentWrists(self) 
-
+        self.wrists = FluentWrists(self, self.hands) 
+        self.elbows = FluentElbows(self, self.wrists, self.hands) 
+        self.arms = FluentArms(self, self.elbows, self.wrists, self.hands) 
+        
         # global duration
         self.setDuration(1)
 
