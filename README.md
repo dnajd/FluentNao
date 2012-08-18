@@ -95,7 +95,10 @@ Here we set the duration for each command
     # put arms out in 4 seconds
     nao.arms.out(4)
 
-We can use the setDuration() to set the duration globally for every command that follows
+We can use the setDuration() to set the duration globally for every function that follows
+
+    # sets duration for all functions
+    nao.setDuration(1)
 
 Contributing
 ============
