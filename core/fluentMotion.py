@@ -6,6 +6,7 @@ from fluentArms import FluentArms
 from fluentHands import FluentHands
 from fluentElbows import FluentElbows
 from fluentWrists import FluentWrists
+from fluentLegs import FluentLegs
 
 class FluentMotion():
 
@@ -23,12 +24,13 @@ class FluentMotion():
         self.joints = FluentJoints()
         self.chains = self.joints.Chains
 
-        # arms & hands
+        # body parts
         self.hands = FluentHands(self) 
         self.wrists = FluentWrists(self, self.hands) 
         self.elbows = FluentElbows(self, self.wrists, self.hands) 
         self.arms = FluentArms(self, self.elbows, self.wrists, self.hands) 
-        
+        self.legs = FluentLegs(self)
+
         # global duration
         self.setDuration(1)
 
@@ -146,6 +148,7 @@ class FluentMotion():
             import fluentHands
             import fluentElbows
             import fluentWrists
+            import fluentLegs
         except:
             import sys
             sys.path.append(pathToCore)
@@ -155,6 +158,7 @@ class FluentMotion():
             import fluentHands
             import fluentElbows
             import fluentWrists
+            import fluentLegs
 
         reload(fluentMotion)
         reload(fluentArms)
@@ -162,6 +166,7 @@ class FluentMotion():
         reload(fluentHands)
         reload(fluentElbows)
         reload(fluentWrists)
+        reload(fluentLegs)
 
 
     # example of chain
