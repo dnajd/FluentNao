@@ -59,12 +59,12 @@ class FluentMotion():
     
     def go(self):
         for taskId in self.jobs:
-            self.log("trying: %s" % (taskId))
+            #self.log("trying: %s" % (taskId))
             self.motionProxy.wait(taskId, 5000)   
-            self.log("released: %s" % (taskId))
+            #self.log("released: %s" % (taskId))
 
         self.jobs[:] = []
-        self.log("done")
+        #self.log("done")
         
         return self         
             
@@ -78,8 +78,8 @@ class FluentMotion():
 
         # save task id
         self.jobs.append(taskId)
-        self.log("%s: %s" % (chain, taskId))
-        #self.log("setting %s to %s" % (chain, angleListInRadians))
+        #self.log("%s: %s" % (chain, taskId))
+        self.log("setting %s to %s" % (chain, angleListInRadians))
 
     def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
         # convert to radians        
