@@ -36,6 +36,20 @@ class FluentMotion():
     ###################################
     # Motion
     ###################################
+    def stiff(self):
+        pNames = "Body"
+        pStiffnessLists = 1.0
+        pTimeLists = 1.0
+        self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+
+    def wbDisable(self):
+        isEnabled  = False
+        self.motionProxy.wbEnable(isEnabled)
+
+    def wbEndable(self):
+        isEnabled  = True
+        self.motionProxy.wbEnable(isEnabled)
+
     def zero(self):
         # MoveChain(chain, angle, speed)
         chain = self.chains.Body
