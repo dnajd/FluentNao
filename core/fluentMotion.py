@@ -50,12 +50,29 @@ class FluentMotion():
         isEnabled  = True
         self.motionProxy.wbEnable(isEnabled)
 
-    def zero(self):
-        # MoveChain(chain, angle, speed)
-        chain = self.chains.Body
-        angleInDegrees = 0.0
-        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
-        return self;
+    def balance(self, leg, duration):
+
+        duration = self.determineDuration(duration)  
+
+        # stiffen body
+        self.stiff()
+        self.wbEndable()
+
+        # Legs are constrained fixed
+        stateName  = "Fixed"
+        supportLeg = "Legs"
+        self.motionProxy.wbFootState(stateName, supportLeg)
+
+        # Constraint Balance Motion
+        isEnable   = True
+        supportLeg = "Legs"
+        self.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+
+        # Com go to LLeg
+        supportLeg = leg
+        self.motionProxy.wbGoToBalance(supportLeg, duration)
+
+        self.wbDisable()
 
     def setDuration(self, durationInSeconds):
         self.globalDuration = durationInSeconds
@@ -85,6 +102,13 @@ class FluentMotion():
     ###################################
     # move
     ###################################
+
+    def zero(self):
+        # MoveChain(chain, angle, speed)
+        chain = self.chains.Body
+        angleInDegrees = 0.0
+        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
+        return self;
 
     def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
         # motion w/ blocking call

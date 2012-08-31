@@ -10,51 +10,17 @@ class FluentLegs():
         self.chains = fluentMotion.chains
         self.log = fluentMotion.log
 
-    def balanceOnLeft(self):
+    ###################################
+    # Balance
+    ###################################
+    def balanceOnLeft(self, duration=0):
+        self.fluentMotion.balance("LLeg", duration)
 
-        # stiffen body
-        self.fluentMotion.stiff()
-        self.fluentMotion.wbEndable()
+    def balanceOnRight(self, duration=0):
+        self.fluentMotion.balance("RLeg", duration)
 
-        # Legs are constrained fixed
-        stateName  = "Fixed"
-        supportLeg = "Legs"
-        self.fluentMotion.motionProxy.wbFootState(stateName, supportLeg)
-
-        # Constraint Balance Motion
-        isEnable   = True
-        supportLeg = "Legs"
-        self.fluentMotion.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
-
-        # Com go to LLeg
-        supportLeg = "LLeg"
-        duration   = 5.0
-        self.fluentMotion.motionProxy.wbGoToBalance(supportLeg, duration)
-
-        # RLeg is free
-        stateName  = "Free"
-        supportLeg = "RLeg"
-        self.fluentMotion.motionProxy.wbFootState(stateName, supportLeg)
-
-    def balanceCenter(self):
-        # stiffen body
-        self.fluentMotion.stiff()
-        self.fluentMotion.wbEndable()
-
-        # Legs are constrained fixed
-        stateName  = "Fixed"
-        supportLeg = "Legs"
-        self.fluentMotion.motionProxy.wbFootState(stateName, supportLeg)
-
-        # Constraint Balance Motion
-        isEnable   = True
-        supportLeg = "Legs"
-        self.fluentMotion.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
-
-        # Com go to LLeg
-        supportLeg = "Legs"
-        duration   = 5.0
-        self.fluentMotion.motionProxy.wbGoToBalance(supportLeg, duration)
+    def balanceCenter(self, duration=0):
+        self.fluentMotion.balance("Legs", duration)
 
     ###################################
     # Forward
@@ -83,11 +49,13 @@ class FluentLegs():
         return self;
 
     def lDown(self, duration=0):
+        self.lStraight(duration)
         duration = self.fluentMotion.determineDuration(duration)       
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, 0, duration)
         return self;
         
     def rDown(self, duration=0):
+        self.rStraight(duration)
         duration = self.fluentMotion.determineDuration(duration)  
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, 0, duration)
         return self;
