@@ -17,7 +17,7 @@ class FluentMotion():
         
         # set motion proxy & log
         self.motionProxy = alProxy("ALMotion")
-        self.postureProxy = alProxy("ALRobotPosture")
+        #self.postureProxy = alProxy("ALRobotPosture")
         self.log = log
 
         # joints
@@ -79,6 +79,18 @@ class FluentMotion():
         isEnabled  = True
         self.motionProxy.wbEnable(isEnabled)
 
+    def fixLegs(self, supportLeg="Legs", stateName="Fixed"):
+        # Legs are constrained fixed
+        # supportLeg: Legs, LLeg or RLeg
+        # stateName: Fixed, Plane or Free
+        self.motionProxy.wbFootState(stateName, supportLeg)
+
+    def constrainMotion(self, supportLeg="Legs"):
+        # Constraint Balance Motion / Support Polygon
+        # supportLeg: Legs, LLeg or RLeg
+        isEnable   = True
+        self.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+
     def balance(self, leg, duration):
 
         duration = self.determineDuration(duration)  
@@ -87,15 +99,8 @@ class FluentMotion():
         self.stiff()
         self.wbEndable()
 
-        # Legs are constrained fixed
-        stateName  = "Fixed"
-        supportLeg = "Legs"
-        self.motionProxy.wbFootState(stateName, supportLeg)
-
-        # Constraint Balance Motion
-        isEnable   = True
-        supportLeg = "Legs"
-        self.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+        self.fixLegs()
+        self.constrainMotion()
 
         # Com go to LLeg
         supportLeg = leg

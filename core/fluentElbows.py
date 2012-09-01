@@ -13,6 +13,9 @@ class FluentElbows():
         self.chains = fluentMotion.chains
         self.log = fluentMotion.log
 
+    def go(self):
+        self.fluentMotion.go()
+        
     ###################################
     # Bent
     ###################################
