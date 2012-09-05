@@ -147,13 +147,15 @@ class FluentMotion():
         return self;
 
     def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
+        
+        self.log("setting %s to %s" % (chain, angleListInRadians))
+
         # motion w/ blocking call
         taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
 
         # save task id
         self.jobs.append(taskId)
-        #self.log("%s: %s" % (chain, taskId))
-        self.log("setting %s to %s" % (chain, angleListInRadians))
+        
 
     def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
         # convert to radians        

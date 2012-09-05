@@ -16,19 +16,22 @@ class FluentHead():
     ###################################
     # turn
     ###################################
-    def turnLeft(self, duration=0):  
+    def left(self, duration=0, offset=0):  
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, 90, duration)  
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
         
-    def turnRight(self, duration=0):   
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, -90, duration)  
+    def right(self, duration=0, offset=0):   
+        duration = self.fluentMotion.determineDuration(duration)   
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
 
-    def forward(self, duration=0):   
+    def forward(self, duration=0, offset=0):   
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, 0, duration)  
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
 
 
@@ -36,17 +39,20 @@ class FluentHead():
     # up / down
     ###################################
 
-    def up(self, duration=0):   
+    def up(self, duration=0, offset=0):   
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, -38, duration)  
+        angle = -38 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;
 
-    def down(self, duration=0):   
+    def down(self, duration=0, offset=0):   
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, 29, duration)  
+        angle = 29 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;
 
-    def center(self, duration=0):   
+    def center(self, duration=0, offset=0):   
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, 0, duration)  
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;
