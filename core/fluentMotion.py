@@ -6,6 +6,7 @@ from fluentHands import FluentHands
 from fluentElbows import FluentElbows
 from fluentWrists import FluentWrists
 from fluentLegs import FluentLegs
+from fluentHead import FluentHead
 
 class FluentMotion():
 
@@ -16,8 +17,8 @@ class FluentMotion():
         self.jobs = []
         
         # set motion proxy & log
-        self.motionProxy = alProxy("ALMotion")
         #self.postureProxy = alProxy("ALRobotPosture")
+        self.motionProxy = alProxy("ALMotion")
         self.log = log
 
         # joints
@@ -25,6 +26,7 @@ class FluentMotion():
         self.chains = self.joints.Chains
 
         # body parts
+        self.head = FluentHead(self)
         self.hands = FluentHands(self) 
         self.wrists = FluentWrists(self, self.hands) 
         self.elbows = FluentElbows(self, self.wrists, self.hands) 
@@ -220,6 +222,7 @@ class FluentMotion():
             import fluentElbows
             import fluentWrists
             import fluentLegs
+            import fluentHead
         except:
             import sys
             sys.path.append(pathToCore)
@@ -230,6 +233,7 @@ class FluentMotion():
             import fluentElbows
             import fluentWrists
             import fluentLegs
+            import fluentHead
 
         reload(fluentMotion)
         reload(fluentArms)
@@ -238,7 +242,7 @@ class FluentMotion():
         reload(fluentElbows)
         reload(fluentWrists)
         reload(fluentLegs)
-
+        reload(fluentHead)
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]
