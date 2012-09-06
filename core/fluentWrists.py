@@ -20,53 +20,59 @@ class FluentWrists():
     ###################################
     # Center
     ###################################
-    def center(self, duration=0):     
-        self.lCenter(duration)
-        self.rCenter(duration)
+    def center(self, duration=0, offset=0):     
+        self.lCenter(duration, offset)
+        self.rCenter(duration, offset)
         return self;
 
-    def lCenter(self, duration=0):
+    def lCenter(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, 0.0, duration)
+        angle = 0.0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rCenter(self, duration=0):
+    def rCenter(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, 0.0, duration)
+        angle = 0.0 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
     # Out
     ###################################
-    def turnOut(self, duration=0):     
-        self.lTurnOut(duration)
-        self.rTurnOut(duration)
+    def turnOut(self, duration=0, offset=0):     
+        self.lTurnOut(duration, offset)
+        self.rTurnOut(duration, offset)
         return self;
 
-    def lTurnOut(self, duration=0):
+    def lTurnOut(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, 90, duration)
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rTurnOut(self, duration=0):
+    def rTurnOut(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, -90, duration)
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
     # In
     ###################################
-    def turnIn(self, duration=0):     
-        self.lTurnIn(duration)
-        self.rTurnIn(duration)
+    def turnIn(self, duration=0, offset=0):     
+        self.lTurnIn(duration, offset)
+        self.rTurnIn(duration, offset)
         return self;
 
-    def lTurnIn(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, -90, duration)
+    def lTurnIn(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)      
+        angle = -90 - offset   
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rTurnIn(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, 90, duration)
+    def rTurnIn(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)   
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
