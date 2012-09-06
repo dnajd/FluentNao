@@ -8,8 +8,8 @@ class FluentJoints():
         self.Head =   Enum(["HeadYaw", "HeadPitch"])
         self.LArm =   Enum(["LShoulderPitch","LShoulderRoll","LElbowYaw","LElbowRoll","LWristYaw","LHand"])
         self.RArm =   Enum(["RShoulderPitch","RShoulderRoll","RElbowYaw","RElbowRoll","RWristYaw","RHand"])
-        self.LLeg =   Enum(["LHipYawPitch1","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll"])
-        self.RLeg =   Enum(["RHipYawPitch1","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"])        
+        self.LLeg =   Enum(["LHipYawPitch","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll"])
+        self.RLeg =   Enum(["RHipYawPitch","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"])        
 
 
 class Enum(set):
