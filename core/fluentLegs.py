@@ -28,95 +28,102 @@ class FluentLegs():
     ###################################
     # Up
     ###################################
-    def up(self, duration=0):   
-        self.rForward(duration)
-        self.lForward(duration)
+    def up(self, duration=0, offset=0):   
+        self.rForward(duration, offset)
+        self.lForward(duration, offset)
         return self;
 
-    def lUp(self, duration=0):
+    def lUp(self, duration=0, offset=0):
         self.balanceOnRight(duration)
         duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, -90, duration)
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
-    def rUp(self, duration=0):
+    def rUp(self, duration=0, offset=0):
         self.balanceOnLeft(duration)
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, -90, duration)
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
     ###################################
     # KneeUp
     ###################################
-    def lKneeUp(self, duration=0):
+    def lKneeUp(self, duration=0, offset=0):
         self.balanceOnRight(duration)
-        self.lUp(duration)
-        self.lKneeBent(duration)
+        self.lUp(duration, offset)
+        self.lKneeBent(duration, offset)
         return self;
         
-    def rKneeUp(self, duration=0):
+    def rKneeUp(self, duration=0, offset=0):
         self.balanceOnLeft(duration)
-        self.rUp(duration)
-        self.rKneeBent(duration)
+        self.rUp(duration, offset)
+        self.rKneeBent(duration, offset)
         return self;
 
     ###################################
     # Down
     ###################################
-    def down(self, duration=0):   
-        self.rDown(duration)
-        self.lDown(duration)
+    def down(self, duration=0, offset=0):   
+        self.rDown(duration, offset)
+        self.lDown(duration, offset)
         return self;
 
-    def lDown(self, duration=0):
-        self.lStraighten(duration)
+    def lDown(self, duration=0, offset=0):
+        self.balanceOnLeft(duration)
         duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, 0, duration)
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
-    def rDown(self, duration=0):
-        self.rStraighten(duration)
+    def rDown(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, 0, duration)
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
     ###################################
     # Bent
     ###################################
-    def bendKnees(self, duration=0):   
-        self.rKneeBent(duration)
-        self.lKneeBent(duration)
+    def kneesBent(self, duration=0, offset=0):   
+        self.rKneeBent(duration, offset)
+        self.lKneeBent(duration, offset)
         return self;
 
-    def lKneeBent(self, duration=0):
+    def lKneeBent(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, 90, duration)
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
-    def rKneeBent(self, duration=0):
+    def rKneeBent(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, 90, duration)
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 
     ###################################
     # Straight
     ###################################
-    def straight(self, duration=0):   
-        self.rStraight(duration)
-        self.lStraight(duration)
+    def straight(self, duration=0, offset=0):   
+        self.rStraight(duration, offset)
+        self.lStraight(duration, offset)
         return self;
 
-    def lStraight(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, 0, duration)
+    def lStraight(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration) 
+        angle = 0 - offset      
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
-    def rStraight(self, duration=0):
+    def rStraight(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, 0, duration)
+        angle = 0 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 
