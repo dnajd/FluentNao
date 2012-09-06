@@ -19,95 +19,104 @@ class FluentElbows():
     ###################################
     # Bent
     ###################################
-    def bent(self, duration=0):
-        self.rBent(duration)
-        self.lBent(duration)
+    def bent(self, duration=0, offset=0):
+        self.rBent(duration, offset)
+        self.lBent(duration, offset)
         return self;
 
-    def rBent(self, duration=0):
+    def rBent(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, 89, duration)
+        angle = 89 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
-    def lBent(self, duration=0):
+    def lBent(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, -89, duration)
+        angle = -89 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
     ###################################
     # Straight
     ###################################
-    def straight(self, duration=0):
-        self.rStraight(duration)
-        self.lStraight(duration)
+    def straight(self, duration=0, offset=0):
+        self.rStraight(duration, offset)
+        self.lStraight(duration, offset)
         return self;
 
-    def rStraight(self, duration=0):
+    def rStraight(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, 0.5, duration)
+        angle = 0.5 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
-    def lStraight(self, duration=0):
+    def lStraight(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, 0.5, duration)
+        angle = 0.5 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
 
     ###################################
     # Up
     ###################################
-    def turnUp(self, duration=0):
-        self.rTurnUp(duration)
-        self.lTurnUp(duration)
+    def turnUp(self, duration=0, offset=0):
+        self.rTurnUp(duration, offset)
+        self.lTurnUp(duration, offset)
         return self;
 
-    def rTurnUp(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, 90, duration)
+    def rTurnUp(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration) 
+        angle = 90 + offset 
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
 
-    def lTurnUp(self, duration=0):
+    def lTurnUp(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, -90, duration)
+        angle = -90 - offset 
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
     ###################################
     # Turn Down
     ###################################
-    def turnDown(self, duration=0):
-        self.rTurnDown(duration)
-        self.lTurnDown(duration)
+    def turnDown(self, duration=0, offset=0):
+        self.rTurnDown(duration, offset)
+        self.lTurnDown(duration, offset)
         return self;
 
-    def rTurnDown(self, duration=0):
+    def rTurnDown(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, -90, duration)
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
-
-    def lTurnDown(self, duration=0):
+    def lTurnDown(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, 90, duration)
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
 
     ###################################
     # In
     ###################################
-    def turnIn(self, duration=0):
-        self.rTurnIn(duration)
-        self.lTurnIn(duration)
+    def turnIn(self, duration=0, offset=0):
+        self.rTurnIn(duration, offset)
+        self.lTurnIn(duration, offset)
         return self;
 
-    def rTurnIn(self, duration=0):
+    def rTurnIn(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, 0, duration)
+        angle = 0 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
-    def lTurnIn(self, duration=0):
+    def lTurnIn(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, 0, duration)
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
