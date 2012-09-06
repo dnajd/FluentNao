@@ -20,80 +20,89 @@ class FluentArms():
     ###################################
     # Forward
     ###################################
-    def forward(self, duration=0):   
-        self.rForward(duration)
-        self.lForward(duration)
+    def forward(self, duration=0, offset=0):   
+        self.rForward(duration, offset)
+        self.lForward(duration, offset)
         return self;
 
-    def lForward(self, duration=0):
+    def lForward(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)       
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 0, duration)
+
         return self;
         
-    def rForward(self, duration=0):
+    def rForward(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
+        angle = 0 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 0, duration)
         return self;
 
     ###################################
     # Out
     ###################################
-    def out(self, duration=0):     
-        self.rOut(duration)
-        self.lOut(duration)
+    def out(self, duration=0, offset=0):     
+        self.rOut(duration, offset)
+        self.lOut(duration, offset)
         return self;
 
-    def lOut(self, duration=0):     
+    def lOut(self, duration=0, offset=0):     
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 90, duration)
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 0, duration)
         return self;
         
-    def rOut(self, duration=0):
+    def rOut(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, -90, duration)
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 0, duration)
         return self;
 
     ###################################
     # Up
     ###################################
-    def up(self, duration=0):     
-        self.rUp(duration)
-        self.lUp(duration)
+    def up(self, duration=0, offset=0):     
+        self.rUp(duration, offset)
+        self.lUp(duration, offset)
         return self;
 
-    def lUp(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, -90, duration)
+    def lUp(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)    
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rUp(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, -90, duration) 
+    def rUp(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)   
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
 
     ###################################
     # Down
     ###################################
-    def down(self, duration=0):     
-        self.rDown(duration)
-        self.lDown(duration)
+    def down(self, duration=0, offset=0):     
+        self.rDown(duration, offset)
+        self.lDown(duration, offset)
         return self;
 
-    def lDown(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 90, duration)
+    def lDown(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)   
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rDown(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 90, duration) 
+    def rDown(self, duration=0, offset=0):
+        duration = self.fluentMotion.determineDuration(duration)   
+        angle = 90 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
 
@@ -101,19 +110,21 @@ class FluentArms():
     ###################################
     # Back
     ###################################
-    def back(self, duration=0):     
-        self.rBack(duration)
-        self.lBack(duration)
+    def back(self, duration=0, offset=0):     
+        self.rBack(duration, offset)
+        self.lBack(duration, offset)
         return self;
 
-    def lBack(self, duration=0):
+    def lBack(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 119.5, duration)
+        angle = 119.5 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rBack(self, duration=0):
+    def rBack(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 119.5, duration) 
+        angle = 119.5 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
