@@ -19,7 +19,9 @@ class FluentMotion():
         
         # set motion proxy & log
         #self.postureProxy = alProxy("ALRobotPosture")
+
         self.motionProxy = alProxy("ALMotion")
+        self.textToSpeechProxy = alProxy("ALTextToSpeech")
         self.log = log
 
         # joints
@@ -41,6 +43,12 @@ class FluentMotion():
 
         # global duration
         self.setDuration(1)
+
+    ###################################
+    # text to speech
+    ###################################        
+    def say(self, text):
+        self.textToSpeechProxy.post.say(text)
 
     ###################################
     # Postures
