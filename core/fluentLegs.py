@@ -20,13 +20,97 @@ class FluentLegs():
     ###################################
     def balanceOnLeft(self, duration=0):
         self.fluentMotion.balance(self.joints.SupportLeg.LLeg, duration)
+        return self;
 
     def balanceOnRight(self, duration=0):
         self.fluentMotion.balance(self.joints.SupportLeg.RLeg, duration)
+        return self;
 
     def balanceCenter(self, duration=0):
         self.fluentMotion.balance(self.joints.SupportLeg.Legs, duration)
+        return self;
 
+
+    ###################################
+    # Out
+    ###################################
+    def lOut(self, duration=0, offset=0):
+
+        # move leg out
+        duration = self.fluentMotion.determineDuration(duration)       
+        angle = 35 + offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipRoll, angle, duration)
+
+        # turn feet in
+        self.feet.lTurnIn()
+        self.feet.rTurnIn(0, -15)
+
+        return self;
+
+    def rOut(self, duration=0, offset=0):
+
+        # move leg out
+        duration = self.fluentMotion.determineDuration(duration)       
+        angle = -35 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipRoll, angle, duration)
+
+        # turn feet in
+        self.feet.rTurnIn()
+        self.feet.lTurnIn(0, -15)
+
+        return self;
+
+    ###################################
+    # Forward
+    ###################################
+    def lForward(self, duration=0, offset=0):
+
+        # stiffen body & enable wb
+        self.fluentMotion.stiff()
+        self.fluentMotion.wbEndable()
+
+        # constrain feet
+        self.fluentMotion.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
+        self.fluentMotion.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
+
+        # move leg forward
+        duration = self.fluentMotion.determineDuration(duration)       
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+
+        # block call
+        self.go()
+
+        # free feet & disable wb
+        self.fluentMotion.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.fluentMotion.wbDisable()
+
+        return self;
+
+
+    def rForward(self, duration=0, offset=0):
+
+        # stiffen body & enable wb
+        self.fluentMotion.stiff()
+        self.fluentMotion.wbEndable()
+
+        # constrain feet
+        self.fluentMotion.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
+        self.fluentMotion.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
+
+        # move leg forward
+        duration = self.fluentMotion.determineDuration(duration)       
+        angle = -90 - offset
+        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+
+        # block call
+        self.go()
+
+        # free feet & disable wb
+        self.fluentMotion.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.fluentMotion.wbDisable()
+        
+        return self;
 
     ###################################
     # Up

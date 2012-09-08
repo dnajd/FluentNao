@@ -66,13 +66,13 @@ class FluentFeet():
 
     def lTurnOut(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)       
-        angle = 44 + offset
+        angle = 22 + offset
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, angle, duration)
         return self;
         
     def rTurnOut(self, duration=0, offset=0):
         duration = self.fluentMotion.determineDuration(duration)        
-        angle = -44 - offset
+        angle = -22 - offset
         self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, angle, duration)
         return self;
 

@@ -82,13 +82,13 @@ class FluentMotion():
     # stiffness
     ###################################
     def stiff(self):
-        pNames = self.joints.chains.Body
+        pNames = self.joints.Chains.Body
         pStiffnessLists = 1.0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 
     def relax(self):
-        pNames = self.joints.chains.Body
+        pNames = self.joints.Chains.Body
         pStiffnessLists = 0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
@@ -97,10 +97,12 @@ class FluentMotion():
     # Whole Body Motion & Balance
     ###################################
     def wbDisable(self):
+        self.log("wbDisable")
         isEnabled  = False
         self.motionProxy.wbEnable(isEnabled)
 
     def wbEndable(self):
+        self.log("wbEnable")
         isEnabled  = True
         self.motionProxy.wbEnable(isEnabled)
 
@@ -108,6 +110,7 @@ class FluentMotion():
         # Legs are constrained fixed
         # supportLeg: Legs, LLeg or RLeg
         # stateName: Fixed, Plane or Free
+        self.log("supportLeg=%s|stateName=%s" % (supportLeg, stateName))
         self.motionProxy.wbFootState(stateName, supportLeg)
 
     def constrainMotion(self, supportLeg="Legs"):
