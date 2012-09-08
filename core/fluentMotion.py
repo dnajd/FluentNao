@@ -87,6 +87,12 @@ class FluentMotion():
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 
+    def relax(self):
+        pNames = "Body"
+        pStiffnessLists = 0
+        pTimeLists = 1.0
+        self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+
     def wbDisable(self):
         isEnabled  = False
         self.motionProxy.wbEnable(isEnabled)
