@@ -1,5 +1,5 @@
 from fluentJoints import FluentJoints
-class FluentAnkle():
+class FluentFeet():
 
     # init method
     def __init__(self, fluentMotion):
@@ -12,7 +12,8 @@ class FluentAnkle():
 
     def go(self):
         self.fluentMotion.go()
-        
+
+
     ###################################
     # point
     ###################################

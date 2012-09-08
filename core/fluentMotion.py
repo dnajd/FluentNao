@@ -7,7 +7,7 @@ from fluentElbows import FluentElbows
 from fluentWrists import FluentWrists
 from fluentLegs import FluentLegs
 from fluentHead import FluentHead
-from fluentAnkle import FluentAnkle
+from fluentFeet import FluentFeet
 
 class FluentMotion():
 
@@ -38,8 +38,8 @@ class FluentMotion():
         self.arms = FluentArms(self, self.elbows, self.wrists, self.hands) 
         
         # legs
-        self.ankles = FluentAnkle(self)
-        self.legs = FluentLegs(self, self.ankles)
+        self.feet = FluentFeet(self)
+        self.legs = FluentLegs(self, self.feet)
 
         # global duration
         self.setDuration(1)
@@ -257,7 +257,7 @@ class FluentMotion():
             import fluentWrists
             import fluentLegs
             import fluentHead
-            import fluentAnkle
+            import fluentFeet
 
         reload(fluentMotion)
         reload(fluentArms)
@@ -267,7 +267,7 @@ class FluentMotion():
         reload(fluentWrists)
         reload(fluentLegs)
         reload(fluentHead)
-        reload(fluentAnkle)
+        reload(fluentFeet)
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]

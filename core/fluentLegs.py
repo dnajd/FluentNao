@@ -2,9 +2,9 @@ from fluentJoints import FluentJoints
 class FluentLegs():
 
     # init method
-    def __init__(self, fluentMotion, ankles):
+    def __init__(self, fluentMotion, feet):
         
-        self.ankles = ankles
+        self.feet = feet
 
         # jobs for threading
         self.fluentMotion = fluentMotion
@@ -26,6 +26,7 @@ class FluentLegs():
 
     def balanceCenter(self, duration=0):
         self.fluentMotion.balance("Legs", duration)
+
 
     ###################################
     # Up
