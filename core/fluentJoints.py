@@ -11,6 +11,10 @@ class FluentJoints():
         self.LLeg =   Enum(["LHipYawPitch","LHipRoll","LHipPitch","LKneePitch","LAnklePitch","LAnkleRoll"])
         self.RLeg =   Enum(["RHipYawPitch","RHipRoll","RHipPitch","RKneePitch","RAnklePitch","RAnkleRoll"])        
 
+        # foot state
+        self.SupportLeg = Enum(["Legs","LLeg","RLeg"])        
+        self.StateName = Enum(["Fixed","Plane","Free"])        
+
 
 class Enum(set):
     def __getattr__(self, name):

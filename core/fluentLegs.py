@@ -19,13 +19,13 @@ class FluentLegs():
     # Balance
     ###################################
     def balanceOnLeft(self, duration=0):
-        self.fluentMotion.balance("LLeg", duration)
+        self.fluentMotion.balance(self.joints.SupportLeg.LLeg, duration)
 
     def balanceOnRight(self, duration=0):
-        self.fluentMotion.balance("RLeg", duration)
+        self.fluentMotion.balance(self.joints.SupportLeg.RLeg, duration)
 
     def balanceCenter(self, duration=0):
-        self.fluentMotion.balance("Legs", duration)
+        self.fluentMotion.balance(self.joints.SupportLeg.Legs, duration)
 
 
     ###################################

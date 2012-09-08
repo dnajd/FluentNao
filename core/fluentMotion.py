@@ -79,20 +79,23 @@ class FluentMotion():
 
 
     ###################################
-    # Motion
+    # stiffness
     ###################################
     def stiff(self):
-        pNames = "Body"
+        pNames = self.joints.chains.Body
         pStiffnessLists = 1.0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 
     def relax(self):
-        pNames = "Body"
+        pNames = self.joints.chains.Body
         pStiffnessLists = 0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
 
+    ###################################
+    # Whole Body Motion & Balance
+    ###################################
     def wbDisable(self):
         isEnabled  = False
         self.motionProxy.wbEnable(isEnabled)
@@ -101,7 +104,7 @@ class FluentMotion():
         isEnabled  = True
         self.motionProxy.wbEnable(isEnabled)
 
-    def fixLegs(self, supportLeg="Legs", stateName="Fixed"):
+    def footState(self, supportLeg="Legs", stateName="Fixed"):
         # Legs are constrained fixed
         # supportLeg: Legs, LLeg or RLeg
         # stateName: Fixed, Plane or Free
@@ -121,7 +124,7 @@ class FluentMotion():
         self.stiff()
         self.wbEndable()
 
-        self.fixLegs()
+        self.footState()
         self.constrainMotion()
 
         # Com go to LLeg
@@ -130,6 +133,10 @@ class FluentMotion():
 
         self.wbDisable()
 
+
+    ###################################
+    # Duration 
+    ###################################
     def setDuration(self, durationInSeconds):
         self.globalDuration = durationInSeconds
         return self;
@@ -141,7 +148,7 @@ class FluentMotion():
         return self.globalDuration
 
     ###################################
-    # wait for tasks to finish
+    # blocking
     ###################################
     
     def go(self):
@@ -156,7 +163,7 @@ class FluentMotion():
         return self         
             
     ###################################
-    # move
+    # movement
     ###################################
 
     def zero(self):
@@ -234,6 +241,9 @@ class FluentMotion():
             return maxDegreesPerSecond
         return fractionOfMaxSpeed
 
+    ###################################
+    # development
+    ###################################
     @staticmethod
     def initModulesForDevelopment(pathToCore):
         try:
@@ -245,7 +255,7 @@ class FluentMotion():
             import fluentWrists
             import fluentLegs
             import fluentHead
-            import fluentAnkle
+            import fluentFeet
         except:
             import sys
             sys.path.append(pathToCore)
