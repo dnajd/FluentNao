@@ -1,0 +1,42 @@
+<style>
+#fluent-motion-widget p { margin-bottom:10px;}
+</style>
+
+<div id="fluent-motion-widget">
+    <h1>Fluent Motion</h1>
+    <p>Remotely execute <a href="https://github.com/dnajd/Fluent-Motion-API" target="_blank">fluent motion</a> commands.</p>
+
+    <h2>Try this command first</h2>
+    <p>nao.say("hi");</p>
+
+    <h2>Get Nao Moving</h2>
+    <p>
+        nao.stiff();<br>
+        nao.hands.close().go();<br>
+        nao.hands.open().go();<br>
+        nao.relax();<br>
+    </p>
+
+
+    <textarea id="input-command" rows="8" cols="40" /><br>
+    <input id="btn-submit" type="button" value="Execute" onclick="sendCommand()" style="width:80px;"/>
+</div>
+
+<script type="text/javascript">
+    var memoryProxy = new ALProxy('ALMemory');
+    var behaviorProxy = new ALProxy('ALBehaviorManager');
+    var result = new Array();
+    
+    function sendCommand() {
+        var inputElement = document.getElementById('input-command');
+
+        // get value
+        var name = inputElement.value;
+
+        // insert into all memory
+        memoryProxy.call('insertData', ['fluentMotionRpcCommand', name]);
+
+        // run behavior
+        behaviorProxy.call('runBehavior', ['fluentMotionRPC']);
+    }
+</script>
