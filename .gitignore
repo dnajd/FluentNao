@@ -31,3 +31,5 @@ pip-log.txt
 *.tmTheme.cache
 *.sublime-workspace
 *.sublime-project
+*.pydevproject
+*.project
