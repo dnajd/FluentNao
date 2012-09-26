@@ -1,5 +1,5 @@
 from joints import Joints
-class FluentElbows():
+class Elbows():
 
     # init method
     def __init__(self, nao, wrists, hands):

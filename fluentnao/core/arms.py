@@ -1,6 +1,6 @@
 from joints import Joints
 
-class FluentArms():
+class Arms():
 
     # init method
     def __init__(self, nao, elbows, wrists, hands):

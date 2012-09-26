@@ -1,4 +1,4 @@
-Fluent-Motion-API
+-Motion-API
 =================
 
 Control Nao's movements using fluent stanza of python code. This is useful if you want to quickly get nao into a very common position.  Useful too if you want Nao to react in many different ways based on word recognition, face recognition, random behavior.
@@ -74,42 +74,42 @@ NOTE: the zero is duration telling the api to ignore that argument;
 
 In Choregraphe
 =================
-You need to include the Fluent-Motion-API python class files in your "Project References" Panel.  Then include the following in a script box.
+You need to include the -Motion-API python class files in your "Project References" Panel.  Then include the following in a script box.
 
 Importing the API
 -----------------
     try:
         import fluentMotion
-        from fluentMotion import FluentMotion
+        from fluentMotion import Motion
     except:
         import sys
         sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
         import fluentMotion
-        from fluentMotion import FluentMotion
+        from fluentMotion import Motion
 
 With this the robot will be able to find and import the python classes. 
 
 
 Contributing
 ============
-I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). My examples below assume you have cloned the repo to /development/Fluent-Motion-API/
+I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). My examples below assume you have cloned the repo to /development/-Motion-API/
 
 Choregraphe
 -----------
-To make changes to the Fluent-Motion-API fast and easy you should run your scripts on the simulated robot.  Include the following in your Choregraphe script box
+To make changes to the -Motion-API fast and easy you should run your scripts on the simulated robot.  Include the following in your Choregraphe script box
 
-    pathToCore = "/development/Fluent-Motion-API/core/"
+    pathToCore = "/development/-Motion-API/core/"
     try:
     	import fluentMotion
-    	from fluentMotion import FluentMotion
+    	from fluentMotion import Motion
     except:
     	import sys
     	sys.path.append(pathToCore)
     	import fluentMotion
-    	from fluentMotion import FluentMotion
+    	from fluentMotion import Motion
             
     reload(fluentMotion)
-    FluentMotion.initModulesForDevelopment(pathToCore)
+    Motion.initModulesForDevelopment(pathToCore)
 
-This code helps python reference the Fluent-Motion-API classes directly from the git repo you cloned. It also informs python that it should reload the Fluent-Motion-API python classes each time you run your behavior. This wont work on the actual robot.
+This code helps python reference the -Motion-API classes directly from the git repo you cloned. It also informs python that it should reload the -Motion-API python classes each time you run your behavior. This wont work on the actual robot.
 

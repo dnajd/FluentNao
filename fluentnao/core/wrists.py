@@ -1,7 +1,7 @@
 import math
 from joints import Joints
 
-class FluentWrists():
+class Wrists():
 
     # init method
     def __init__(self, nao, hands):

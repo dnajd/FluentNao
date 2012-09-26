@@ -1,5 +1,5 @@
 from joints import Joints
-class FluentHead():
+class Head():
 
     # init method
     def __init__(self, nao):

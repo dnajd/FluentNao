@@ -1,11 +1,11 @@
-from fluentnao.core.fluentArms import FluentArms
-from fluentnao.core.fluentElbows import FluentElbows
-from fluentnao.core.fluentFeet import FluentFeet
-from fluentnao.core.fluentHands import FluentHands
-from fluentnao.core.fluentHead import FluentHead
+from fluentnao.core.arms import Arms
+from fluentnao.core.elbows import Elbows
+from fluentnao.core.feet import Feet
+from fluentnao.core.hands import Hands
+from fluentnao.core.head import Head
 from fluentnao.core.joints import Joints
-from fluentnao.core.fluentLegs import FluentLegs
-from fluentnao.core.fluentWrists import FluentWrists
+from fluentnao.core.legs import Legs
+from fluentnao.core.wrists import Wrists
 import almath
 import math
 
@@ -29,17 +29,17 @@ class Nao():
         self.chains = self.joints.Chains
 
         # head
-        self.head = FluentHead(self)
+        self.head = Head(self)
         
         # arms
-        self.hands = FluentHands(self) 
-        self.wrists = FluentWrists(self, self.hands) 
-        self.elbows = FluentElbows(self, self.wrists, self.hands) 
-        self.arms = FluentArms(self, self.elbows, self.wrists, self.hands) 
+        self.hands = Hands(self) 
+        self.wrists = Wrists(self, self.hands) 
+        self.elbows = Elbows(self, self.wrists, self.hands) 
+        self.arms = Arms(self, self.elbows, self.wrists, self.hands) 
         
         # legs
-        self.feet = FluentFeet(self)
-        self.legs = FluentLegs(self, self.feet)
+        self.feet = Feet(self)
+        self.legs = Legs(self, self.feet)
 
         # global duration
         self.setDuration(1)
@@ -251,23 +251,23 @@ def initModulesForDevelopment(pathToCore):
 
     import sys
     sys.path.append(pathToCore)
-    import fluentnao.core.fluentArms
-    import fluentnao.core.fluentElbows
-    import fluentnao.core.fluentFeet
-    import fluentnao.core.fluentHands
-    import fluentnao.core.fluentHead
+    import fluentnao.core.arms
+    import fluentnao.core.elbows
+    import fluentnao.core.feet
+    import fluentnao.core.hands
+    import fluentnao.core.head
     import fluentnao.core.joints
-    import fluentnao.core.fluentLegs
-    import fluentnao.core.fluentWrists
+    import fluentnao.core.legs
+    import fluentnao.core.wrists
 
-    reload(fluentnao.core.fluentArms)
+    reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
-    reload(fluentnao.core.fluentHands)
-    reload(fluentnao.core.fluentElbows)
-    reload(fluentnao.core.fluentWrists)
-    reload(fluentnao.core.fluentLegs)
-    reload(fluentnao.core.fluentHead)
-    reload(fluentnao.core.fluentFeet)
+    reload(fluentnao.core.hands)
+    reload(fluentnao.core.elbows)
+    reload(fluentnao.core.wrists)
+    reload(fluentnao.core.legs)
+    reload(fluentnao.core.head)
+    reload(fluentnao.core.feet)
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]

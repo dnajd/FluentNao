@@ -1,6 +1,6 @@
 import math
 from joints import Joints
-class FluentHands():
+class Hands():
 
     # init method
     def __init__(self, nao):
