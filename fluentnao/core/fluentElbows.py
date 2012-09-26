@@ -1,20 +1,20 @@
-from fluentJoints import FluentJoints
+from joints import Joints
 class FluentElbows():
 
     # init method
-    def __init__(self, fluentNao, wrists, hands):
+    def __init__(self, nao, wrists, hands):
         
         self.wrists = wrists
         self.hands = hands
         
         # jobs for threading
-        self.fluentNao = fluentNao
-        self.joints = fluentNao.joints
-        self.chains = fluentNao.chains
-        self.log = fluentNao.log
+        self.nao = nao
+        self.joints = nao.joints
+        self.chains = nao.chains
+        self.log = nao.log
 
     def go(self):
-        self.fluentNao.go()
+        self.nao.go()
         
     ###################################
     # Bent
@@ -25,16 +25,16 @@ class FluentElbows():
         return self;
 
     def rBent(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 89 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
     def lBent(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = -89 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
     ###################################
@@ -46,16 +46,16 @@ class FluentElbows():
         return self;
 
     def rStraight(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0.5 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
     def lStraight(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0.5 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
 
@@ -68,16 +68,16 @@ class FluentElbows():
         return self;
 
     def rTurnUp(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration) 
+        duration = self.nao.determineDuration(duration) 
         angle = 90 + offset 
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
 
     def lTurnUp(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = -90 - offset 
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
     ###################################
@@ -89,15 +89,15 @@ class FluentElbows():
         return self;
 
     def rTurnDown(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = -90 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
     def lTurnDown(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 90 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
 
@@ -110,13 +110,13 @@ class FluentElbows():
         return self;
 
     def rTurnIn(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
     def lTurnIn(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;

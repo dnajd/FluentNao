@@ -1,4 +1,4 @@
-class FluentJoints():
+class Joints():
 
     # init method
     def __init__(self):

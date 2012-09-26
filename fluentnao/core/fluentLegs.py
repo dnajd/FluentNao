@@ -1,33 +1,33 @@
-from fluentJoints import FluentJoints
+from joints import Joints
 class FluentLegs():
 
     # init method
-    def __init__(self, fluentNao, feet):
+    def __init__(self, nao, feet):
         
         self.feet = feet
 
         # jobs for threading
-        self.fluentNao = fluentNao
-        self.joints = fluentNao.joints
-        self.chains = fluentNao.chains
-        self.log = fluentNao.log
+        self.nao = nao
+        self.joints = nao.joints
+        self.chains = nao.chains
+        self.log = nao.log
 
     def go(self):
-        self.fluentNao.go()
+        self.nao.go()
         
     ###################################
     # Balance
     ###################################
     def balanceOnLeft(self, duration=0):
-        self.fluentNao.balance(self.joints.SupportLeg.LLeg, duration)
+        self.nao.balance(self.joints.SupportLeg.LLeg, duration)
         return self;
 
     def balanceOnRight(self, duration=0):
-        self.fluentNao.balance(self.joints.SupportLeg.RLeg, duration)
+        self.nao.balance(self.joints.SupportLeg.RLeg, duration)
         return self;
 
     def balanceCenter(self, duration=0):
-        self.fluentNao.balance(self.joints.SupportLeg.Legs, duration)
+        self.nao.balance(self.joints.SupportLeg.Legs, duration)
         return self;
 
 
@@ -37,9 +37,9 @@ class FluentLegs():
     def lOut(self, duration=0, offset=0):
 
         # move leg out
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = 35 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LHipRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipRoll, angle, duration)
 
         # turn feet in
         self.feet.lTurnIn()
@@ -50,9 +50,9 @@ class FluentLegs():
     def rOut(self, duration=0, offset=0):
 
         # move leg out
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = -35 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RHipRoll, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipRoll, angle, duration)
 
         # turn feet in
         self.feet.rTurnIn()
@@ -66,24 +66,24 @@ class FluentLegs():
     def lForward(self, duration=0, offset=0):
 
         # stiffen body & enable wb
-        self.fluentNao.stiff()
-        self.fluentNao.wbEndable()
+        self.nao.stiff()
+        self.nao.wbEndable()
 
         # constrain feet
-        self.fluentNao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
-        self.fluentNao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
+        self.nao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
+        self.nao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
 
         # move leg forward
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = -90 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
 
         # block call
         self.go()
 
         # free feet & disable wb
-        self.fluentNao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
-        self.fluentNao.wbDisable()
+        self.nao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.nao.wbDisable()
 
         return self;
 
@@ -91,24 +91,24 @@ class FluentLegs():
     def rForward(self, duration=0, offset=0):
 
         # stiffen body & enable wb
-        self.fluentNao.stiff()
-        self.fluentNao.wbEndable()
+        self.nao.stiff()
+        self.nao.wbEndable()
 
         # constrain feet
-        self.fluentNao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
-        self.fluentNao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
+        self.nao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
+        self.nao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
 
         # move leg forward
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = -90 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
 
         # block call
         self.go()
 
         # free feet & disable wb
-        self.fluentNao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
-        self.fluentNao.wbDisable()
+        self.nao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.nao.wbDisable()
         
         return self;
 
@@ -122,16 +122,16 @@ class FluentLegs():
 
     def lUp(self, duration=0, offset=0):
         self.balanceOnRight(duration)
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = -90 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
     def rUp(self, duration=0, offset=0):
         self.balanceOnLeft(duration)
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = -90 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
@@ -160,15 +160,15 @@ class FluentLegs():
 
     def lDown(self, duration=0, offset=0):
         self.balanceOnLeft(duration)
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = 0 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
     def rDown(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
@@ -181,15 +181,15 @@ class FluentLegs():
         return self;
 
     def lKneeBent(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)       
+        duration = self.nao.determineDuration(duration)       
         angle = 90 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
     def rKneeBent(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 90 + offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 
@@ -202,15 +202,15 @@ class FluentLegs():
         return self;
 
     def lStraight(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration) 
+        duration = self.nao.determineDuration(duration) 
         angle = 0 - offset      
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
     def rStraight(self, duration=0, offset=0):
-        duration = self.fluentNao.determineDuration(duration)  
+        duration = self.nao.determineDuration(duration)  
         angle = 0 - offset
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
+        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 

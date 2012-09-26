@@ -3,7 +3,7 @@ from fluentnao.core.fluentElbows import FluentElbows
 from fluentnao.core.fluentFeet import FluentFeet
 from fluentnao.core.fluentHands import FluentHands
 from fluentnao.core.fluentHead import FluentHead
-from fluentnao.core.fluentJoints import FluentJoints
+from fluentnao.core.joints import Joints
 from fluentnao.core.fluentLegs import FluentLegs
 from fluentnao.core.fluentWrists import FluentWrists
 import almath
@@ -25,7 +25,7 @@ class Nao():
         self.log = log
 
         # joints
-        self.joints = FluentJoints()
+        self.joints = Joints()
         self.chains = self.joints.Chains
 
         # head
@@ -256,12 +256,12 @@ def initModulesForDevelopment(pathToCore):
     import fluentnao.core.fluentFeet
     import fluentnao.core.fluentHands
     import fluentnao.core.fluentHead
-    import fluentnao.core.fluentJoints
+    import fluentnao.core.joints
     import fluentnao.core.fluentLegs
     import fluentnao.core.fluentWrists
 
     reload(fluentnao.core.fluentArms)
-    reload(fluentnao.core.fluentJoints)
+    reload(fluentnao.core.joints)
     reload(fluentnao.core.fluentHands)
     reload(fluentnao.core.fluentElbows)
     reload(fluentnao.core.fluentWrists)

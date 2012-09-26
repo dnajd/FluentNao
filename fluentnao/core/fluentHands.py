@@ -1,18 +1,18 @@
 import math
-from fluentJoints import FluentJoints
+from joints import Joints
 class FluentHands():
 
     # init method
-    def __init__(self, fluentNao):
+    def __init__(self, nao):
         
         # jobs for threading
-        self.fluentNao = fluentNao
-        self.joints = fluentNao.joints
-        self.chains = fluentNao.chains
-        self.log = fluentNao.log
+        self.nao = nao
+        self.joints = nao.joints
+        self.chains = nao.chains
+        self.log = nao.log
 
     def go(self):
-        self.fluentNao.go()
+        self.nao.go()
         
     ###################################
     # Hands Open
@@ -23,13 +23,13 @@ class FluentHands():
         return self;
 
     def lOpen(self, duration=0):
-        duration = self.fluentNao.determineDuration(duration)       
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
+        duration = self.nao.determineDuration(duration)       
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
         return self;
         
     def rOpen(self, duration=0):
-        duration = self.fluentNao.determineDuration(duration)  
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
+        duration = self.nao.determineDuration(duration)  
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
         return self;
 
     ###################################
@@ -41,11 +41,11 @@ class FluentHands():
         return self;
 
     def lClose(self, duration=0):
-        duration = self.fluentNao.determineDuration(duration)       
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
+        duration = self.nao.determineDuration(duration)       
+        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
         return self;
         
     def rClose(self, duration=0):
-        duration = self.fluentNao.determineDuration(duration)  
-        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
+        duration = self.nao.determineDuration(duration)  
+        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
         return self;
