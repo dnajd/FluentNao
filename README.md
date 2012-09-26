@@ -5,42 +5,21 @@ Control Nao using fluent stanza of python code.
 
 Example Code
 ======================
-Here is an example to make nao fight.
+
+Example code using Fluent Nao
 
     # zero out joints
     nao.zero().go()
 
-    # set duration for movements
-    nao.setDuration(.5)
-
-    # get ready
-    nao.say("ready position")
-    nao.arms.back().elbows.bent().turnUp()
-    nao.go()
-
-    # right punch
-    nao.setDuration(.3)
-    nao.say("throw two punches")
-    nao.arms.rForward().elbows.rStraight().rTurnIn()
-    nao.go()
+    # arms up
+    nao.say("raising my hands") 
+    nao.arms.up()
+    nao.go() 
  
-    # left punch
-    nao.arms.rBack().lForward()
-    nao.elbows.rBent().rTurnUp()
-    nao.elbows.lStraight().lTurnIn()
-    nao.go()
- 
-    # bring left back
-    nao.setDuration(1)
-    nao.say("ready position")
-    nao.arms.lBack().elbows.lBent().lTurnUp()
-    nao.go()
-
-    # muscle man
-    nao.say("Look at me")
-    nao.arms.out().elbows.bent().turnUp()
-    nao.go()
-    nao.say("I am strong")
+    # hands open
+    nao.say("opening my hands") 
+    nao.hands.open()
+    nao.go() 
 
 Duration of Movement
 --------------------
