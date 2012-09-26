@@ -250,7 +250,7 @@ class FluentNao():
     @staticmethod
     def initModulesForDevelopment(pathToCore):
         try:
-            import fluentNao
+            #import fluentnao
             import fluentArms
             import fluentJoints
             import fluentHands
@@ -262,7 +262,7 @@ class FluentNao():
         except:
             import sys
             sys.path.append(pathToCore)
-            import fluentNao
+            #import fluentnao
             import fluentArms
             import fluentJoints
             import fluentHands
@@ -272,7 +272,7 @@ class FluentNao():
             import fluentHead
             import fluentFeet
 
-        reload(fluentNao)
+        #reload(fluentnao)
         reload(fluentArms)
         reload(fluentJoints)
         reload(fluentHands)
