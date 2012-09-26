@@ -4,18 +4,18 @@ from fluentJoints import FluentJoints
 class FluentWrists():
 
     # init method
-    def __init__(self, fluentMotion, hands):
+    def __init__(self, fluentNao, hands):
         
         self.hands = hands
 
         # jobs for threading
-        self.fluentMotion = fluentMotion
-        self.joints = fluentMotion.joints
-        self.chains = fluentMotion.chains
-        self.log = fluentMotion.log
+        self.fluentNao = fluentNao
+        self.joints = fluentNao.joints
+        self.chains = fluentNao.chains
+        self.log = fluentNao.log
 
     def go(self):
-        self.fluentMotion.go()
+        self.fluentNao.go()
         
     ###################################
     # Center
@@ -26,15 +26,15 @@ class FluentWrists():
         return self;
 
     def lCenter(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = 0.0 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
     def rCenter(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 0.0 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
@@ -46,15 +46,15 @@ class FluentWrists():
         return self;
 
     def lTurnOut(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = 90 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
     def rTurnOut(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = -90 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
@@ -66,13 +66,13 @@ class FluentWrists():
         return self;
 
     def lTurnIn(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)      
+        duration = self.fluentNao.determineDuration(duration)      
         angle = -90 - offset   
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
     def rTurnIn(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)   
+        duration = self.fluentNao.determineDuration(duration)   
         angle = 90 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
         return self;

@@ -2,16 +2,16 @@ from fluentJoints import FluentJoints
 class FluentFeet():
 
     # init method
-    def __init__(self, fluentMotion):
+    def __init__(self, fluentNao):
         
         # jobs for threading
-        self.fluentMotion = fluentMotion
-        self.joints = fluentMotion.joints
-        self.chains = fluentMotion.chains
-        self.log = fluentMotion.log
+        self.fluentNao = fluentNao
+        self.joints = fluentNao.joints
+        self.chains = fluentNao.chains
+        self.log = fluentNao.log
 
     def go(self):
-        self.fluentMotion.go()
+        self.fluentNao.go()
 
 
     ###################################
@@ -23,15 +23,15 @@ class FluentFeet():
         return self;
 
     def lPointToe(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = 52.8 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, angle, duration)
         return self;
         
     def rPointToe(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 52.8 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, angle, duration)
         return self;
 
    
@@ -44,15 +44,15 @@ class FluentFeet():
         return self;
 
     def lRaiseToe(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = -68.0 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, angle, duration)
         return self;
         
     def rRaiseToe(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = -68.0 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, angle, duration)
         return self;
 
 
@@ -65,15 +65,15 @@ class FluentFeet():
         return self;
 
     def lTurnOut(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = 22 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, angle, duration)
         return self;
         
     def rTurnOut(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)        
+        duration = self.fluentNao.determineDuration(duration)        
         angle = -22 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, angle, duration)
         return self;
 
 
@@ -86,15 +86,15 @@ class FluentFeet():
         return self;
 
     def lTurnIn(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
+        duration = self.fluentNao.determineDuration(duration)       
         angle = -22.8 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, angle, duration)
         return self;
         
     def rTurnIn(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)        
+        duration = self.fluentNao.determineDuration(duration)        
         angle = 22.8 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, angle, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, angle, duration)
         return self;
 
 
@@ -107,13 +107,13 @@ class FluentFeet():
         return self;
 
     def lCenter(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, 0, duration)
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, 0, duration)
+        duration = self.fluentNao.determineDuration(duration)       
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnkleRoll, 0, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LLeg.LAnklePitch, 0, duration)
         return self;
         
     def rCenter(self, duration=0, offset=0):
-        duration = self.fluentMotion.determineDuration(duration)        
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, 0, duration)
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, 0, duration)
+        duration = self.fluentNao.determineDuration(duration)        
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnkleRoll, 0, duration)
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RLeg.RAnklePitch, 0, duration)
         return self;

@@ -3,16 +3,16 @@ from fluentJoints import FluentJoints
 class FluentHands():
 
     # init method
-    def __init__(self, fluentMotion):
+    def __init__(self, fluentNao):
         
         # jobs for threading
-        self.fluentMotion = fluentMotion
-        self.joints = fluentMotion.joints
-        self.chains = fluentMotion.chains
-        self.log = fluentMotion.log
+        self.fluentNao = fluentNao
+        self.joints = fluentNao.joints
+        self.chains = fluentNao.chains
+        self.log = fluentNao.log
 
     def go(self):
-        self.fluentMotion.go()
+        self.fluentNao.go()
         
     ###################################
     # Hands Open
@@ -23,13 +23,13 @@ class FluentHands():
         return self;
 
     def lOpen(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
+        duration = self.fluentNao.determineDuration(duration)       
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
         return self;
         
     def rOpen(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
+        duration = self.fluentNao.determineDuration(duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
         return self;
 
     ###################################
@@ -41,11 +41,11 @@ class FluentHands():
         return self;
 
     def lClose(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)       
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
+        duration = self.fluentNao.determineDuration(duration)       
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
         return self;
         
     def rClose(self, duration=0):
-        duration = self.fluentMotion.determineDuration(duration)  
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
+        duration = self.fluentNao.determineDuration(duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
         return self;

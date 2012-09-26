@@ -2,36 +2,36 @@ from fluentJoints import FluentJoints
 class FluentHead():
 
     # init method
-    def __init__(self, fluentMotion):
+    def __init__(self, fluentNao):
         
         # jobs for threading
-        self.fluentMotion = fluentMotion
-        self.joints = fluentMotion.joints
-        self.chains = fluentMotion.chains
-        self.log = fluentMotion.log
+        self.fluentNao = fluentNao
+        self.joints = fluentNao.joints
+        self.chains = fluentNao.chains
+        self.log = fluentNao.log
 
     def go(self):
-        self.fluentMotion.go()
+        self.fluentNao.go()
         
     ###################################
     # turn
     ###################################
     def left(self, duration=0, offset=0):  
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 90 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
         
     def right(self, duration=0, offset=0):   
-        duration = self.fluentMotion.determineDuration(duration)   
+        duration = self.fluentNao.determineDuration(duration)   
         angle = -90 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
 
     def forward(self, duration=0, offset=0):   
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 0 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadYaw, angle, duration)  
         return self;
 
 
@@ -40,19 +40,19 @@ class FluentHead():
     ###################################
 
     def up(self, duration=0, offset=0):   
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = -38 - offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;
 
     def down(self, duration=0, offset=0):   
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 29 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;
 
     def center(self, duration=0, offset=0):   
-        duration = self.fluentMotion.determineDuration(duration)  
+        duration = self.fluentNao.determineDuration(duration)  
         angle = 0 + offset
-        self.fluentMotion.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
+        self.fluentNao.moveWithDegreesAndDuration(self.joints.Head.HeadPitch, angle, duration)  
         return self;

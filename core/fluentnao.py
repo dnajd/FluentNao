@@ -9,7 +9,7 @@ from fluentLegs import FluentLegs
 from fluentHead import FluentHead
 from fluentFeet import FluentFeet
 
-class FluentMotion():
+class FluentNao():
 
     # init method
     def __init__(self, alProxy, log):
@@ -250,7 +250,7 @@ class FluentMotion():
     @staticmethod
     def initModulesForDevelopment(pathToCore):
         try:
-            import fluentMotion
+            import fluentNao
             import fluentArms
             import fluentJoints
             import fluentHands
@@ -262,7 +262,7 @@ class FluentMotion():
         except:
             import sys
             sys.path.append(pathToCore)
-            import fluentMotion
+            import fluentNao
             import fluentArms
             import fluentJoints
             import fluentHands
@@ -272,7 +272,7 @@ class FluentMotion():
             import fluentHead
             import fluentFeet
 
-        reload(fluentMotion)
+        reload(fluentNao)
         reload(fluentArms)
         reload(fluentJoints)
         reload(fluentHands)
