@@ -1,18 +1,19 @@
--Motion-API
+-FluentNao
 =================
 
-Control Nao's movements using fluent stanza of python code. This is useful if you want to quickly get nao into a very common position.  Useful too if you want Nao to react in many different ways based on word recognition, face recognition, random behavior.
+Control Nao using fluent stanza of python code.
 
 Example Code
 ======================
 Here is an example to make nao fight.
 
     # zero out joints
-    nao.zero()
-    nao.go()
+    nao.zero().go()
 
-    # ready to fight
+    # set duration for movements
     nao.setDuration(.5)
+
+    # get ready
     nao.say("ready position")
     nao.arms.back().elbows.bent().turnUp()
     nao.go()
@@ -74,42 +75,50 @@ NOTE: the zero is duration telling the api to ignore that argument;
 
 In Choregraphe
 =================
-You need to include the -Motion-API python class files in your "Project References" Panel.  Then include the following in a script box.
+You need to include the FluentNao python class files in your "Project References" Panel.  Then include the following in a script box.
 
 Importing the API
 -----------------
+    # import
     try:
-        import fluentMotion
-        from fluentMotion import Motion
+        from fluentnao import nao
     except:
         import sys
         sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
-        import fluentMotion
-        from fluentMotion import Motion
+        from fluentnao import nao
+        reload(nao)
+
+    # start using
+    from fluentnao.nao import Nao
+    nao = Nao(ALProxy, self.log)
 
 With this the robot will be able to find and import the python classes. 
 
 
 Contributing
 ============
-I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). My examples below assume you have cloned the repo to /development/-Motion-API/
+I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). My examples below assume you have cloned the github repository to /development/FluentNao/
 
-Choregraphe
+Developing in Choregraphe
 -----------
-To make changes to the -Motion-API fast and easy you should run your scripts on the simulated robot.  Include the following in your Choregraphe script box
+NOTE: This only works in Choregraphe and not on the actual robot.  To make changes to FluentNao python code in a fast and easy way, you should run your scripts on the simulated robot.  Include the following in your Choregraphe script box to develop & test quickly and easily.
 
-    pathToCore = "/development/-Motion-API/core/"
+    # import
+    pathToCore = "/development/FluentNao/"
     try:
-    	import fluentMotion
-    	from fluentMotion import Motion
+        from fluentnao import nao
     except:
     	import sys
     	sys.path.append(pathToCore)
-    	import fluentMotion
-    	from fluentMotion import Motion
-            
-    reload(fluentMotion)
-    Motion.initModulesForDevelopment(pathToCore)
+	from fluentnao import nao
+    reload(nao)
+    nao.initModulesForDevelopment(pathToCore)
 
-This code helps python reference the -Motion-API classes directly from the git repo you cloned. It also informs python that it should reload the -Motion-API python classes each time you run your behavior. This wont work on the actual robot.
+    # start using
+    from fluentnao.nao import Nao
+    nao = Nao(ALProxy, self.log)
+
+This code helps python reference FluentNao modules and classes directly from the git repository you cloned. It also informs python that it should reload the modules and classes each time you run your behavior. 
+
+
 
