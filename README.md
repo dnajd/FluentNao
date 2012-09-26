@@ -75,18 +75,19 @@ NOTE: the zero is duration telling the api to ignore that argument;
 
 In Choregraphe
 =================
-Refer to the .crg projects in the /examples/choregraphe folder
+To use FluentNao in choregraphe, check out the example behavior ./examples/choregraphe/fluentnao.crg
 
-fluentnao.crg
------------------
 This behavior includes the FluentNao modules and classes as project references.  It contains the python code needed to import and use FluentNao.
 
 
 Contributing
 ============
-I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). If you clone the github repository to /home/development/FluentNao/
+I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2") and Eclipse. 
 
-fluentnao_dev.crg
------------------
-This behavior in the /examples/choregraphe folder will run FluentNao modules and classes from your clone of the repository.  Clone the git repo to a folder and use this behavior to run the modules against the local naoqi or the simulator.
+1. Clone the github repository
+2. Check out ./examples/choregraphe/development/fluentnao_dev.crg
+
+This behavior will run FluentNao modules and classes from your clone of the repository.  This behavior can run the FluentNao modules and classes against the local naoqi or the simulator.  When you update FluentNao, everything will be reloaded and changes will take effect immediately.
+
+NOTE: you must update pathToFluentNao in the FluentNao Script Box
 
