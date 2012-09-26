@@ -75,50 +75,18 @@ NOTE: the zero is duration telling the api to ignore that argument;
 
 In Choregraphe
 =================
-You need to include the FluentNao python class files in your "Project References" Panel.  Then include the following in a script box.
+Refer to the .crg projects in the /examples/choregraphe folder
 
-Importing the API
+fluentnao.crg
 -----------------
-    # import
-    try:
-        from fluentnao import nao
-    except:
-        import sys
-        sys.path.append(ALFrameManager.getBehaviorPath(self.behaviorId))
-        from fluentnao import nao
-        reload(nao)
-
-    # start using
-    from fluentnao.nao import Nao
-    nao = Nao(ALProxy, self.log)
-
-With this the robot will be able to find and import the python classes. 
+This behavior includes the FluentNao modules and classes as project references.  It contains the python code needed to import and use FluentNao.
 
 
 Contributing
 ============
-I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). My examples below assume you have cloned the github repository to /development/FluentNao/
+I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2"). If you clone the github repository to /home/development/FluentNao/
 
-Developing in Choregraphe
------------
-NOTE: This only works in Choregraphe and not on the actual robot.  To make changes to FluentNao python code in a fast and easy way, you should run your scripts on the simulated robot.  Include the following in your Choregraphe script box to develop & test quickly and easily.
-
-    # import
-    pathToCore = "/development/FluentNao/"
-    try:
-        from fluentnao import nao
-    except:
-    	import sys
-    	sys.path.append(pathToCore)
-	from fluentnao import nao
-    reload(nao)
-    nao.initModulesForDevelopment(pathToCore)
-
-    # start using
-    from fluentnao.nao import Nao
-    nao = Nao(ALProxy, self.log)
-
-This code helps python reference FluentNao modules and classes directly from the git repository you cloned. It also informs python that it should reload the modules and classes each time you run your behavior. 
-
-
+fluentnao_dev.crg
+-----------------
+This behavior in the /examples/choregraphe folder will run FluentNao modules and classes from your clone of the repository.  Clone the git repo to a folder and use this behavior to run the modules against the local naoqi or the simulator.
 
