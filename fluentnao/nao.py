@@ -244,33 +244,30 @@ class Nao():
             return maxDegreesPerSecond
         return fractionOfMaxSpeed
 
-    ###################################
-    # development
-    ###################################
-    @staticmethod
-    def initModulesForDevelopment(pathToCore):
+###################################
+# development
+###################################
+def initModulesForDevelopment(pathToCore):
 
-        import sys
-        sys.path.append(pathToCore)
-        from fluentnao.nao import Nao
-        from fluentnao.core.fluentArms import FluentArms
-        from fluentnao.core.fluentElbows import FluentElbows
-        from fluentnao.core.fluentFeet import FluentFeet
-        from fluentnao.core.fluentHands import FluentHands
-        from fluentnao.core.fluentHead import FluentHead
-        from fluentnao.core.fluentJoints import FluentJoints
-        from fluentnao.core.fluentLegs import FluentLegs
-        from fluentnao.core.fluentWrists import FluentWrists
+    import sys
+    sys.path.append(pathToCore)
+    import fluentnao.core.fluentArms
+    import fluentnao.core.fluentElbows
+    import fluentnao.core.fluentFeet
+    import fluentnao.core.fluentHands
+    import fluentnao.core.fluentHead
+    import fluentnao.core.fluentJoints
+    import fluentnao.core.fluentLegs
+    import fluentnao.core.fluentWrists
 
-        reload(Nao)
-        reload(FluentArms)
-        reload(FluentJoints)
-        reload(FluentHands)
-        reload(FluentElbows)
-        reload(FluentWrists)
-        reload(FluentLegs)
-        reload(FluentHead)
-        reload(FluentFeet)
+    reload(fluentnao.core.fluentArms)
+    reload(fluentnao.core.fluentJoints)
+    reload(fluentnao.core.fluentHands)
+    reload(fluentnao.core.fluentElbows)
+    reload(fluentnao.core.fluentWrists)
+    reload(fluentnao.core.fluentLegs)
+    reload(fluentnao.core.fluentHead)
+    reload(fluentnao.core.fluentFeet)
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]
