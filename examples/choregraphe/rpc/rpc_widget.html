@@ -2,23 +2,16 @@
 #fluent-motion-widget p { margin-bottom:10px;}
 </style>
 
-<div id="fluent-motion-widget">
-    <h1> Motion</h1>
-    <p>Remotely execute <a href="https://github.com/dnajd/-Motion-API" target="_blank">fluent motion</a> commands.</p>
-
-    <h2>Try this command first</h2>
-    <p>nao.say("hi");</p>
-
-    <h2>Get Nao Moving</h2>
+<div id="fluent-motion-widget">    
     <p>
-        nao.stiff();<br>
-        nao.hands.close().go();<br>
-        nao.hands.open().go();<br>
-        nao.relax();<br>
+        Control nao using <a href="https://github.com/dnajd/fluentnao" target="_blank">FluentNao</a> commands.
     </p>
 
-
-    <textarea id="input-command" rows="8" cols="40" /><br>
+    <p>
+        Examples: <select id="behavior-select"></select><br>
+    </p>
+    
+    <textarea id="input-command" rows="8" cols="40"></textarea><br>
     <input id="btn-submit" type="button" value="Execute" onclick="sendCommand()" style="width:80px;"/>
 </div>
 
@@ -39,4 +32,38 @@
         // run behavior
         behaviorProxy.call('runBehavior', ['fluentMotionRPC']);
     }
+
+
+    // naoscript
+    function populateBehaviorSelect()
+    {
+        // get selectElement
+        var selectElement = $("#behavior-select");
+
+        // populate
+        var url = 'http://naoscript.herokuapp.com/behaviors';
+        $.get(url + '.json', function(data) {
+
+          // append option
+          selectElement.append($("<option />").val('').text(' -- select --'));
+          $.each(data, function() {
+              selectElement.append($("<option />").val(this.id).text(this.name));
+          });
+
+        });
+
+        // onchange
+        selectElement.change(function (){
+            var selected = selectElement.val();
+            if (selected)
+            {
+                // add script to text area
+                $.get(url + '/' + selected + '.json', function(data) {
+                    $('#input-command').val(data.script);
+                });
+            }
+        });
+    }
+
+    populateBehaviorSelect();
 </script>
