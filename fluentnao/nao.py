@@ -42,7 +42,7 @@ class Nao():
         self.legs = Legs(self, self.feet)
 
         # global duration
-        self.setDuration(1)
+        self.set_duration(1)
 
     ###################################
     # text to speech
@@ -96,24 +96,24 @@ class Nao():
     ###################################
     # Whole Body Motion & Balance
     ###################################
-    def wbDisable(self):
+    def whole_body_disable(self):
         self.log("wbDisable")
         isEnabled  = False
         self.motionProxy.wbEnable(isEnabled)
 
-    def wbEndable(self):
+    def whole_body_endable(self):
         self.log("wbEnable")
         isEnabled  = True
         self.motionProxy.wbEnable(isEnabled)
 
-    def footState(self, supportLeg="Legs", stateName="Fixed"):
+    def foot_state(self, supportLeg="Legs", stateName="Fixed"):
         # Legs are constrained fixed
         # supportLeg: Legs, LLeg or RLeg
         # stateName: Fixed, Plane or Free
         self.log("supportLeg=%s|stateName=%s" % (supportLeg, stateName))
         self.motionProxy.wbFootState(stateName, supportLeg)
 
-    def constrainMotion(self, supportLeg="Legs"):
+    def constrain_motion(self, supportLeg="Legs"):
         # Constraint Balance Motion / Support Polygon
         # supportLeg: Legs, LLeg or RLeg
         isEnable   = True
@@ -121,30 +121,30 @@ class Nao():
 
     def balance(self, leg, duration):
 
-        duration = self.determineDuration(duration)  
+        duration = self.determine_duration(duration)  
 
         # stiffen body
         self.stiff()
-        self.wbEndable()
+        self.whole_body_endable()
 
-        self.footState()
-        self.constrainMotion()
+        self.foot_state()
+        self.constrain_motion()
 
         # Com go to LLeg
         supportLeg = leg
         self.motionProxy.wbGoToBalance(supportLeg, duration)
 
-        self.wbDisable()
+        self.whole_body_disable()
 
 
     ###################################
     # Duration 
     ###################################
-    def setDuration(self, durationInSeconds):
+    def set_duration(self, durationInSeconds):
         self.globalDuration = durationInSeconds
         return self;
 
-    def determineDuration(self, durationInSeconds):
+    def determine_duration(self, durationInSeconds):
         if durationInSeconds > 0:
             return durationInSeconds
 
@@ -173,7 +173,7 @@ class Nao():
         # MoveChain(chain, angle, speed)
         chain = self.chains.Body
         angleInDegrees = 0.0
-        self.moveWithDegrees(chain, self.getTargetAnglesForChain(chain, angleInDegrees))
+        self.move_with_degrees(chain, self.get_target_angles_for_chain(chain, angleInDegrees))
         return self;
 
     def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
@@ -187,16 +187,16 @@ class Nao():
         self.jobs.append(taskId)
         
 
-    def moveWithDegrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
+    def move_with_degrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
         # convert to radians        
         angleListInRadians = [ x * almath.TO_RAD for x in angleListInDegrees]
 
         # move
         self.move(chain, angleListInRadians, fractionMaxSpeed)
 
-    def moveWithDegreesAndDuration(self, jointName, angleInDegrees, durationInSeconds):
+    def move_with_degrees_and_duration(self, jointName, angleInDegrees, durationInSeconds):
         # fraction of max speed
-        fractionMaxSpeed = self.getFractionMaxSpeed(jointName, angleInDegrees, durationInSeconds)
+        fractionMaxSpeed = self.get_fraction_max_speed(jointName, angleInDegrees, durationInSeconds)
 
         # convert to radians
         angleInRadians = angleInDegrees * almath.TO_RAD
@@ -208,14 +208,14 @@ class Nao():
     # helpers
     ###################################
 
-    def getTargetAnglesForChain(self, chain, angle):
+    def get_target_angles_for_chain(self, chain, angle):
         # Get the Number of Joints
         numBodies = len(self.motionProxy.getJointNames(chain))
     
         # We prepare a collection of floats
         return [angle] * numBodies
 
-    def getMaxDegreesPerSecond(self, jointName):
+    def get_max_degrees_per_second(self, jointName):
         limits = self.motionProxy.getLimits(jointName);
         minAngle = limits[0][0]
         maxAngle = limits[0][1]
@@ -224,7 +224,7 @@ class Nao():
         #self.log("maxChange: " + str(maxChange) + " for " + jointName)
         return math.degrees(maxChange)
 
-    def getFractionMaxSpeed(self, jointName, desiredPositionInDegrees, executionTimeInSeconds):
+    def get_fraction_max_speed(self, jointName, desiredPositionInDegrees, executionTimeInSeconds):
         # current position in degrees
         useSensors = False;
         currentPositionInDegrees = math.degrees(self.motionProxy.getAngles(jointName, useSensors)[0]);
@@ -235,7 +235,7 @@ class Nao():
         #self.log("distance: " + str(distanceInDegrees))
 
         # max speed
-        maxDegreesPerSecond = self.getMaxDegreesPerSecond(jointName)
+        maxDegreesPerSecond = self.get_max_degrees_per_second(jointName)
 
         # fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
         fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
@@ -247,7 +247,7 @@ class Nao():
 ###################################
 # development
 ###################################
-def initModulesForDevelopment(pathToCore):
+def init_modules_for_development(pathToCore):
 
     import sys
     sys.path.append(pathToCore)
@@ -271,4 +271,4 @@ def initModulesForDevelopment(pathToCore):
 
     # example of chain
     #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]
-    #self.moveWithDegrees(self.Chains.RArm, angleList, 0.3)
+    #self.move_with_degrees(self.Chains.RArm, angleList, 0.3)

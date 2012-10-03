@@ -20,103 +20,103 @@ class Elbows():
     # Bent
     ###################################
     def bent(self, duration=0, offset=0):
-        self.rBent(duration, offset)
-        self.lBent(duration, offset)
+        self.right_bent(duration, offset)
+        self.left_bent(duration, offset)
         return self;
 
-    def rBent(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_bent(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 89 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
-    def lBent(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_bent(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = -89 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
     ###################################
     # Straight
     ###################################
     def straight(self, duration=0, offset=0):
-        self.rStraight(duration, offset)
-        self.lStraight(duration, offset)
+        self.right_straight(duration, offset)
+        self.left_straight(duration, offset)
         return self;
 
-    def rStraight(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_straight(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0.5 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RElbowRoll, angle, duration)
         return self;
 
 
-    def lStraight(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_straight(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0.5 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LElbowRoll, angle, duration)
         return self;
 
 
     ###################################
     # Up
     ###################################
-    def turnUp(self, duration=0, offset=0):
-        self.rTurnUp(duration, offset)
-        self.lTurnUp(duration, offset)
+    def turn_up(self, duration=0, offset=0):
+        self.right_turn_up(duration, offset)
+        self.left_turn_up(duration, offset)
         return self;
 
-    def rTurnUp(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration) 
+    def right_turn_up(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration) 
         angle = 90 + offset 
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
 
-    def lTurnUp(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_turn_up(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = -90 - offset 
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
     ###################################
     # Turn Down
     ###################################
-    def turnDown(self, duration=0, offset=0):
-        self.rTurnDown(duration, offset)
-        self.lTurnDown(duration, offset)
+    def turn_down(self, duration=0, offset=0):
+        self.right_turn_down(duration, offset)
+        self.left_turn_down(duration, offset)
         return self;
 
-    def rTurnDown(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_turn_down(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
-    def lTurnDown(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_turn_down(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;
 
 
     ###################################
     # In
     ###################################
-    def turnIn(self, duration=0, offset=0):
-        self.rTurnIn(duration, offset)
-        self.lTurnIn(duration, offset)
+    def turn_in(self, duration=0, offset=0):
+        self.right_turn_in(duration, offset)
+        self.left_turn_in(duration, offset)
         return self;
 
-    def rTurnIn(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_turn_in(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RElbowYaw, angle, duration)
         return self;
 
-    def lTurnIn(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_turn_in(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LElbowYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LElbowYaw, angle, duration)
         return self;

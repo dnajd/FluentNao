@@ -18,15 +18,15 @@ class Legs():
     ###################################
     # Balance
     ###################################
-    def balanceOnLeft(self, duration=0):
+    def left_balance(self, duration=0):
         self.nao.balance(self.joints.SupportLeg.LLeg, duration)
         return self;
 
-    def balanceOnRight(self, duration=0):
+    def right_balance(self, duration=0):
         self.nao.balance(self.joints.SupportLeg.RLeg, duration)
         return self;
 
-    def balanceCenter(self, duration=0):
+    def balance(self, duration=0):
         self.nao.balance(self.joints.SupportLeg.Legs, duration)
         return self;
 
@@ -34,12 +34,12 @@ class Legs():
     ###################################
     # Out
     ###################################
-    def lOut(self, duration=0, offset=0):
+    def left_out(self, duration=0, offset=0):
 
         # move leg out
-        duration = self.nao.determineDuration(duration)       
+        duration = self.nao.determine_duration(duration)       
         angle = 35 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipRoll, angle, duration)
 
         # turn feet in
         self.feet.lTurnIn()
@@ -47,12 +47,12 @@ class Legs():
 
         return self;
 
-    def rOut(self, duration=0, offset=0):
+    def right_out(self, duration=0, offset=0):
 
         # move leg out
-        duration = self.nao.determineDuration(duration)       
+        duration = self.nao.determine_duration(duration)       
         angle = -35 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipRoll, angle, duration)
 
         # turn feet in
         self.feet.rTurnIn()
@@ -63,154 +63,137 @@ class Legs():
     ###################################
     # Forward
     ###################################
-    def lForward(self, duration=0, offset=0):
+    def left_forward(self, duration=0, offset=0):
 
         # stiffen body & enable wb
         self.nao.stiff()
-        self.nao.wbEndable()
+        self.nao.whole_body_enable()
 
         # constrain feet
-        self.nao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
-        self.nao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
+        self.nao.foot_state(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
+        self.nao.foot_state(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
 
         # move leg forward
-        duration = self.nao.determineDuration(duration)       
+        duration = self.nao.determine_duration(duration)       
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle, duration)
 
         # block call
         self.go()
 
         # free feet & disable wb
-        self.nao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
-        self.nao.wbDisable()
+        self.nao.foot_state(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.nao.whole_body_disable()
 
         return self;
 
 
-    def rForward(self, duration=0, offset=0):
+    def right_forward(self, duration=0, offset=0):
 
         # stiffen body & enable wb
         self.nao.stiff()
-        self.nao.wbEndable()
+        self.nao.whole_body_enable()
 
         # constrain feet
-        self.nao.footState(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
-        self.nao.footState(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
+        self.nao.foot_state(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
+        self.nao.foot_state(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
 
         # move leg forward
-        duration = self.nao.determineDuration(duration)       
+        duration = self.nao.determine_duration(duration)       
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
 
         # block call
         self.go()
 
         # free feet & disable wb
-        self.nao.footState(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
-        self.nao.wbDisable()
+        self.nao.foot_state(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.nao.whole_body_disable()
         
         return self;
 
     ###################################
     # Up
     ###################################
-    def up(self, duration=0, offset=0):   
-        self.rForward(duration, offset)
-        self.lForward(duration, offset)
-        return self;
-
-    def lUp(self, duration=0, offset=0):
-        self.balanceOnRight(duration)
-        duration = self.nao.determineDuration(duration)       
+    def left_up(self, duration=0, offset=0):
+        self.right_balance(duration)
+        duration = self.nao.determine_duration(duration)       
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
-    def rUp(self, duration=0, offset=0):
-        self.balanceOnLeft(duration)
-        duration = self.nao.determineDuration(duration)  
+    def right_up(self, duration=0, offset=0):
+        self.left_balance(duration)
+        duration = self.nao.determine_duration(duration)  
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
     ###################################
     # KneeUp
     ###################################
-    def lKneeUp(self, duration=0, offset=0):
-        self.balanceOnRight(duration)
-        self.lUp(duration, offset)
-        self.lKneeBent(duration, offset)
+    def left_knee_up(self, duration=0, offset=0):
+        self.right_balance(duration)
+        self.left_up(duration, offset)
+        self.left_knee_bent(duration, offset)
         return self;
         
-    def rKneeUp(self, duration=0, offset=0):
-        self.balanceOnLeft(duration)
-        self.rUp(duration, offset)
-        self.rKneeBent(duration, offset)
+    def right_knee_up(self, duration=0, offset=0):
+        self.left_balance(duration)
+        self.right_up(duration, offset)
+        self.right_knee_bent(duration, offset)
         return self;
 
     ###################################
     # Down
     ###################################
-    def down(self, duration=0, offset=0):   
-        self.rDown(duration, offset)
-        self.lDown(duration, offset)
-        return self;
 
-    def lDown(self, duration=0, offset=0):
-        self.balanceOnLeft(duration)
-        duration = self.nao.determineDuration(duration)       
+    def left_down(self, duration=0, offset=0):
+        self.left_balance(duration)
+        duration = self.nao.determine_duration(duration)       
         angle = 0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle, duration)
         return self;
         
-    def rDown(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_down(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
         return self;
 
 
     ###################################
     # Bent
     ###################################
-    def kneesBent(self, duration=0, offset=0):   
-        self.rKneeBent(duration, offset)
-        self.lKneeBent(duration, offset)
-        return self;
-
-    def lKneeBent(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)       
+    
+    def left_knee_bent(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)       
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
-    def rKneeBent(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_knee_bent(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 
     ###################################
     # Straight
     ###################################
-    def straight(self, duration=0, offset=0):   
-        self.rStraight(duration, offset)
-        self.lStraight(duration, offset)
-        return self;
 
-    def lStraight(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration) 
+    def left_straight(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration) 
         angle = 0 - offset      
-        self.nao.moveWithDegreesAndDuration(self.joints.LLeg.LKneePitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
-    def rStraight(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_straight(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RLeg.RKneePitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RKneePitch, angle, duration)
         return self;
 
 

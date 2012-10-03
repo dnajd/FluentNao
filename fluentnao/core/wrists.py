@@ -21,58 +21,58 @@ class Wrists():
     # Center
     ###################################
     def center(self, duration=0, offset=0):     
-        self.lCenter(duration, offset)
-        self.rCenter(duration, offset)
+        self.left_center(duration, offset)
+        self.right_center(duration, offset)
         return self;
 
-    def lCenter(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)       
+    def left_center(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)       
         angle = 0.0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rCenter(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_center(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0.0 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
     # Out
     ###################################
-    def turnOut(self, duration=0, offset=0):     
-        self.lTurnOut(duration, offset)
-        self.rTurnOut(duration, offset)
+    def turn_out(self, duration=0, offset=0):     
+        self.left_turn_out(duration, offset)
+        self.right_turn_out(duration, offset)
         return self;
 
-    def lTurnOut(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)       
+    def left_turn_out(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)       
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rTurnOut(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_turn_out(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RWristYaw, angle, duration)
         return self;
 
     ###################################
     # In
     ###################################
-    def turnIn(self, duration=0, offset=0):     
-        self.lTurnIn(duration, offset)
-        self.rTurnIn(duration, offset)
+    def turn_in(self, duration=0, offset=0):     
+        self.left_turn_in(duration, offset)
+        self.right_turn_in(duration, offset)
         return self;
 
-    def lTurnIn(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)      
+    def left_turn_in(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)      
         angle = -90 - offset   
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LWristYaw, angle, duration)
         return self;
         
-    def rTurnIn(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)   
+    def right_turn_in(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)   
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RWristYaw, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RWristYaw, angle, duration)
         return self;

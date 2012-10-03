@@ -22,89 +22,89 @@ class Arms():
     # Forward
     ###################################
     def forward(self, duration=0, offset=0):   
-        self.rForward(duration, offset)
-        self.lForward(duration, offset)
+        self.right_forward(duration, offset)
+        self.left_forward(duration, offset)
         return self;
 
-    def lForward(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)       
+    def left_forward(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)       
         angle = 0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, 0, duration)
 
         return self;
         
-    def rForward(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_forward(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 0 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
 
     ###################################
     # Out
     ###################################
     def out(self, duration=0, offset=0):     
-        self.rOut(duration, offset)
-        self.lOut(duration, offset)
+        self.right_out(duration, offset)
+        self.left_out(duration, offset)
         return self;
 
-    def lOut(self, duration=0, offset=0):     
-        duration = self.nao.determineDuration(duration)  
+    def left_out(self, duration=0, offset=0):     
+        duration = self.nao.determine_duration(duration)  
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, 0, duration)
         return self;
         
-    def rOut(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_out(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, 0, duration)
         return self;
 
     ###################################
     # Up
     ###################################
     def up(self, duration=0, offset=0):     
-        self.rUp(duration, offset)
-        self.lUp(duration, offset)
+        self.right_up(duration, offset)
+        self.left_up(duration, offset)
         return self;
 
-    def lUp(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)    
+    def left_up(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)    
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rUp(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)   
+    def right_up(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)   
         angle = -90 - offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
 
     ###################################
     # Down
     ###################################
     def down(self, duration=0, offset=0):     
-        self.rDown(duration, offset)
-        self.lDown(duration, offset)
+        self.right_down(duration, offset)
+        self.left_down(duration, offset)
         return self;
 
-    def lDown(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)   
+    def left_down(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)   
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rDown(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)   
+    def right_down(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)   
         angle = 90 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;
 
 
@@ -112,20 +112,20 @@ class Arms():
     # Back
     ###################################
     def back(self, duration=0, offset=0):     
-        self.rBack(duration, offset)
-        self.lBack(duration, offset)
+        self.right_back(duration, offset)
+        self.left_back(duration, offset)
         return self;
 
-    def lBack(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def left_back(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 119.5 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderPitch, angle, duration)
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, 0, duration)
         return self;
         
-    def rBack(self, duration=0, offset=0):
-        duration = self.nao.determineDuration(duration)  
+    def right_back(self, duration=0, offset=0):
+        duration = self.nao.determine_duration(duration)  
         angle = 119.5 + offset
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderPitch, angle, duration) 
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RShoulderRoll, 0, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, 0, duration)
         return self;

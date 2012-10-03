@@ -17,35 +17,35 @@ class Hands():
     ###################################
     # Hands Open
     ###################################
-    def open(self, duration=0):     
-        self.lOpen(duration)
-        self.rOpen(duration)
+    def open(self, duration=0):   
+        self.right_open(duration)  
+        self.left_open(duration)
         return self;
 
-    def lOpen(self, duration=0):
-        duration = self.nao.determineDuration(duration)       
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(1.0), duration)
+    def left_open(self, duration=0):
+        duration = self.nao.determine_duration(duration)       
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LHand, math.degrees(1.0), duration)
         return self;
         
-    def rOpen(self, duration=0):
-        duration = self.nao.determineDuration(duration)  
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(1.0), duration)
+    def right_open(self, duration=0):
+        duration = self.nao.determine_duration(duration)  
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RHand, math.degrees(1.0), duration)
         return self;
 
     ###################################
     # Hands Close
     ###################################
-    def close(self, duration=0):     
-        self.lClose(duration)
-        self.rClose(duration)
+    def close(self, duration=0):    
+        self.right_close(duration) 
+        self.left_close(duration)
         return self;
 
-    def lClose(self, duration=0):
-        duration = self.nao.determineDuration(duration)       
-        self.nao.moveWithDegreesAndDuration(self.joints.LArm.LHand, math.degrees(0.0), duration)
+    def left_close(self, duration=0):
+        duration = self.nao.determine_duration(duration)       
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LHand, math.degrees(0.0), duration)
         return self;
         
-    def rClose(self, duration=0):
-        duration = self.nao.determineDuration(duration)  
-        self.nao.moveWithDegreesAndDuration(self.joints.RArm.RHand, math.degrees(0.0), duration)
+    def right_close(self, duration=0):
+        duration = self.nao.determine_duration(duration)  
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RHand, math.degrees(0.0), duration)
         return self;
