@@ -26,7 +26,7 @@ Duration of Movement
 You can specify a number of seconds to take for each command or stanza. We use the setDuration() to set the duration globally for every function that follows
 
     # sets duration to half a second 
-    nao.setDuration(.5)
+    nao.set_duration(.5)
 
 We can override the default duration in each motion function
 
