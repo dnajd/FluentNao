@@ -49,6 +49,7 @@ class Nao():
     ###################################        
     def say(self, text):
         self.textToSpeechProxy.post.say(text)
+        return self;
 
     ###################################
     # Postures
