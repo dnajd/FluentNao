@@ -1,3 +1,7 @@
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script> 
+
 <style>
 #fluent-motion-widget p { margin-bottom:10px;}
 </style>
@@ -18,23 +22,7 @@
 </div>
 
 <script type="text/javascript">
-    var memoryProxy = new ALProxy('ALMemory');
-    var behaviorProxy = new ALProxy('ALBehaviorManager');
-    var result = new Array();
-    
-    function sendCommand() {
-        var inputElement = document.getElementById('input-command');
-
-        // get value
-        var name = inputElement.value;
-
-        // insert into all memory
-        memoryProxy.call('insertData', ['fluentMotionRpcCommand', name]);
-
-        // run behavior
-        behaviorProxy.call('runBehavior', ['naoscript_1']);
-    }
-
+  
 
     // naoscript
     function populateBehaviorSelect()
@@ -42,10 +30,13 @@
         // get selectElement
         var selectElement = $("#behavior-select");
 
-        // populate
-        var url = 'http://naoscript.herokuapp.com/behaviors';
-        $.get(url + '.json', function(data) {
 
+        // populate
+        var url = 'http://naoscript.herokuapp.com/behaviors.json';
+alert('hi1');
+        $.get(url, function(data) {
+
+alert('hi2');
           // append option
           selectElement.append($("<option />").val('').text(' -- select --'));
           $.each(data, function() {
@@ -53,19 +44,6 @@
           });
 
         });
-
-        // onchange
-        selectElement.change(function (){
-            var selected = selectElement.val();
-            if (selected)
-            {
-                // add script to text area
-                $.get(url + '/' + selected + '.json', function(data) {
-                    $('#input-command').val(data.script);
-                });
-            }
-        });
     }
-
     populateBehaviorSelect();
 </script>
