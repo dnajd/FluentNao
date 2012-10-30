@@ -8,6 +8,7 @@ from fluentnao.core.legs import Legs
 from fluentnao.core.wrists import Wrists
 import almath
 import math
+import time
 
 class Nao():
 
@@ -49,6 +50,10 @@ class Nao():
     ###################################        
     def say(self, text):
         self.textToSpeechProxy.post.say(text)
+        return self;
+
+    def wait(self, seconds):
+        time.sleep(seconds)
         return self;
 
     ###################################
