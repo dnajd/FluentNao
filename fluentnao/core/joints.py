@@ -15,6 +15,9 @@ class Joints():
         self.SupportLeg = Enum(["Legs","LLeg","RLeg"])        
         self.StateName = Enum(["Fixed","Plane","Free"])        
 
+        # http://www.aldebaran-robotics.com/documentation/naoqi/sensors/alleds.html
+        self.LEDs = Enum(["AllLeds","BrainLeds","EarLeds","FaceLeds","ChestLeds","FeetLeds"])       
+
 
 class Enum(set):
     def __getattr__(self, name):

@@ -6,6 +6,7 @@ from fluentnao.core.head import Head
 from fluentnao.core.joints import Joints
 from fluentnao.core.legs import Legs
 from fluentnao.core.wrists import Wrists
+from fluentnao.core.leds import Leds
 import almath
 import math
 import time
@@ -20,7 +21,8 @@ class Nao():
         
         # set motion proxy & log
         #self.postureProxy = alProxy("ALRobotPosture")
-
+        
+        self.ledsProxy = alProxy("ALLeds");
         self.motionProxy = alProxy("ALMotion")
         self.textToSpeechProxy = alProxy("ALTextToSpeech")
         self.log = log
@@ -28,6 +30,9 @@ class Nao():
         # joints
         self.joints = Joints()
         self.chains = self.joints.Chains
+
+        # leds
+        self.leds = Leds(self)
 
         # head
         self.head = Head(self)
@@ -55,6 +60,7 @@ class Nao():
     def wait(self, seconds):
         time.sleep(seconds)
         return self;
+
 
     ###################################
     # Postures
@@ -265,6 +271,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.joints
     import fluentnao.core.legs
     import fluentnao.core.wrists
+    import fluentnao.core.leds
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -274,7 +281,4 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.legs)
     reload(fluentnao.core.head)
     reload(fluentnao.core.feet)
-
-    # example of chain
-    #angleList = [0.0, -60, 0.0, 0.0, 0.0, 0.0]
-    #self.move_with_degrees(self.Chains.RArm, angleList, 0.3)
+    reload(fluentnao.core.leds)
