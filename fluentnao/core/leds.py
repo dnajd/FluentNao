@@ -17,7 +17,7 @@ class Leds():
     # LEDs
     ###################################
     def off(self):
-        self.nao.ledsProxy.off(self.joints.LEDs.ALLeds);
+        self.nao.ledsProxy.off(self.joints.LEDs.AllLeds);
         return self;
 
     def eyes(self, hex=0xCC0033, intensity=0):
@@ -28,7 +28,7 @@ class Leds():
         self.ledsProxy.fadeRGB(self.joints.LEDs.BrainLeds, hex, intensity) # intensity & duration
         return self;
 
-    def head(self, hex=0xCC0033, intensity=0):
+    def ears(self, hex=0xCC0033, intensity=0):
         self.nao.ledsProxy.fadeRGB(self.joints.LEDs.EarLeds, hex, intensity) # intensity & duration
         return self;
 
