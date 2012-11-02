@@ -272,6 +272,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.legs
     import fluentnao.core.wrists
     import fluentnao.core.leds
+    import fluentnao.memory.eventModule
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -282,3 +283,4 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.head)
     reload(fluentnao.core.feet)
     reload(fluentnao.core.leds)
+    reload(fluentnao.memory.eventModule)

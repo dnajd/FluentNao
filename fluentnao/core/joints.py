@@ -18,6 +18,18 @@ class Joints():
         # http://www.aldebaran-robotics.com/documentation/naoqi/sensors/alleds.html
         self.LEDs = Enum(["AllLeds","BrainLeds","EarLeds","FaceLeds","ChestLeds","FeetLeds"])       
 
+        self.Events = Events()
+
+class Events():
+
+    # init method
+    def __init__(self):
+
+        # http://developer.aldebaran-robotics.com/doc/1-12/naoqi/sensors/alsensors-api.html#alsensors-api
+        self.Bumper = Enum(["RightBumperPressed","LeftBumperPressed"])
+        self.Tactil = Enum(["FrontTactilTouched","MiddleTactilTouched","RearTactilTouched"])
+        self.Hand = Enum(["HandRightBackTouched","HandRightLeftTouched","HandRightRightTouched","HandLeftBackTouched","HandLeftLeftTouched","HandLeftRightTouched"])
+        self.Other = Enum(["HotJointDetected","BodyStiffnessChanged","ChestButtonPressed"])       
 
 class Enum(set):
     def __getattr__(self, name):
