@@ -7,6 +7,8 @@ from fluentnao.core.joints import Joints
 from fluentnao.core.legs import Legs
 from fluentnao.core.wrists import Wrists
 from fluentnao.core.leds import Leds
+from fluentnao.memory.eventModule import EventModule
+from fluentnao.memory.sense import Sense
 import almath
 import math
 import time
@@ -46,6 +48,8 @@ class Nao():
         # legs
         self.feet = Feet(self)
         self.legs = Legs(self, self.feet)
+
+        self.sense = Sense(self)
 
         # global duration
         self.set_duration(1)
@@ -273,6 +277,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.wrists
     import fluentnao.core.leds
     import fluentnao.memory.eventModule
+    import fluentnao.memory.sense
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -284,3 +289,4 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.feet)
     reload(fluentnao.core.leds)
     reload(fluentnao.memory.eventModule)
+    reload(fluentnao.memory.sense)
