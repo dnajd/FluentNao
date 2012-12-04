@@ -69,29 +69,29 @@ class Nao():
     ###################################
     # Postures
     ###################################
-    #def standInit(self, duration=1):
-    #    postureProxy.goToPosture("StandInit", duration)
-    #
-    #def sitRelax(self, duration=1):
-    #    postureProxy.goToPosture("SitRelax", duration)
-    #
-    #def standZero(self, duration=1):
-    #    postureProxy.goToPosture("StandZero", duration)
-    #
-    #def lyingBelly(self, duration=1):
-    #    postureProxy.goToPosture("LyingBelly", duration)
-    #
-    #def lyingBack(self, duration=1):
-    #    postureProxy.goToPosture("LyingBack", duration)
-    #
-    #def stand(self, duration=1):
-    #    postureProxy.goToPosture("Stand", duration)
-    #
-    #def crouch(self, duration=1):
-    #    postureProxy.goToPosture("Crouch", duration)
-    #
-    #def sit(self, duration=1):
-    #    postureProxy.goToPosture("Sit", duration)
+    def standInit(self, duration=1):
+        postureProxy.goToPosture("StandInit", duration)
+    
+    def sitRelax(self, duration=1):
+        postureProxy.goToPosture("SitRelax", duration)
+    
+    def standZero(self, duration=1):
+        postureProxy.goToPosture("StandZero", duration)
+    
+    def lyingBelly(self, duration=1):
+        postureProxy.goToPosture("LyingBelly", duration)
+    
+    def lyingBack(self, duration=1):
+        postureProxy.goToPosture("LyingBack", duration)
+    
+    def stand(self, duration=1):
+        postureProxy.goToPosture("Stand", duration)
+    
+    def crouch(self, duration=1):
+        postureProxy.goToPosture("Crouch", duration)
+    
+    def sit(self, duration=1):
+        postureProxy.goToPosture("Sit", duration)
 
 
     ###################################
