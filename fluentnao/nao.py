@@ -69,42 +69,58 @@ class Nao():
     ###################################
     # Postures
     ###################################
-    def standInit(self, duration=1):
+    def standInit(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("StandInit", duration))
         taskId = self.postureProxy.post.goToPosture("StandInit", duration)
         self.jobs.append(taskId)
         return self;
     
-    def sitRelax(self, duration=1):
+    def sitRelax(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("SitRelax", duration))
         taskId = self.postureProxy.post.goToPosture("SitRelax", duration)
         self.jobs.append(taskId)
         return self;
     
-    def standZero(self, duration=1):
+    def standZero(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("StandZero", duration))
         taskId = self.postureProxy.post.goToPosture("StandZero", duration)
         self.jobs.append(taskId)
         return self;
     
-    def lyingBelly(self, duration=1):
+    def lyingBelly(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("LyingBelly", duration))
         taskId = self.postureProxy.post.goToPosture("LyingBelly", duration)
         self.jobs.append(taskId)
         return self;
     
-    def lyingBack(self, duration=1):
+    def lyingBack(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("LyingBack", duration))
         taskId = self.postureProxy.post.goToPosture("LyingBack", duration)
         self.jobs.append(taskId)
         return self;
     
-    def stand(self, duration=1):
+    def stand(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("Stand", duration))
         taskId = self.postureProxy.post.goToPosture("Stand", duration)
         self.jobs.append(taskId)
         return self;
     
-    def crouch(self, duration=1):
+    def crouch(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("Crouch", duration))
         taskId = self.postureProxy.post.goToPosture("Crouch", duration)
         self.jobs.append(taskId)
         return self;
     
-    def sit(self, duration=1):
+    def sit(self, duration=0):
+        duration = self.determine_duration(duration)  
+        self.log("goToPosture=%s|duration=%s" % ("Sit", duration))
         taskId = self.postureProxy.post.goToPosture("Sit", duration)
         self.jobs.append(taskId)
         return self;
