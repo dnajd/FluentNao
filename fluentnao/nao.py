@@ -22,7 +22,7 @@ class Nao():
         self.jobs = []
         
         # set motion proxy & log
-        #self.postureProxy = alProxy("ALRobotPosture")
+        self.postureProxy = alProxy("ALRobotPosture")
         
         self.ledsProxy = alProxy("ALLeds");
         self.motionProxy = alProxy("ALMotion")
@@ -70,28 +70,44 @@ class Nao():
     # Postures
     ###################################
     def standInit(self, duration=1):
-        postureProxy.goToPosture("StandInit", duration)
+        taskId = self.postureProxy.post.goToPosture("StandInit", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def sitRelax(self, duration=1):
-        postureProxy.goToPosture("SitRelax", duration)
+        taskId = self.postureProxy.post.goToPosture("SitRelax", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def standZero(self, duration=1):
-        postureProxy.goToPosture("StandZero", duration)
+        taskId = self.postureProxy.post.goToPosture("StandZero", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def lyingBelly(self, duration=1):
-        postureProxy.goToPosture("LyingBelly", duration)
+        taskId = self.postureProxy.post.goToPosture("LyingBelly", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def lyingBack(self, duration=1):
-        postureProxy.goToPosture("LyingBack", duration)
+        taskId = self.postureProxy.post.goToPosture("LyingBack", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def stand(self, duration=1):
-        postureProxy.goToPosture("Stand", duration)
+        taskId = self.postureProxy.post.goToPosture("Stand", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def crouch(self, duration=1):
-        postureProxy.goToPosture("Crouch", duration)
+        taskId = self.postureProxy.post.goToPosture("Crouch", duration)
+        self.jobs.append(taskId)
+        return self;
     
     def sit(self, duration=1):
-        postureProxy.goToPosture("Sit", duration)
+        taskId = self.postureProxy.post.goToPosture("Sit", duration)
+        self.jobs.append(taskId)
+        return self;
 
 
     ###################################
