@@ -69,35 +69,35 @@ class Nao():
     ###################################
     # Postures
     ###################################
-    def standInit(self, speed=.5):
+    def stand_init(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("StandInit", speed))
         taskId = self.postureProxy.post.goToPosture("StandInit", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
-    def sitRelax(self, speed=.5):
+    def sit_relax(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("SitRelax", speed))
         taskId = self.postureProxy.post.goToPosture("SitRelax", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
-    def standZero(self, speed=.5):
+    def stand_zero(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("StandZero", speed))
         taskId = self.postureProxy.post.goToPosture("StandZero", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
-    def lyingBelly(self, speed=.5):
+    def lying_belly(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("LyingBelly", speed))
         taskId = self.postureProxy.post.goToPosture("LyingBelly", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
-    def lyingBack(self, speed=.5):
+    def lying_back(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("LyingBack", speed))
         taskId = self.postureProxy.post.goToPosture("LyingBack", speed)
         self.jobs.append(taskId)
@@ -203,7 +203,7 @@ class Nao():
     def go(self):
         for taskId in self.jobs:
             #self.log("trying: %s" % (taskId))
-            self.motionProxy.wait(taskId, 5000)   
+            self.motionProxy.wait(taskId, 15000)   
             #self.log("released: %s" % (taskId))
 
         self.jobs[:] = []
