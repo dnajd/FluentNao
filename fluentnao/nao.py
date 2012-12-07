@@ -69,60 +69,58 @@ class Nao():
     ###################################
     # Postures
     ###################################
-    def standInit(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("StandInit", duration))
-        taskId = self.postureProxy.post.goToPosture("StandInit", duration)
+    def standInit(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("StandInit", speed))
+        taskId = self.postureProxy.post.goToPosture("StandInit", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def sitRelax(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("SitRelax", duration))
-        taskId = self.postureProxy.post.goToPosture("SitRelax", duration)
+    def sitRelax(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("SitRelax", speed))
+        taskId = self.postureProxy.post.goToPosture("SitRelax", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def standZero(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("StandZero", duration))
-        taskId = self.postureProxy.post.goToPosture("StandZero", duration)
+    def standZero(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("StandZero", speed))
+        taskId = self.postureProxy.post.goToPosture("StandZero", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def lyingBelly(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("LyingBelly", duration))
-        taskId = self.postureProxy.post.goToPosture("LyingBelly", duration)
+    def lyingBelly(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("LyingBelly", speed))
+        taskId = self.postureProxy.post.goToPosture("LyingBelly", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def lyingBack(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("LyingBack", duration))
-        taskId = self.postureProxy.post.goToPosture("LyingBack", duration)
+    def lyingBack(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("LyingBack", speed))
+        taskId = self.postureProxy.post.goToPosture("LyingBack", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def stand(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("Stand", duration))
-        taskId = self.postureProxy.post.goToPosture("Stand", duration)
-        self.jobs.append(taskId)
+    def stand(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("Stand", speed))
+        self.postureProxy.goToPosture("Stand", speed)
+        self.motionProxy.waitUntilMoveIsFinished();
         return self;
     
-    def crouch(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("Crouch", duration))
-        taskId = self.postureProxy.post.goToPosture("Crouch", duration)
+    def crouch(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("Crouch", speed))
+        taskId = self.postureProxy.post.goToPosture("Crouch", speed)
         self.jobs.append(taskId)
+        self.go()
         return self;
     
-    def sit(self, duration=0):
-        duration = self.determine_duration(duration)  
-        self.log("goToPosture=%s|duration=%s" % ("Sit", duration))
-        taskId = self.postureProxy.post.goToPosture("Sit", duration)
-        self.jobs.append(taskId)
+    def sit(self, speed=.5):
+        self.log("goToPosture=%s|speed=%s" % ("Sit", speed))
+        self.postureProxy.post.goToPosture("Sit", speed)
+        self.motionProxy.waitUntilMoveIsFinished();
         return self;
 
 
