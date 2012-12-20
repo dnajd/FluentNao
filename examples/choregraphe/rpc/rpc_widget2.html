@@ -1,0 +1,85 @@
+<style>
+#fluent-motion-widget p { margin-bottom:10px;}
+</style>
+  <script src="http://naoscript.herokuapp.com/assets/application-d239e55f56f3c36f3304dc761906d72a.js" type="text/javascript"></script>
+<div id="fluent-motion-widget">    
+    <p style="margin-left:20px" class="alert">
+        <b>WARNING:</b> Every command starts with the word nao and must end with a semi-colon.
+    </p>
+    <p style="margin-left:20px">
+        Try typing:<br>
+        nao.say("hello");<br>
+    </p>
+    <iframe src="http://naoscript.herokuapp.com/widget" name="widget" id="widget" width="725" height="610" style="border:none;" scrolling="no"></iframe>
+    
+</div>
+
+<script type="text/javascript">
+
+    // postmessage listener
+    function listener(event){
+        if ( event.origin !== "http://naoscript.herokuapp.com" )
+            return;
+        sendCommand(event.data);
+    }
+    $(document).ready(function() {
+        if (window.addEventListener){
+            addEventListener("message", listener, false);
+        } else {
+            attachEvent("onmessage", listener);
+        }
+    });
+
+    // process command
+    var memoryProxy = new ALProxy('ALMemory');
+    var behaviorProxy = new ALProxy('ALBehaviorManager');
+    var result = new Array();
+    
+    function sendCommand(data) {
+        var inputElement = document.getElementById('input-command');
+
+        // get value
+        if (!data)
+            data = inputElement.value;
+
+        // insert into all memory
+        memoryProxy.call('insertData', ['fluentMotionRpcCommand', data]);
+
+        // run behavior
+        behaviorProxy.call('runBehavior', ['naoscript_1']);
+    }
+
+
+    // naoscript
+    function populateBehaviorSelect()
+    {
+        // get selectElement
+        var selectElement = $("#behavior-select");
+
+        // populate
+        var url = 'http://naoscript.herokuapp.com/behaviors';
+        $.get(url + '.json', function(data) {
+
+          // append option
+          selectElement.append($("<option />").val('').text(' -- select --'));
+          $.each(data, function() {
+              selectElement.append($("<option />").val(this.id).text(this.name));
+          });
+
+        });
+
+        // onchange
+        selectElement.change(function (){
+            var selected = selectElement.val();
+            if (selected)
+            {
+                // add script to text area
+                $.get(url + '/' + selected + '.json', function(data) {
+                    $('#input-command').val(data.script);
+                });
+            }
+        });
+    }
+
+    populateBehaviorSelect();
+</script>
