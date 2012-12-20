@@ -52,7 +52,7 @@ class Nao():
         self.sense = Sense(self)
 
         # global duration
-        self.set_duration(1)
+        self.set_duration(2)
 
     ###################################
     # text to speech
