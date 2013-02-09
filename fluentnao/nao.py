@@ -7,6 +7,7 @@ from fluentnao.core.joints import Joints
 from fluentnao.core.legs import Legs
 from fluentnao.core.wrists import Wrists
 from fluentnao.core.leds import Leds
+from fluentnao.core.audio import Audio
 from fluentnao.memory.eventModule import EventModule
 from fluentnao.memory.sense import Sense
 import almath
@@ -27,6 +28,7 @@ class Nao():
         self.ledsProxy = alProxy("ALLeds");
         self.motionProxy = alProxy("ALMotion")
         self.textToSpeechProxy = alProxy("ALTextToSpeech")
+        self.alaudioplayer = alProxy("ALAudioPlayer")
         self.log = log
 
         # joints
@@ -35,6 +37,7 @@ class Nao():
 
         # leds
         self.leds = Leds(self)
+        self.audio = Audio(self)
 
         # head
         self.head = Head(self)
@@ -132,6 +135,9 @@ class Nao():
         pStiffnessLists = 1.0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+
+    def rest(self):
+        self.motionProxy.rest()
 
     def relax(self):
         pNames = self.joints.Chains.Body
@@ -306,6 +312,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.legs
     import fluentnao.core.wrists
     import fluentnao.core.leds
+    import fluentnao.core.audio
     import fluentnao.memory.eventModule
     import fluentnao.memory.sense
 
@@ -318,5 +325,6 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.head)
     reload(fluentnao.core.feet)
     reload(fluentnao.core.leds)
+    reload(fluentnao.core.audio)
     reload(fluentnao.memory.eventModule)
     reload(fluentnao.memory.sense)

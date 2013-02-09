@@ -25,7 +25,9 @@ class Leds():
         return self;
 
     def head(self, hex=0xCC0033, intensity=0):
-        self.ledsProxy.fadeRGB(self.joints.LEDs.BrainLeds, hex, intensity) # intensity & duration
+        self.nao.ledsProxy.fadeRGB("BrainLedsBack", hex, intensity) # intensity & duration
+        self.nao.ledsProxy.fadeRGB("BrainLedsMiddle", hex, intensity) # intensity & duration
+        self.nao.ledsProxy.fadeRGB("BrainLedsFront", hex, intensity) # intensity & duration
         return self;
 
     def ears(self, hex=0xCC0033, intensity=0):
