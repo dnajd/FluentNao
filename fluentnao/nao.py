@@ -135,15 +135,18 @@ class Nao():
         pStiffnessLists = 1.0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
 
     def rest(self):
         self.motionProxy.rest()
+        return self;
 
     def relax(self):
         pNames = self.joints.Chains.Body
         pStiffnessLists = 0
         pTimeLists = 1.0
         self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
 
     ###################################
     # Whole Body Motion & Balance
