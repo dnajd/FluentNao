@@ -28,7 +28,7 @@ class Arms():
 
     def left_forward(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)       
-        angle = 0 + offset
+        angle = 0 - offset
         angle2 = 0 + offset2
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle2, duration)
@@ -37,8 +37,8 @@ class Arms():
         
     def right_forward(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)  
-        angle = 0 + offset
-        angle2 = 0 + offset2
+        angle = 0 - offset
+        angle2 = 0 - offset2
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration)
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle2, duration)
         return self;
@@ -53,18 +53,19 @@ class Arms():
 
     def left_out(self, duration=0, offset=0, offset2=0):     
         duration = self.nao.determine_duration(duration)  
-        angle = 90 + offset
-        angle2 = 0 + offset2
-        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle, duration)
-        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle2, duration)
+        angle = 0 - offset
+        angle2 = 90 + offset2
+        
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle2, duration)
         return self;
         
     def right_out(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)  
-        angle = -90 - offset
-        angle2 = 0 + offset2
-        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle, duration)
-        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle2, duration)
+        angle = 0 - offset
+        angle2 = -90 - offset2
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle2, duration)
         return self;
 
     ###################################
@@ -86,7 +87,7 @@ class Arms():
     def right_up(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)   
         angle = -90 - offset
-        angle2 = 0 + offset2
+        angle2 = 0 - offset2
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle2, duration)
         return self;
@@ -101,7 +102,7 @@ class Arms():
 
     def left_down(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)   
-        angle = 90 + offset
+        angle = 90 - offset
         angle2 = 0 + offset2
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle2, duration)
@@ -109,8 +110,8 @@ class Arms():
         
     def right_down(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)   
-        angle = 90 + offset
-        angle2 = 0 + offset2
+        angle = 90 - offset
+        angle2 = 0 - offset2
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle2, duration)
         return self;
@@ -126,7 +127,7 @@ class Arms():
 
     def left_back(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)  
-        angle = 119.5 + offset
+        angle = 119.5 - offset
         angle2 = 0 + offset2
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderPitch, angle, duration)
         self.nao.move_with_degrees_and_duration(self.joints.LArm.LShoulderRoll, angle2, duration)
@@ -134,8 +135,8 @@ class Arms():
         
     def right_back(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)  
-        angle = 119.5 + offset
-        angle2 = 0 + offset2
+        angle = 119.5 - offset
+        angle2 = 0 - offset2
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderPitch, angle, duration) 
         self.nao.move_with_degrees_and_duration(self.joints.RArm.RShoulderRoll, angle2, duration)
         return self;

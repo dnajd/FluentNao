@@ -1,6 +1,7 @@
 from naoqi import ALProxy
 from naoqi import ALModule
 class EventModule(ALModule):
+    
     def __init__(self, globalName, eventLambda, eventName, log):
         ALModule.__init__(self, globalName)
 
@@ -9,8 +10,10 @@ class EventModule(ALModule):
         memory = ALProxy("ALMemory")
         self.log = log
         
-        # settings
+        # code to execute
         self.eventLambda = eventLambda
+
+        # for Nao API
         self.eventName = eventName
         self.callbackModule = globalName
         self.callbackMethod = "onNaoEvent"
@@ -27,8 +30,8 @@ class EventModule(ALModule):
         else:
             pressed=False  
         
+        # trigger lambda
         if (pressed):
-            # trigger lambda
             self.unsubscribe()
             self.eventLambda()
             self.subscribe()
