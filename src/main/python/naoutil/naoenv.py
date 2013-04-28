@@ -5,10 +5,11 @@ Created on Feb 10, 2013
 
 Code used to abstract away some of the details of the NAOqi environment
 so that clients do not need to pass around proxies and objects holding
-loggers. Instead code justs passes around NaoEnvironment instances
+loggers. Instead code just passes around NaoEnvironment instances
 '''
 import inspect
 import os
+import logging
 
 from naoqi import ALProxy
 
@@ -51,7 +52,6 @@ PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
 '''
 Hold information about the NAO environment and provide abstraction for logging
 '''
-# TODO build proxies on demand using python properties with custom getter
 class NaoEnvironment(object):
     def __init__(self, box_, proxies={}, ipaddr=None, port=None):
         super(NaoEnvironment, self).__init__()
@@ -61,6 +61,7 @@ class NaoEnvironment(object):
         self.data_path = None
         self.proxyAddr = ipaddr
         self.proxyPort = port
+        self.logger = logging.getLogger("naoutil.naoenv.NaoEnvironment")
         # construct the set of proxies, ensuring that we use only valid long names
         self.proxies = { }
         longNames = PROXY_SHORT_NAMES.values()
@@ -69,9 +70,16 @@ class NaoEnvironment(object):
                 self.proxies[n] = v
             elif n in PROXY_SHORT_NAMES:
                 self.proxies[PROXY_SHORT_NAMES[n]] = v
-    
+
+    # equivalent to logging at info level but also allows fallback to choreographe box 
+    # and print statements
     def log(self, msg):
-        self.box.log(msg)
+        if self.box:
+            self.box.log(msg)
+        elif self.logger:
+            self.logger.info(msg)
+        else:
+            print msg
     
     def _base_dir(self):
         this_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -107,7 +115,7 @@ class NaoEnvironment(object):
             try:
                 os.makedirs(self.data_path)
             except OSError:
-                self.log("Failed to creat dir: "+self.data_path)
+                self.logger.error("Failed to creat dir: "+self.data_path)
         return self.data_path
     
     def set_data_dir(self, dir_name):
@@ -126,7 +134,7 @@ class NaoEnvironment(object):
                                basename, 
                                language_code, 
                                property_name)
-        self.log("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
+        self.logger.debug("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
         return lt
 
     # read the named property from the specified config file. The file extension does not need
@@ -169,10 +177,10 @@ class NaoEnvironment(object):
     # invoke ALProxy to create the proxy we need
     def add_proxy(self, longName):
         if self.proxyAddr and self.proxyPort:
-            self.log('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
-            self.proxies[longName] = ALProxy(longName, self.proxyAddr, self.portPort)
+            self.logger.debug('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
+            self.proxies[longName] = ALProxy(longName, self.proxyAddr, self.proxyPort)
         else:
-            self.log('Creating proxy: ' + longName)
+            self.logger.debug('Creating proxy: ' + longName)
             self.proxies[longName] = ALProxy(longName)
 
 '''
