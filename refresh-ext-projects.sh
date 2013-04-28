@@ -1,5 +1,5 @@
 #! /bin/sh
-# Copies files from external projects into NAO wanderer. This is to allow
+# Copies files from external projects into FluentNao. This is to allow
 # ease of use for others whilst still allowing other projects to be managed
 # separately.
 
