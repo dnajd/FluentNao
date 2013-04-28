@@ -12,13 +12,13 @@ class Audio():
         self.log = nao.log
 
     def play(self, url, volume=1, pan=0):
-        self.nao.alaudioplayer.post.playWebStream(url, volume, pan)
+        self.nao.env.audioPlayer.post.playWebStream(url, volume, pan)
         return self;
 
     def stop_all(self):
-        self.nao.alaudioplayer.stopAll()
+        self.nao.env.audioPlayer.stopAll()
         return self;
 
     def set_master_volume(self, volume=1):
-        self.nao.alaudioplayer.setMasterVolume(volume)
+        self.nao.env.audioPlayer.setMasterVolume(volume)
         return self;
