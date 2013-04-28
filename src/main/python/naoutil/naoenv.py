@@ -53,16 +53,18 @@ Hold information about the NAO environment and provide abstraction for logging
 '''
 # TODO build proxies on demand using python properties with custom getter
 class NaoEnvironment(object):
-    def __init__(self, box_, proxies_={}):
+    def __init__(self, box_, proxies={}, ipaddr=None, port=None):
         super(NaoEnvironment, self).__init__()
         self.box = box_
         self.app_name = None
         self.resources_path = None
         self.data_path = None
+        self.proxyAddr = ipaddr
+        self.proxyPort = port
         # construct the set of proxies, ensuring that we use only valid long names
         self.proxies = { }
         longNames = PROXY_SHORT_NAMES.values()
-        for n, v in proxies_.iteritems():
+        for n, v in proxies.iteritems():
             if n in longNames:
                 self.proxies[n] = v
             elif n in PROXY_SHORT_NAMES:
@@ -166,13 +168,17 @@ class NaoEnvironment(object):
 
     # invoke ALProxy to create the proxy we need
     def add_proxy(self, longName):
-        self.log('Creating proxy: ' + longName)
-        self.proxies[longName] = ALProxy(longName)
+        if self.proxyAddr and self.proxyPort:
+            self.log('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
+            self.proxies[longName] = ALProxy(longName, self.proxyAddr, self.portPort)
+        else:
+            self.log('Creating proxy: ' + longName)
+            self.proxies[longName] = ALProxy(longName)
 
 '''
 Create environment object.
 Needs to be called from a process with an ALBroker running (for example
 within choreographe code)
 '''
-def make_environment(box_):
-    return NaoEnvironment(box_, {})
+def make_environment(box_, proxies={}, ipaddr=None, port=None):
+    return NaoEnvironment(box_, proxies, ipaddr, port)
