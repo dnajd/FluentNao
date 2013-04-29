@@ -1,3 +1,12 @@
+'''
+Created on 31st October , 2012
+
+@author: Don Najd
+
+'''
+import logging
+
+from naoutil.naoenv import NaoEnvironment, make_environment
 from fluentnao.core.arms import Arms
 from fluentnao.core.elbows import Elbows
 from fluentnao.core.feet import Feet
@@ -16,28 +25,27 @@ import almath
 import math
 import time
 
-class Nao():
+class Nao(object):
 
     # init method
-    def __init__(self, alProxy, log):
+    def __init__(self, env, log_function=None):
+        super(Nao, self).__init__()
         
         # jobs for threading
         self.jobs = []
         
         # set motion proxy & log
-        self.postureProxy = alProxy("ALRobotPosture")
-        self.ledsProxy = alProxy("ALLeds");
-        self.motionProxy = alProxy("ALMotion")
-        self.textToSpeechProxy = alProxy("ALTextToSpeech")
-        self.alaudioplayer = alProxy("ALAudioPlayer")
-        self.log = log
+        self.env = env
+        self.log_function = log_function
+        if not log_function:
+            self.logger = logging.getLogger("fluentnao.nao.Nao")
 
         # joints
         self.joints = Joints()
         self.chains = self.joints.Chains
 
         # other
-	self.naoscript = NaoScript(self)
+        self.naoscript = NaoScript(self)
         self.leds = Leds(self)
         self.audio = Audio(self)
         self.sense = Sense(self)
@@ -58,11 +66,17 @@ class Nao():
         # global duration
         self.set_duration(2)
 
+    def log(self, msg):
+        if (self.log_function):
+            self.log_function(msg)
+        else:
+            self.logger.debug(msg)
+
     ###################################
     # text to speech
     ###################################        
     def say(self, text):
-        self.textToSpeechProxy.post.say(text)
+        self.env.tts.post.say(text)
         return self;
 
     def wait(self, seconds):
@@ -75,56 +89,56 @@ class Nao():
     ###################################
     def stand_init(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("StandInit", speed))
-        taskId = self.postureProxy.post.goToPosture("StandInit", speed)
+        taskId = self.env.robotPosture.post.goToPosture("StandInit", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def sit_relax(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("SitRelax", speed))
-        taskId = self.postureProxy.post.goToPosture("SitRelax", speed)
+        taskId = self.env.robotPosture.post.goToPosture("SitRelax", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def stand_zero(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("StandZero", speed))
-        taskId = self.postureProxy.post.goToPosture("StandZero", speed)
+        taskId = self.env.robotPosture.post.goToPosture("StandZero", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def lying_belly(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("LyingBelly", speed))
-        taskId = self.postureProxy.post.goToPosture("LyingBelly", speed)
+        taskId = self.env.robotPosture.post.goToPosture("LyingBelly", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def lying_back(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("LyingBack", speed))
-        taskId = self.postureProxy.post.goToPosture("LyingBack", speed)
+        taskId = self.env.robotPosture.post.goToPosture("LyingBack", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def stand(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("Stand", speed))
-        self.postureProxy.goToPosture("Stand", speed)
-        self.motionProxy.waitUntilMoveIsFinished();
+        self.env.robotPosture.goToPosture("Stand", speed)
+        self.env.motion.waitUntilMoveIsFinished();
         return self;
     
     def crouch(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("Crouch", speed))
-        taskId = self.postureProxy.post.goToPosture("Crouch", speed)
+        taskId = self.env.robotPosture.post.goToPosture("Crouch", speed)
         self.jobs.append(taskId)
         self.go()
         return self;
     
     def sit(self, speed=.5):
         self.log("goToPosture=%s|speed=%s" % ("Sit", speed))
-        self.postureProxy.post.goToPosture("Sit", speed)
-        self.motionProxy.waitUntilMoveIsFinished();
+        self.env.robotPosture.post.goToPosture("Sit", speed)
+        self.env.motion.waitUntilMoveIsFinished();
         return self;
 
 
@@ -135,18 +149,18 @@ class Nao():
         pNames = self.joints.Chains.Body
         pStiffnessLists = 1.0
         pTimeLists = 1.0
-        self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     def rest(self):
-        self.motionProxy.rest()
+        self.env.motion.rest()
         return self;
 
     def relax(self):
         pNames = self.joints.Chains.Body
         pStiffnessLists = 0
         pTimeLists = 1.0
-        self.motionProxy.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     ###################################
@@ -155,25 +169,25 @@ class Nao():
     def whole_body_disable(self):
         self.log("wbDisable")
         isEnabled  = False
-        self.motionProxy.wbEnable(isEnabled)
+        self.env.motion.wbEnable(isEnabled)
 
     def whole_body_endable(self):
         self.log("wbEnable")
         isEnabled  = True
-        self.motionProxy.wbEnable(isEnabled)
+        self.env.motion.wbEnable(isEnabled)
 
     def foot_state(self, supportLeg="Legs", stateName="Fixed"):
         # Legs are constrained fixed
         # supportLeg: Legs, LLeg or RLeg
         # stateName: Fixed, Plane or Free
         self.log("supportLeg=%s|stateName=%s" % (supportLeg, stateName))
-        self.motionProxy.wbFootState(stateName, supportLeg)
+        self.env.motion.wbFootState(stateName, supportLeg)
 
     def constrain_motion(self, supportLeg="Legs"):
         # Constraint Balance Motion / Support Polygon
         # supportLeg: Legs, LLeg or RLeg
         isEnable   = True
-        self.motionProxy.wbEnableBalanceConstraint(isEnable, supportLeg)
+        self.env.motion.wbEnableBalanceConstraint(isEnable, supportLeg)
 
     def balance(self, leg, duration):
 
@@ -188,7 +202,7 @@ class Nao():
 
         # Com go to LLeg
         supportLeg = leg
-        self.motionProxy.wbGoToBalance(supportLeg, duration)
+        self.env.motion.wbGoToBalance(supportLeg, duration)
 
         self.whole_body_disable()
 
@@ -213,7 +227,7 @@ class Nao():
     def go(self):
         for taskId in self.jobs:
             #self.log("trying: %s" % (taskId))
-            self.motionProxy.wait(taskId, 15000)   
+            self.env.motion.wait(taskId, 15000)   
             #self.log("released: %s" % (taskId))
 
         self.jobs[:] = []
@@ -237,7 +251,7 @@ class Nao():
         self.log("setting %s to %s" % (chain, angleListInRadians))
 
         # motion w/ blocking call
-        taskId = self.motionProxy.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
+        taskId = self.env.motion.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
 
         # save task id
         self.jobs.append(taskId)
@@ -266,13 +280,13 @@ class Nao():
 
     def get_target_angles_for_chain(self, chain, angle):
         # Get the Number of Joints
-        numBodies = len(self.motionProxy.getJointNames(chain))
+        numBodies = len(self.env.motion.getJointNames(chain))
     
         # We prepare a collection of floats
         return [angle] * numBodies
 
     def get_max_degrees_per_second(self, jointName):
-        limits = self.motionProxy.getLimits(jointName);
+        limits = self.env.motion.getLimits(jointName);
         minAngle = limits[0][0]
         maxAngle = limits[0][1]
         maxChange = limits[0][2]  # in rad.s-1
@@ -283,7 +297,7 @@ class Nao():
     def get_fraction_max_speed(self, jointName, desiredPositionInDegrees, executionTimeInSeconds):
         # current position in degrees
         useSensors = False;
-        currentPositionInDegrees = math.degrees(self.motionProxy.getAngles(jointName, useSensors)[0]);
+        currentPositionInDegrees = math.degrees(self.env.motion.getAngles(jointName, useSensors)[0]);
         #self.log("pos in deg: " + str(currentPositionInDegrees))
 
         # distance
