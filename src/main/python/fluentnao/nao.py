@@ -46,7 +46,6 @@ class Nao(object):
         self.naoscript = NaoScript(self)
         self.leds = Leds(self)
         self.audio = Audio(self)
-        self.memory = self.env.memory
 
         # head
         self.head = Head(self)
