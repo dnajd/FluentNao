@@ -1,5 +1,5 @@
 import math
-from joints import Joints
+
 class Hands():
 
     # init method

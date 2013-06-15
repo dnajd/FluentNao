@@ -1,8 +1,5 @@
-from joints import Joints
-
 class Leds():
 
-    # init method
     def __init__(self, nao):
         
         # jobs for threading

@@ -1,5 +1,3 @@
-from joints import Joints
-
 class Arms():
 
     # init method

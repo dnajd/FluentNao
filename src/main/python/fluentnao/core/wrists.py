@@ -1,6 +1,3 @@
-import math
-from joints import Joints
-
 class Wrists():
 
     # init method

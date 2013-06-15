@@ -1,4 +1,3 @@
-from joints import Joints
 class Elbows():
 
     # init method

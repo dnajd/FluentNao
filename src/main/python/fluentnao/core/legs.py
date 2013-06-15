@@ -1,4 +1,3 @@
-from joints import Joints
 class Legs():
 
     # init method
