@@ -58,6 +58,11 @@ To use FluentNao in choregraphe, check out the example behavior ./examples/chore
 
 This behavior includes the FluentNao modules and classes as project references.  It contains the python code needed to import and use FluentNao.
 
+In Python Interactive Shell
+==========================
+Try FluentNao in an python interactive shell, directly against a Nao on your local network 'nao.local'
+
+    python -i bootstrap.py
 
 Contributing
 ============
