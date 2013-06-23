@@ -62,7 +62,22 @@ In Python Interactive Shell
 ==========================
 Try FluentNao in an python interactive shell, directly against a Nao on your local network 'nao.local'
 
+First download the correct python sdk from the nao developers site to your computer
+
+Then clone the FluentNao repository as well.
+
+Include both FluentNao and the SDK in your python path; I put the following in my .bashrc
+
+    export PYTHONPATH=$PYTHONPATH:/home/nao/development/personal/FluentNao/src/main/python
+    export PYTHONPATH=$PYTHONPATH:/home/nao/development/opensource/pynaoqi-python-2.7-naoqi-1.14-linux64
+
+Then from the FluentNao folder run the following command
+
     python -i bootstrap.py
+
+That loads up the interactive python prompt and you can begin executing FluentNao commands directly against nao
+
+    nao.say('wow this is awesome')
 
 Contributing
 ============
