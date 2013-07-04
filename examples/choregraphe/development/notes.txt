@@ -1,0 +1,6 @@
+Development Behaviors 
+=====================
+
+Run these against a local naoqi
+* runs against your local FluentNao files
+* these will not work against an actual nao robot

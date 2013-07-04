@@ -1,0 +1,6 @@
+Production Behaviors 
+=====================
+
+Run these against an actual nao robot
+* examples of using box library to run naoscripts off http://naoscript.herokuapp.com
+* example of using naoscript in a script box in choregraphe
