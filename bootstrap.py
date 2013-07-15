@@ -12,3 +12,13 @@ env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.loc
 
 # fluent nao
 nao = nao.Nao(env, None)
+
+# create events with callbacks
+# def callback(dataName, value, message):
+# memory.subscribeToEvent('RightBumperPressed', stopCallback)
+
+# events you can use
+#RightBumperPressed, LeftBumperPressed, ChestButtonPressed, FrontTactilTouched
+#MiddleTactilTouched, RearTactilTouched, HotJointDetected, HandRightBackTouched, HandRightLeftTouched
+#HandRightRightTouched, HandLeftBackTouched, HandLeftLeftTouched, HandLeftRightTouched
+#BodyStiffnessChanged, SimpleClickOccured, DoubleClickOccured, TripleClickOccured
