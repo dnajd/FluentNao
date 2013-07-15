@@ -20,7 +20,7 @@ class Head():
         pNames = self.joints.Chains.Head
         pStiffnessLists = 1.0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     ###################################
@@ -30,7 +30,7 @@ class Head():
         pNames = self.joints.Chains.Head
         pStiffnessLists = 0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     ###################################

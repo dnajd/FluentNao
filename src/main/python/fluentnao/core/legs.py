@@ -27,14 +27,14 @@ class Legs():
         pNames = self.joints.Chains.LLeg
         pStiffnessLists = 1.0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     def right_stiff(self):
         pNames = self.joints.Chains.RLeg
         pStiffnessLists = 1.0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
 
@@ -50,14 +50,14 @@ class Legs():
         pNames = self.joints.Chains.LLeg
         pStiffnessLists = 0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     def right_relax(self):
         pNames = self.joints.Chains.RLeg
         pStiffnessLists = 0
         pTimeLists = 1.0
-        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        self.nao.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
         return self;
 
     ###################################
