@@ -15,7 +15,53 @@ class Arms():
 
     def go(self):
         self.nao.go()
+
+
+    ###################################
+    # Stiff
+    ###################################
+    def stiff(self):
+        self.left_stiff()
+        self.right_stiff()
+        return self;
         
+    def left_stiff(self):
+        pNames = self.joints.Chains.LArm
+        pStiffnessLists = 1.0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
+    def right_stiff(self):
+        pNames = self.joints.Chains.RArm
+        pStiffnessLists = 1.0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
+
+    ###################################
+    # Relax
+    ###################################
+    def relax(self):
+        self.left_relax()
+        self.right_relax()
+        return self;
+
+    def left_relax(self):
+        pNames = self.joints.Chains.LArm
+        pStiffnessLists = 0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
+    def right_relax(self):
+        pNames = self.joints.Chains.RArm
+        pStiffnessLists = 0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
     ###################################
     # Forward
     ###################################
