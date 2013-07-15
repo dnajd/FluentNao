@@ -14,12 +14,18 @@ env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.loc
 nao = nao.Nao(env, None)
 
 # create events with callbacks
+#event = 'HandRightBackTouched'
+#def callbackUnsubscribe(dataName, value, message):
+#	memory.subscribeToEvent(event, callback)
+
 #def callback(dataName, value, message):
 #	if value==1:
 #		nao.arms.stiff()
+#		nao.leds.eyes(0xcc0000)
 #	else:
 #		nao.arms.relax()
-#memory.subscribeToEvent('RightBumperPressed', callback)
+# 		nao.leds.eyes(0x0000FF)
+#memory.subscribeToEvent(event, callback)
 
 # events you can use
 #RightBumperPressed, LeftBumperPressed, ChestButtonPressed, FrontTactilTouched
