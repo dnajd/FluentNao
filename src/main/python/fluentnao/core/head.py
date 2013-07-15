@@ -11,7 +11,28 @@ class Head():
 
     def go(self):
         self.nao.go()
-        
+
+
+    ###################################
+    # Stiff
+    ###################################
+    def stiff(self):
+        pNames = self.joints.Chains.Head
+        pStiffnessLists = 1.0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
+    ###################################
+    # Relax
+    ###################################
+    def relax(self):
+        pNames = self.joints.Chains.Head
+        pStiffnessLists = 0
+        pTimeLists = 1.0
+        self.env.motion.stiffnessInterpolation(pNames, pStiffnessLists, pTimeLists)
+        return self;
+
     ###################################
     # turn
     ###################################
