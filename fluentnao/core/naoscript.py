@@ -2,7 +2,7 @@ from joints import Joints
 import httplib
 import json
 
-class Connection():
+class NaoScript():
 
     # init method
     def __init__(self, nao):

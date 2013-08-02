@@ -10,7 +10,7 @@ from fluentnao.core.leds import Leds
 from fluentnao.core.audio import Audio
 from fluentnao.memory.eventModule import EventModule
 from fluentnao.memory.sense import Sense
-from fluentnao.core.connection import Connection
+from fluentnao.core.naoscript import NaoScript
 
 import almath
 import math
@@ -37,9 +37,10 @@ class Nao():
         self.chains = self.joints.Chains
 
         # other
-	self.connection = Connection(self)
+	self.naoscript = NaoScript(self)
         self.leds = Leds(self)
         self.audio = Audio(self)
+        self.sense = Sense(self)
 
         # head
         self.head = Head(self)
@@ -53,8 +54,6 @@ class Nao():
         # legs
         self.feet = Feet(self)
         self.legs = Legs(self, self.feet)
-
-        self.sense = Sense(self)
 
         # global duration
         self.set_duration(2)
@@ -320,7 +319,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.audio
     import fluentnao.memory.eventModule
     import fluentnao.memory.sense
-    import fluentnao.core.connection
+    import fluentnao.core.naoscript
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -334,4 +333,4 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.audio)
     reload(fluentnao.memory.eventModule)
     reload(fluentnao.memory.sense)
-    reload(fluentnao.core.connection)
+    reload(fluentnao.core.naoscript)
