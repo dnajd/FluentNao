@@ -231,7 +231,7 @@ class Nao(object):
 
             self.log("taskId=%s|action=wait" % (taskId))
             d1 = datetime.now()
-            self.env.motion.wait(taskId, 15000)   
+            self.env.motion.wait(taskId, 8000)   
             d2 = datetime.now()
             r = d2 - d1
             self.log("taskId=%s|action=done|seconds=%s" % (taskId, r.total_seconds()))
