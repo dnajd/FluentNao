@@ -37,8 +37,8 @@ class Connection():
 	json_result = json.loads(data)
 	
 	# run script
-	script = str(json_result['script'], '\r\n')
-	self.run_script(script)
+	script = str(json_result['script']).strip()
+	self.run_script(script, '\r\n')
 
         return self;
 
@@ -49,10 +49,12 @@ class Connection():
                 for cmd in cmds.split(split_str):
                     line += 1
                     if not "#" in cmd:
-                        self.log(cmd)
-                        cmd = cmd.strip().replace("nao.", "").strip()
+                        cmd = cmd.replace("nao.", "").strip()
+			cmd = cmd.replace(";", "").strip()
                         if (len(cmd) > 0):
-                            eval("self.nao." + cmd)   
+			    cmd = "self.nao." + cmd
+		  	    self.log("line " + str(line) + ": " + cmd)
+                            eval(cmd)   
         except:
             self.log("errors occured")
             self.nao.say("you have an error in your code on line " + str(line))
