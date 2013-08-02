@@ -10,6 +10,8 @@ from fluentnao.core.leds import Leds
 from fluentnao.core.audio import Audio
 from fluentnao.memory.eventModule import EventModule
 from fluentnao.memory.sense import Sense
+from fluentnao.core.connection import Connection
+
 import almath
 import math
 import time
@@ -24,7 +26,6 @@ class Nao():
         
         # set motion proxy & log
         self.postureProxy = alProxy("ALRobotPosture")
-        
         self.ledsProxy = alProxy("ALLeds");
         self.motionProxy = alProxy("ALMotion")
         self.textToSpeechProxy = alProxy("ALTextToSpeech")
@@ -35,7 +36,8 @@ class Nao():
         self.joints = Joints()
         self.chains = self.joints.Chains
 
-        # leds
+        # other
+	self.connection = Connection(self)
         self.leds = Leds(self)
         self.audio = Audio(self)
 
@@ -318,6 +320,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.audio
     import fluentnao.memory.eventModule
     import fluentnao.memory.sense
+    import fluentnao.core.connection
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -331,3 +334,4 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.audio)
     reload(fluentnao.memory.eventModule)
     reload(fluentnao.memory.sense)
+    reload(fluentnao.core.connection)
