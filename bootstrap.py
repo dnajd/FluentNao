@@ -1,3 +1,5 @@
+
+import math
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
 import fluentnao.nao as nao

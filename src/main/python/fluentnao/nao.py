@@ -77,6 +77,10 @@ class Nao(object):
         self.env.tts.post.say(text)
         return self;
 
+    def say_and_block(self, text):
+        self.env.tts.say(text)
+        return self;
+
     def wait(self, seconds):
         time.sleep(seconds)
         return self;
