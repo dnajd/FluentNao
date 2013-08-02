@@ -37,16 +37,16 @@ class Connection():
 	json_result = json.loads(data)
 	
 	# run script
-	script = str(json_result['script'])
+	script = str(json_result['script'], '\r\n')
 	self.run_script(script)
 
         return self;
 
-    def run_script(self, cmds):
+    def run_script(self, cmds, split_str=";"):
         line = 0;
         try:
             if (len(cmds) > 0):
-                for cmd in cmds.split(";"):
+                for cmd in cmds.split(split_str):
                     line += 1
                     if not "#" in cmd:
                         self.log(cmd)
