@@ -34,3 +34,6 @@ nao = nao.Nao(env, None)
 #MiddleTactilTouched, RearTactilTouched, HotJointDetected, HandRightBackTouched, HandRightLeftTouched
 #HandRightRightTouched, HandLeftBackTouched, HandLeftLeftTouched, HandLeftRightTouched
 #BodyStiffnessChanged, SimpleClickOccured, DoubleClickOccured, TripleClickOccured
+
+
+#broker.shutdown()
