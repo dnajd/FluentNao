@@ -1,3 +1,10 @@
+'''
+Created on 17 Sept 2013
+
+@author: don Najd
+@description: Nao will greet known faces in more realistic autonomous way
+'''
+
 import math
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
