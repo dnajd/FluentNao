@@ -5,65 +5,92 @@ import fluentnao.nao as nao
 from datetime import datetime, timedelta
 from naoutil import broker
 
-def faceCallback(dataName, value, message):
-    #self.log(value)
+class Greet(object):
 
-    # get name
-    name = value[1][1][1][0]
-    if len(name) > 0:            
-    
-        # new person?
-        if not name in names:
+    def __init__(self, nao, facetracker, memory):
 
-            # log greeting
-            names[name] = datetime.now()
-            nao.wait(1)
+        # args
+        self.nao = nao 
+        self.facetracker = facetracker
+        self.memory = memory
 
-            # do greeting
-            nao.naoscript.get(35)
-            nao.go()
-            nao.say('hello ' + name)
-            
-            # sit & relax
-            nao.sit()
-              
-        else:
-            then = names[name]
-            now = datetime.now()
-            if now - then > timedelta(minutes=1):
-                nao.say('hello again ' + name)    
-       
+        # class state
+        self.logged_recog = {}   
+        self.running = False
 
-def startCallback(dataName, value, message):
-    # bumper down
-    if value==1:
-        # face track
-        motion.setStiffnesses("Head", 1.0)
-        facetracker.startTracker()    
+        # touch controls
+        self.memory.subscribeToEvent('FrontTactilTouched', self.startControlCallback)
+        self.memory.subscribeToEvent('RearTactilTouched', self.cancelControlCallback)
 
-        # start
-        nao.sit()
-        nao.say('start behavior')
-        memory.subscribeToEvent('FaceDetected', faceCallback)
+    ##########################
+    # Face Recog Event
+    def faceCallback(self, dataName, value, message):
 
-def cancelCallback(dataName, value, message):
-    # bumper down
-    if value==1:
+        # get name from naoqi
+        name = value[1][1][1][0]
+        if len(name) > 0:            
+        
+            # new person?
+            if not name in self.logged_recog:
 
-        # stop face track
-        facetracker.stopTracker()    
-        motion.setStiffnesses("Head", 0)
+                # log greeting
+                self.logged_recog[name] = datetime.now()
+                self.nao.wait(1)
 
-        # cancel
-        nao.say('cancel behavior')
-        memory.unsubscribeToEvent('FaceDetected')  
-        nao.sit()
-        nao.wait(3)
-        nao.relax()
+                # do greeting
+                self.nao.naoscript.get(35)
+                self.nao.go()
+                self.nao.say('hello ' + name)
+                
+                # sit & relax
+                self.nao.sit()
+                  
+            else:
+                then = self.logged_recog[name]
+                now = datetime.now()
+                if now - then > timedelta(minutes=5):
+                    self.nao.say('hello again ' + name)    
+           
+    ##########################
+    # Touch Controls
+
+    def startControlCallback(self, dataName, value, message):
+        # bumper down & not running
+        if value==1 and self.running == False:
+
+            # set state
+            self.running = True
+
+            # face track
+            self.nao.env.motion.setStiffnesses("Head", 1.0)
+            self.facetracker.startTracker()    
+
+            # start
+            self.nao.sit()
+            self.nao.say('start behavior')
+            self.memory.subscribeToEvent('FaceDetected', self.faceCallback)
+
+    def cancelControlCallback(self, dataName, value, message):
+        # bumper down & running
+        if value==1 and self.running == True:
+
+            # set state
+            self.running = False
+
+            # stop face track
+            self.facetracker.stopTracker()    
+            self.nao.env.motion.setStiffnesses("Head", 0)
+
+            # cancel
+            self.nao.say('cancel behavior')
+            self.memory.unsubscribeToEvent('FaceDetected')  
+            self.nao.sit()
+            self.nao.wait(3)
+            self.nao.relax()
 
 
 #########################
-# MAIN SETUP
+# SETUP
 ######################### 
 
 # Broker (must come first)
@@ -76,15 +103,10 @@ nao = nao.Nao(env, None)
 # Proxies: FaceTracker & Motion
 nao.env.add_proxy("ALFaceTracker")   
 facetracker = nao.env.proxies["ALFaceTracker"] 
-motion = nao.env.motion  
 
 #########################
-# MAIN EVENT
+# GO
 ######################### 
+greet = Greet(nao, facetracker, memory)
 
-# names
-names = {}    
 
-# start / cancel controls
-memory.subscribeToEvent('FrontTactilTouched', startCallback)
-memory.subscribeToEvent('RearTactilTouched', cancelCallback)
