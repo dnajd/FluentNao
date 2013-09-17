@@ -14,17 +14,18 @@ def faceCallback(dataName, value, message):
     
         # new person?
         if not name in names:
+
+            # log greeting
             names[name] = datetime.now()
-            nao.wait(2)
+            nao.wait(1)
+
+            # do greeting
             nao.naoscript.get(35)
             nao.go()
-            nao.sit()
-            
-            # say hello
             nao.say('hello ' + name)
             
-            # store in names w/ datetime
-            #self.log(self.names)
+            # sit & relax
+            nao.sit()
               
         else:
             then = names[name]
@@ -36,20 +37,29 @@ def faceCallback(dataName, value, message):
 def startCallback(dataName, value, message):
     # bumper down
     if value==1:
-        nao.say('start behavior')
-        #nao.log("starting")
-        memory.subscribeToEvent('FaceDetected', faceCallback)
-        facetracker.startTracker()    
+        # face track
         motion.setStiffnesses("Head", 1.0)
+        facetracker.startTracker()    
+
+        # start
+        nao.sit()
+        nao.say('start behavior')
+        memory.subscribeToEvent('FaceDetected', faceCallback)
 
 def cancelCallback(dataName, value, message):
     # bumper down
     if value==1:
-        nao.say('cancel behavior')
-        #nao.log("stopping")
-        memory.unsubscribeToEvent('FaceDetected')                 
+
+        # stop face track
         facetracker.stopTracker()    
-        motion.setStiffnesses("Head", 0)   
+        motion.setStiffnesses("Head", 0)
+
+        # cancel
+        nao.say('cancel behavior')
+        memory.unsubscribeToEvent('FaceDetected')  
+        nao.sit()
+        nao.wait(3)
+        nao.relax()
 
 
 #########################
