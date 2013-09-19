@@ -24,51 +24,53 @@ class FaceRecog(object):
         self.facetracker = self.nao.env.proxies["ALFaceTracker"] 
 
         # wire touch controls
-        self.memory.subscribeToEvent('FrontTactilTouched', self.startCallback)
-        self.memory.subscribeToEvent('RearTactilTouched', self.stopCallback)
+        self.memory.subscribeToEvent('FrontTactilTouched', self.start_callback)
+        self.memory.subscribeToEvent('RearTactilTouched', self.stop_callback)
 
-    # subscription
-    def addSubscriber(self, subscriber):
+
+    # SUBSCRIPTION
+    def add_subscriber(self, subscriber):
+
         self.subscribers.append(subscriber)
 
 
-    # face detected
-    def faceDetectedCallback(self, dataName, value, message):
+    # FACE DETECTED
+    def face_detected_callback(self, dataName, value, message):
 
         # call subscribers
         for s in self.subscribers:
-            s.faceRecogCallback(dataName, value, message)
+            s.callback(dataName, value, message)
 
-           
-    ##########################
-    # Touch Controls
 
-    def startCallback(self, dataName, value, message):
+    # TOUCH CONTROLS
+    def start_callback(self, dataName, value, message):
+
         # control down
         if value==1 and self.running == False:
 
             # status
             self.running = True
-            nao.log('class=facerecog|controls=start|running=True')   
+            nao.log('class=facerecog|method=start_callback|controls=start|running=True')   
 
             # face track
             self.nao.env.motion.setStiffnesses("Head", 1.0)
             self.facetracker.startTracker()    
 
             # start
-            self.memory.subscribeToEvent('FaceDetected', self.faceDetectedCallback)
+            self.memory.subscribeToEvent('FaceDetected', self.face_detected_callback)
 
             # call subscribers
             for s in self.subscribers:
-                s.faceRecogStartCallback(dataName, value, message)
+                s.setup()
 
-    def stopCallback(self, dataName, value, message):
+    def stop_callback(self, dataName, value, message):
+
         # control down
         if value==1 and self.running == True:
 
             # status
             self.running = False
-            nao.log('class=facerecog|controls=stop|running=False')  
+            nao.log('class=facerecog|method=stop_callback|controls=stop|running=False')  
 
             # face track
             self.nao.env.motion.setStiffnesses("Head", 0)
@@ -79,4 +81,4 @@ class FaceRecog(object):
 
             # call subscribers
             for s in self.subscribers:
-                s.faceRecogStopCallback(dataName, value, message)
+                s.teardown()
