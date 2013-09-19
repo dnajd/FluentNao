@@ -12,7 +12,7 @@ class FaceRecog(object):
 
     def __init__(self, nao, memory):
 
-        self.running == False
+        self.running = False
         self.subscribers = []
 
         # args
@@ -50,7 +50,7 @@ class FaceRecog(object):
 
             # status
             self.running = True
-            nao.log('class=facerecog|method=start_callback|controls=start|running=True')   
+            self.nao.log('class=facerecog|method=start_callback|controls=start|running=True')   
 
             # face track
             self.nao.env.motion.setStiffnesses("Head", 1.0)
@@ -70,7 +70,7 @@ class FaceRecog(object):
 
             # status
             self.running = False
-            nao.log('class=facerecog|method=stop_callback|controls=stop|running=False')  
+            self.nao.log('class=facerecog|method=stop_callback|controls=stop|running=False')  
 
             # face track
             self.nao.env.motion.setStiffnesses("Head", 0)

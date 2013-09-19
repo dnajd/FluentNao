@@ -8,6 +8,8 @@ from __future__ import print_function
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
 import fluentnao.nao as nao
+import autonao.greet as greet
+import autonao.facerecog as facerecog
 from naoutil import broker
 
 
@@ -28,8 +30,8 @@ nao = nao.Nao(env, log)
 ######################### 
 
 # create greeter
-greeter = Greet(nao)
+greeter = greet.Greet(nao)
 
 # subscribe to face recog
-faceRecog = FaceRecog(nao, memory)
+faceRecog = facerecog.FaceRecog(nao, memory)
 faceRecog.add_subscriber(greeter)

@@ -21,8 +21,7 @@ class Greet(object):
         self.nao = nao 
 
         # class state
-        self.logged_recog = {}   
-        self.running = False
+        self.logged_recog = {}  
 
 
     # GREETINGS
@@ -31,7 +30,7 @@ class Greet(object):
         i = random.randint(0,len(self.greetings))
         return self.greetings[i]
 
-    def play_greeting(self):
+    def play_greeting(self, name):
 
         # log greeting
         self.logged_recog[name] = datetime.now()
@@ -58,18 +57,18 @@ class Greet(object):
 
         if len(name) > 0:    
 
-            nao.log('class=Greet|method=callback|name=' + str(name))
+            self.nao.log('class=Greet|method=callback|name=' + str(name))
         
             # new person?
             if not name in self.logged_recog:
-                self.play_greeting() # greet
+                self.play_greeting(name) # greet
             else:
 
                 # how long ago?
                 last_recog = self.logged_recog[name]
                 time_past = datetime.now() - last_recog
                 if time_past > timedelta(minutes=5):
-                    self.play_greeting() # greet
+                    self.play_greeting(name) # greet
 
 
     def setup(self):
