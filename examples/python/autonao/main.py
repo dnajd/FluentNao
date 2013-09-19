@@ -2,7 +2,7 @@
 Created on 17 Sept 2013
 
 @author: don Najd
-@description: Nao will greet known faces in more realistic autonomous way
+@description: Nao will act autonomously
 '''
 from __future__ import print_function
 import math
@@ -130,10 +130,6 @@ broker.Broker('bootstrapBroker', naoIp="nao.local", naoPort=9559)
 env = naoenv.make_environment(None)
 log = lambda msg: print(msg) # lambda for loggin to the console
 nao = nao.Nao(env, log)
-
-# Proxies: FaceTracker & Motion
-nao.env.add_proxy("ALFaceTracker")   
-facetracker = nao.env.proxies["ALFaceTracker"] 
 
 #########################
 # GO
