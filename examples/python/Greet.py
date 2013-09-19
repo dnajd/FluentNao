@@ -4,13 +4,14 @@ Created on 17 Sept 2013
 @author: don Najd
 @description: Nao will greet known faces in more realistic autonomous way
 '''
-
+from __future__ import print_function
 import math
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
 import fluentnao.nao as nao
 from datetime import datetime, timedelta
 from naoutil import broker
+import random
 
 class Greet(object):
 
@@ -29,34 +30,54 @@ class Greet(object):
         self.memory.subscribeToEvent('FrontTactilTouched', self.startControlCallback)
         self.memory.subscribeToEvent('RearTactilTouched', self.cancelControlCallback)
 
+    def get_greeting(self):
+        # greetings
+        greetings = ['Greetings', 'Hello','Hello there','Hey','Hi','Hi there','How are you','How are you doing','Howdy','Hows it going','Salutations','Sup','Whats up','Yo']
+
+        # get rand greeting
+        i = random.randint(0,len(greetings))
+        return greetings[i]
+
+    def do_greeting(self):
+
+        # log greeting
+        self.logged_recog[name] = datetime.now()
+        self.nao.wait(1)
+
+        # do greeting
+        self.nao.naoscript.get(35)
+        self.nao.go()
+        self.nao.say(self.get_greeting() + ' ' + name)
+        
+        # sit & relax
+        self.nao.sit()
+
     ##########################
     # Face Recog Event
     def faceCallback(self, dataName, value, message):
 
+        #nao.log(''.join(str(e) for e in value))
+
         # get name from naoqi
-        name = value[1][1][1][0]
-        if len(name) > 0:            
+        try:
+            name = value[1][1][1][0]
+        except IndexError:
+            name = ''
+
+        if len(name) > 0:    
+            # log
+            nao.log('face recog|name=' + str(name))
         
             # new person?
             if not name in self.logged_recog:
-
-                # log greeting
-                self.logged_recog[name] = datetime.now()
-                self.nao.wait(1)
-
-                # do greeting
-                self.nao.naoscript.get(35)
-                self.nao.go()
-                self.nao.say('hello ' + name)
-                
-                # sit & relax
-                self.nao.sit()
-                  
+                self.do_greeting() # greet
             else:
-                then = self.logged_recog[name]
-                now = datetime.now()
-                if now - then > timedelta(minutes=5):
-                    self.nao.say('hello again ' + name)    
+
+                # how long ago?
+                last_recog = self.logged_recog[name]
+                time_past = datetime.now() - last_recog
+                if time_past > timedelta(minutes=5):
+                    self.do_greeting() # greet
            
     ##########################
     # Touch Controls
@@ -67,6 +88,7 @@ class Greet(object):
 
             # set state
             self.running = True
+            nao.log('controls=start|running=True')   
 
             # face track
             self.nao.env.motion.setStiffnesses("Head", 1.0)
@@ -83,6 +105,7 @@ class Greet(object):
 
             # set state
             self.running = False
+            nao.log('controls=cancel|running=false')   
 
             # stop face track
             self.facetracker.stopTracker()    
@@ -105,7 +128,8 @@ broker.Broker('bootstrapBroker', naoIp="nao.local", naoPort=9559)
 
 # FluentNao
 env = naoenv.make_environment(None)
-nao = nao.Nao(env, None)
+log = lambda msg: print(msg) # lambda for loggin to the console
+nao = nao.Nao(env, log)
 
 # Proxies: FaceTracker & Motion
 nao.env.add_proxy("ALFaceTracker")   
