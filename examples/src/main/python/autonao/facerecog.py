@@ -4,9 +4,6 @@ Created on 17 Sept 2013
 @author: don Najd
 @description: Wrapper around face recognition
 '''
-import naoutil.naoenv as naoenv
-import naoutil.memory as memory
-import fluentnao.nao as nao
 
 class FaceRecog(object):
 

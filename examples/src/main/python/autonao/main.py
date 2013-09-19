@@ -5,13 +5,14 @@ Created on 17 Sept 2013
 @description: Nao will act autonomously
 '''
 from __future__ import print_function
+
+from naoutil import broker
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
-import fluentnao.nao as nao
-import autonao.greet as greet
-import autonao.facerecog as facerecog
-from naoutil import broker
 
+from fluentnao.nao import Nao
+from autonao.facerecog import FaceRecog
+from autonao.greet import Greet
 
 #########################
 # SETUP
@@ -23,15 +24,15 @@ broker.Broker('bootstrapBroker', naoIp="nao.local", naoPort=9559)
 # FluentNao
 env = naoenv.make_environment(None)
 log = lambda msg: print(msg) # lambda for loggin to the console
-nao = nao.Nao(env, log)
+nao = Nao(env, log)
 
 #########################
 # GO
 ######################### 
 
 # create greeter
-greeter = greet.Greet(nao)
+greeter = Greet(nao)
 
 # subscribe to face recog
-faceRecog = facerecog.FaceRecog(nao, memory)
+faceRecog = FaceRecog(nao, memory)
 faceRecog.add_subscriber(greeter)

@@ -4,11 +4,8 @@ Created on 17 Sept 2013
 @author: don Najd
 @description: Nao will greet autonomously
 '''
-import naoutil.naoenv as naoenv
-import naoutil.memory as memory
-import fluentnao.nao as nao
+from autonao.person import Person
 from datetime import datetime, timedelta
-from naoutil import broker
 import random
 
 class Greet(object):
@@ -30,16 +27,16 @@ class Greet(object):
         i = random.randint(0,len(self.greetings))
         return self.greetings[i]
 
-    def play_greeting(self, name):
+    def play_greeting(self, person):
 
         # log greeting
-        self.logged_recog[name] = datetime.now()
+        person.track_recognition()
         self.nao.wait(1)
 
         # do greeting
         self.nao.naoscript.get(35)
         self.nao.go()
-        self.nao.say(self.rand_greeting() + ' ' + name)
+        self.nao.say(self.rand_greeting() + ' ' + person.name)
         
         # sit & relax
         self.nao.sit()
@@ -61,14 +58,19 @@ class Greet(object):
         
             # new person?
             if not name in self.logged_recog:
-                self.play_greeting(name) # greet
+
+                # create & log person
+                person = Person(name)
+                self.logged_recog[name] = person
+
+                # greet
+                self.play_greeting(person)
             else:
 
-                # how long ago?
-                last_recog = self.logged_recog[name]
-                time_past = datetime.now() - last_recog
-                if time_past > timedelta(minutes=5):
-                    self.play_greeting(name) # greet
+                 # greet?
+                person = self.logged_recog[name]
+                if person.recog_more_than_mins(5):
+                    self.play_greeting(person)
 
 
     def setup(self):
