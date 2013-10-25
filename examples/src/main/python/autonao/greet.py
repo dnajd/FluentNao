@@ -12,7 +12,7 @@ class Greet(object):
 
     def __init__(self, nao):
 
-        self.greetings = ['Greetings', 'Hello','Hello there','Hey','Hi','Hi there','How are you','How are you doing','Howdy','Hows it going','Salutations','Sup','Whats up','Yo']
+        self.greetings = ['Greetings', 'Hello','Hello there','Hey','Hi','Hi there','How are you','How are you doing','Howdy','Hows it going','Salutations','Whats up']
 
         # args
         self.nao = nao 
@@ -30,7 +30,7 @@ class Greet(object):
     def play_greeting(self, person):
 
         # log greeting
-        person.track_recognition()
+        person.track_greeting()
         self.nao.wait(1)
 
         # do greeting
@@ -62,10 +62,13 @@ class Greet(object):
                 # create & log person
                 person = Person(name)
                 self.logged_recog[name] = person
+                person.track_recognition()
 
                 # greet
                 self.play_greeting(person)
             else:
+                person = self.logged_recog[name]
+                person.track_recognition()
 
                  # greet?
                 person = self.logged_recog[name]

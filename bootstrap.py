@@ -7,7 +7,8 @@ from datetime import datetime
 from naoutil import broker
 
 # broker (must come first)
-broker.Broker('bootstrapBroker', naoIp="nao.local", naoPort=9559)
+naoIp = "192.168.2.11"
+broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # nao env
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
@@ -16,18 +17,20 @@ env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.loc
 nao = nao.Nao(env, None)
 
 # create events with callbacks
-#event = 'HandRightBackTouched'
-#def callbackUnsubscribe(dataName, value, message):
-#	memory.subscribeToEvent(event, callback)
 
-#def callback(dataName, value, message):
-#	if value==1:
-#		nao.arms.stiff()
-#		nao.leds.eyes(0xcc0000)
-#	else:
-#		nao.arms.relax()
-# 		nao.leds.eyes(0x0000FF)
-#memory.subscribeToEvent(event, callback)
+def callbackUnsubscribe(dataName, value, message):
+	memory.subscribeToEvent(event, callback)
+
+def callback(dataName, value, message):
+	if value==1:
+		nao.arms.stiff()
+		nao.leds.eyes(0xcc0000)
+	else:
+		nao.arms.relax()
+ 		nao.leds.eyes(0x0000FF)
+
+event = 'RightBumperPressed'
+memory.subscribeToEvent(event, callback)
 
 # events you can use
 #RightBumperPressed, LeftBumperPressed, ChestButtonPressed, FrontTactilTouched

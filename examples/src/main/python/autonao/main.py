@@ -13,13 +13,15 @@ import naoutil.memory as memory
 from fluentnao.nao import Nao
 from autonao.facerecog import FaceRecog
 from autonao.greet import Greet
+from autonao.autobody import Autobody
 
 #########################
 # SETUP
 ######################### 
 
 # Broker (must come first)
-broker.Broker('bootstrapBroker', naoIp="nao.local", naoPort=9559)
+naoIp = "192.168.2.15"
+broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # FluentNao
 env = naoenv.make_environment(None)
@@ -36,3 +38,5 @@ greeter = Greet(nao)
 # subscribe to face recog
 faceRecog = FaceRecog(nao, memory)
 faceRecog.add_subscriber(greeter)
+
+Autobody(nao)
