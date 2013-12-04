@@ -20,7 +20,7 @@ def automove(nao, autobody):
 	        nao.head.forward(0, offset_x).center(0, offset_y)
 
 	        # sleep
-	        sleep_time = randint(0,20)
+	        sleep_time = randint(0,120)
 	        sleep(sleep_time)
 	except KeyboardInterrupt:
 	    print("Quitting the program.")
@@ -33,7 +33,7 @@ class Autobody(object):
 	def __init__(self, nao):
 
 		# start running
-		autobody.run = True
+		self.run = True
 
 		# thread to return control
 		t = Thread(target=automove, args=(nao,self,))

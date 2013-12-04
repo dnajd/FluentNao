@@ -20,7 +20,7 @@ from autonao.autobody import Autobody
 ######################### 
 
 # Broker (must come first)
-naoIp = "192.168.2.15"
+naoIp = "192.168.2.11"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # FluentNao
@@ -39,4 +39,4 @@ greeter = Greet(nao)
 faceRecog = FaceRecog(nao, memory)
 faceRecog.add_subscriber(greeter)
 
-Autobody(nao)
+#Autobody(nao)

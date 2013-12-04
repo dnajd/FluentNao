@@ -7,7 +7,7 @@ from datetime import datetime
 from naoutil import broker
 
 # broker (must come first)
-naoIp = "192.168.2.11"
+naoIp = "nao.local"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # nao env
