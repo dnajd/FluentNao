@@ -173,7 +173,7 @@ class Nao(object):
         isEnabled  = False
         self.env.motion.wbEnable(isEnabled)
 
-    def whole_body_endable(self):
+    def whole_body_enable(self):
         self.log("wbEnable")
         isEnabled  = True
         self.env.motion.wbEnable(isEnabled)
