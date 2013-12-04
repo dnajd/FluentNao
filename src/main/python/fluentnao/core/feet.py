@@ -116,7 +116,7 @@ class Feet():
         
     def right_center(self, duration=0, offset=0, offset2=0):
         duration = self.nao.determine_duration(duration)      
-        angle = 0 - offset
+        angle = 0 + offset
         angle2 = 0 - offset2  
         self.nao.move_with_degrees_and_duration(self.joints.RLeg.RAnkleRoll, angle, duration)
         self.nao.move_with_degrees_and_duration(self.joints.RLeg.RAnklePitch, angle2, duration)
