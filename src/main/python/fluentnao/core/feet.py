@@ -100,9 +100,9 @@ class Feet():
     ###################################
     # center
     ###################################
-    def center(self, duration=0, offset=0):   
-        self.right_center(duration, offset)
-        self.left_center(duration, offset)
+    def center(self, duration=0, offset=0, offset2=0):   
+        self.right_center(duration, offset, offset2)
+        self.left_center(duration, offset, offset2)
         return self;
 
     def left_center(self, duration=0, offset=0, offset2=0):
