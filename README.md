@@ -66,10 +66,11 @@ First download the correct python sdk from the nao developers site to your compu
 
 Then clone the FluentNao repository as well.
 
-Include both FluentNao and the SDK in your python path; I put the following in my .bashrc
+Include NaoUtil, FluentNao and the Python SDK in your python path; I put the following in my .bashrc
 
-    export PYTHONPATH=$PYTHONPATH:/home/nao/development/personal/FluentNao/src/main/python
-    export PYTHONPATH=$PYTHONPATH:/home/nao/development/opensource/pynaoqi-python-2.7-naoqi-1.14-linux64
+    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/naoutil/naoutil/src/main/python
+    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/FluentNao/src/main/python
+    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/pynaoqi-python-2.7-naoqi-1.14-linux64
 
 Then from the FluentNao folder run the following command
 
