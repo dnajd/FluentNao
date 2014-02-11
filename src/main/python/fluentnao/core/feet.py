@@ -12,6 +12,37 @@ class Feet():
     def go(self):
         self.nao.go()
 
+    ###################################
+    # plane
+    ###################################
+    def left_plane_on(self):
+
+        # stiffen body & enable wb
+        self.nao.stiff()
+        self.nao.whole_body_enable()
+
+        # constrain feet
+        self.nao.foot_state(self.joints.SupportLeg.RLeg, self.joints.StateName.Fixed)
+        self.nao.foot_state(self.joints.SupportLeg.LLeg, self.joints.StateName.Plane)
+
+    def right_plane_on(self):
+
+        # stiffen body & enable wb
+        self.nao.stiff()
+        self.nao.whole_body_enable()
+
+        # constrain feet
+        self.nao.foot_state(self.joints.SupportLeg.RLeg, self.joints.StateName.Plane)
+        self.nao.foot_state(self.joints.SupportLeg.LLeg, self.joints.StateName.Fixed)
+
+    def plane_off(self):
+
+        # block call
+        self.go()
+
+        # free feet & disable wb
+        self.nao.foot_state(self.joints.SupportLeg.Legs, self.joints.StateName.Free)
+        self.nao.whole_body_disable()
 
     ###################################
     # point
