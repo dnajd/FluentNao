@@ -77,9 +77,9 @@ class Legs():
 
 
     ###################################
-    # Slide Out
+    # Out
     ###################################
-    def left_slide_out(self, duration=0, offset=0, balance=True):
+    def left_out(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.left_plane_on()
@@ -94,7 +94,7 @@ class Legs():
 
         return self;
 
-    def right_slide_out(self, duration=0, offset=0, balance=True):
+    def right_out(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.right_plane_on()
@@ -110,42 +110,50 @@ class Legs():
         return self;
 
     ###################################
-    # Slide In
+    # In
     ###################################
-    def left_slide_in(self, duration=0, offset=0, balance=True):
+    def left_in(self, duration=0, offset=0, offset2=0, balance=True):
 
         if balance:
             self.nao.feet.left_plane_on()
 
-        # move leg out
+        # move leg in
         duration = self.nao.determine_duration(duration)       
+        
         angle = 0 + offset
         self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipRoll, angle, duration)
 
+        angle2 = 0 - offset2
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle2, duration)
+        
         if balance:
             self.nao.feet.plane_off()
 
         return self;
 
-    def right_slide_in(self, duration=0, offset=0, balance=True):
+    def right_in(self, duration=0, offset=0, offset2=0, balance=True):
 
         if balance:
             self.nao.feet.right_plane_on()
 
         # move leg out
-        duration = self.nao.determine_duration(duration)       
+        duration = self.nao.determine_duration(duration) 
+
         angle = 0 - offset
         self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipRoll, angle, duration)
 
+        angle2 = 0 - offset2
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle2, duration)
+
         if balance:
             self.nao.feet.plane_off()
 
         return self;
 
     ###################################
-    # Slide Forward
+    # Forward
     ###################################
-    def left_slide_forward(self, duration=0, offset=0, balance=True):
+    def left_forward(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.left_plane_on()
@@ -161,7 +169,7 @@ class Legs():
         return self;
 
 
-    def right_slide_forward(self, duration=0, offset=0, balance=True):
+    def right_forward(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.right_plane_on()
@@ -177,9 +185,9 @@ class Legs():
         return self;
 
     ###################################
-    # Slide Back
+    # Back
     ###################################
-    def left_slide_back(self, duration=0, offset=0, balance=True):
+    def left_back(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.left_plane_on()
@@ -195,7 +203,7 @@ class Legs():
         return self;
 
 
-    def right_slide_back(self, duration=0, offset=0, balance=True):
+    def right_back(self, duration=0, offset=0, balance=True):
 
         if balance:
             self.nao.feet.right_plane_on()
@@ -203,40 +211,6 @@ class Legs():
         # move leg forward
         duration = self.nao.determine_duration(duration)       
         angle = 50 - offset
-        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
-
-        if balance:
-            self.nao.feet.plane_off()
-        
-        return self;
-
-    ###################################
-    # slide under
-    ###################################
-    def left_slide_under(self, duration=0, offset=0, balance=True):
-
-        if balance:
-            self.nao.feet.left_plane_on()
-
-        # move leg forward
-        duration = self.nao.determine_duration(duration)       
-        angle = 0 - offset
-        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle, duration)
-
-        if balance:
-            self.nao.feet.plane_off()
-
-        return self;
-
-
-    def right_slide_under(self, duration=0, offset=0, balance=True):
-
-        if balance:
-            self.nao.feet.right_plane_on()
-
-        # move leg forward
-        duration = self.nao.determine_duration(duration)       
-        angle = 0 - offset
         self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
 
         if balance:
@@ -296,7 +270,7 @@ class Legs():
 
 
     ###################################
-    # Bent
+    # Knee Bent
     ###################################
     
     def left_knee_bent(self, duration=0, offset=0):
@@ -313,16 +287,16 @@ class Legs():
 
 
     ###################################
-    # Straight
+    # Knee Straight
     ###################################
 
-    def left_straight(self, duration=0, offset=0):
+    def left_knee_straight(self, duration=0, offset=0):
         duration = self.nao.determine_duration(duration) 
         angle = 0 - offset      
         self.nao.move_with_degrees_and_duration(self.joints.LLeg.LKneePitch, angle, duration)
         return self;
         
-    def right_straight(self, duration=0, offset=0):
+    def right_knee_straight(self, duration=0, offset=0):
         duration = self.nao.determine_duration(duration)  
         angle = 0 - offset
         self.nao.move_with_degrees_and_duration(self.joints.RLeg.RKneePitch, angle, duration)

@@ -7,7 +7,7 @@ from datetime import datetime
 from naoutil import broker
 
 # broker (must come first)
-naoIp = "nao.local"
+naoIp = "192.168.2.5"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # nao env
@@ -29,8 +29,8 @@ def callback(dataName, value, message):
 		nao.arms.relax()
  		nao.leds.eyes(0x0000FF)
 
-event = 'RightBumperPressed'
-memory.subscribeToEvent(event, callback)
+#event = 'RightBumperPressed'
+#memory.subscribeToEvent(event, callback)
 
 # events you can use
 #RightBumperPressed, LeftBumperPressed, ChestButtonPressed, FrontTactilTouched
