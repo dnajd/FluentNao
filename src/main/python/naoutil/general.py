@@ -51,13 +51,13 @@ def find_class(fqcn):
         try:
             m = __import__(moduleName)
         except ImportError:
-            print "Unable to import from " + moduleName
+            print "Unable to import from {}".format(moduleName)
     
     #for name, obj in inspect.getmembers(m):
     for name, obj in inspect.getmembers(sys.modules[moduleName]):
         if inspect.isclass(obj) and className == name:
             return obj
         
-    raise TypeError("Can't find class " +fqcn)
+    raise TypeError("Can't find class {}".format(fqcn))
 
 

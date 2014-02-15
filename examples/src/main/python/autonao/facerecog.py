@@ -23,7 +23,7 @@ class FaceRecog(object):
         # wire touch controls
         self.memory.subscribeToEvent('FrontTactilTouched', self.start_callback)
         self.memory.subscribeToEvent('RearTactilTouched', self.stop_callback)
-
+        self.nao.log('class=facerecog|method=__init__')   
 
     # SUBSCRIPTION
     def add_subscriber(self, subscriber):
@@ -41,7 +41,7 @@ class FaceRecog(object):
 
     # TOUCH CONTROLS
     def start_callback(self, dataName, value, message):
-
+        self.nao.log('class=facerecog|method=start_callback')   
         # control down
         if value==1 and self.running == False:
 

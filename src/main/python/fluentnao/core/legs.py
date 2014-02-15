@@ -119,12 +119,10 @@ class Legs():
 
         # move leg in
         duration = self.nao.determine_duration(duration)       
-        
-        angle = 0 + offset
-        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipRoll, angle, duration)
-
-        angle2 = 0 - offset2
-        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle2, duration)
+        angle = 0 - offset
+        angle2 = 0 + offset2        
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.LLeg.LHipRoll, angle2, duration)
         
         if balance:
             self.nao.feet.plane_off()
@@ -138,12 +136,10 @@ class Legs():
 
         # move leg out
         duration = self.nao.determine_duration(duration) 
-
         angle = 0 - offset
-        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipRoll, angle, duration)
-
         angle2 = 0 - offset2
-        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle2, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipPitch, angle, duration)
+        self.nao.move_with_degrees_and_duration(self.joints.RLeg.RHipRoll, angle2, duration)
 
         if balance:
             self.nao.feet.plane_off()

@@ -31,6 +31,8 @@ PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
                       'behaviourManager' : 'ALBehaviorManager',
                       'connectionManager' : 'ALConnectionManager',
                       'faceDetection' : 'ALFaceDetection',
+                      'faceTracker' : 'ALFaceTracker',
+                      'ballTracker' : 'ALRedBallTracker',
                       'infrared' : 'ALInfrared',
                       'leds' : 'ALLeds',
                       'memory' : 'ALMemory',
@@ -111,11 +113,11 @@ class NaoEnvironment(object):
         # since, unlike the resources dir, the data dir is not part of the program it might not
         # already exist, so we create it if necessary
         if not os.path.exists(self.data_path):
-            self.log('Creating data dir: '+self.data_path)
+            self.logger.debug('Creating data dir: {}'.format(self.data_path))
             try:
                 os.makedirs(self.data_path)
             except OSError:
-                self.logger.error("Failed to creat dir: "+self.data_path)
+                self.logger.error("Failed to create dir: {}".format(self.data_path))
         return self.data_path
     
     def set_data_dir(self, dir_name):
@@ -134,7 +136,8 @@ class NaoEnvironment(object):
                                basename, 
                                language_code, 
                                property_name)
-        self.logger.debug("Property '"+property_name+"' resolved to text '"+lt+"' in language '"+language_code+"'")
+        self.logger.debug("Property '{name}' resolved to text '{value}' in language '{lang}'"
+                          .format(name=property_name,value=lt,lang=language_code))
         return lt
 
     # read the named property from the specified config file. The file extension does not need
@@ -174,14 +177,18 @@ class NaoEnvironment(object):
             # not a valid short name or long name
             raise AttributeError
 
-    # invoke ALProxy to create the proxy we need
+    # invoke ALProxy to store the proxy we need
     def add_proxy(self, longName):
+        self.proxies[longName] = self.create_proxy(longName)
+
+    # invoke ALProxy to create the proxy we need
+    def create_proxy(self, longName):
         if self.proxyAddr and self.proxyPort:
-            self.logger.debug('Creating proxy: ' + longName + " at "+self.proxyAddr+":"+str(self.proxyPort))
-            self.proxies[longName] = ALProxy(longName, self.proxyAddr, self.proxyPort)
+            self.logger.debug('Creating proxy: {name} at {proxy.proxyAddr}:{proxy.proxyPort}'.format(name=longName, proxy=self))
+            return ALProxy(longName, self.proxyAddr, self.proxyPort)
         else:
-            self.logger.debug('Creating proxy: ' + longName)
-            self.proxies[longName] = ALProxy(longName)
+            self.logger.debug('Creating proxy: {name}'.format(name=longName))
+            return ALProxy(longName)
 
 '''
 Create environment object.

@@ -6,8 +6,12 @@ import fluentnao.nao as nao
 from datetime import datetime
 from naoutil import broker
 
+from naoqi import ALProxy
+from naoqi import ALBroker
+from naoqi import ALModule
+
 # broker (must come first)
-naoIp = "192.168.2.5"
+naoIp = "192.168.2.13"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # nao env
@@ -16,27 +20,46 @@ env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.loc
 # fluent nao
 nao = nao.Nao(env, None)
 
-# create events with callbacks
+# events
+def unsubscribe_callback(dataName, value, message):
+	memory.unsubscribeToEvent('FrontTactilTouched')
+	memory.unsubscribeToEvent('WordRecognized')
 
-def callbackUnsubscribe(dataName, value, message):
-	memory.subscribeToEvent(event, callback)
 
-def callback(dataName, value, message):
+def subscribe_callback(dataName, value, message):
+	memory.subscribeToEvent('FrontTactilTouched', tactil_callback)
+	memory.subscribeToEvent('WordRecognized', speech_callback)
+
+
+def tactil_callback(dataName, value, message):
+
 	if value==1:
-		nao.arms.stiff()
-		nao.leds.eyes(0xcc0000)
+		print 'pressed'
 	else:
-		nao.arms.relax()
- 		nao.leds.eyes(0x0000FF)
+		print 'released'
 
-#event = 'RightBumperPressed'
-#memory.subscribeToEvent(event, callback)
+def speech_callback(dataName, value, message):
+
+	# zip into dictionary
+	d = dict(zip(value[0::2], value[1::2]))
+
+	if d['yes'] > 0.5:
+		print d['yes']
+
+# set vocab
+vocab = ['yes','no']
+nao.env.speechRecognition.setVocabulary(vocab, True)
+
+memory.subscribeToEvent('FrontTactilTouched', subscribe_callback)
+memory.subscribeToEvent('RearTactilTouched', unsubscribe_callback)
+
+# subscribe
 
 # events you can use
 #RightBumperPressed, LeftBumperPressed, ChestButtonPressed, FrontTactilTouched
 #MiddleTactilTouched, RearTactilTouched, HotJointDetected, HandRightBackTouched, HandRightLeftTouched
 #HandRightRightTouched, HandLeftBackTouched, HandLeftLeftTouched, HandLeftRightTouched
 #BodyStiffnessChanged, SimpleClickOccured, DoubleClickOccured, TripleClickOccured
-
+#WordRecognized, LastWordRecognized, SpeechDetected" https://community.aldebaran-robotics.com/doc/1-14/naoqi/audio/alspeechrecognition-api.html#ALSpeechRecognitionProxy::setVisualExpression__bCR
 
 #broker.shutdown()
