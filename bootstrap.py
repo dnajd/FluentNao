@@ -7,7 +7,7 @@ from datetime import datetime
 from naoutil import broker
 
 # naoutil broker & env
-naoIp = "192.168.2.13"
+naoIp = "192.168.2.10"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
 
@@ -34,21 +34,50 @@ def speech_callback(dataName, value, message):
 
 	# zip into dictionary
 	d = dict(zip(value[0::2], value[1::2]))
+	t = .58
 
-	key = 'sit'
-	if key in d and d[key] > 0.6:
-		nao.sit()
+	#key = 'sit'
+	#if key in d and d[key] > t:
+#		nao.sit()
 
-	key = 'wake'
-	if key in d and d[key] > 0.6:
-		nao.stiff()
+	#key = 'wake'
+	#if key in d and d[key] > t:
+#		nao.stiff()
 	
-	key = 'sleep'
-	if key in d and d[key] > 0.6:
-		nao.relax()
+#	key = 'sleep'
+#	if key in d and d[key] > t:
+#		nao.relax()
+
+	key = 'data'
+	if key in d and d[key] > t:
+		nao.say('yes what do you want')
+
+	key = 'phasers'
+	if key in d and d[key] > t:
+		nao.say('fire when ready')
+
+	key = 'tractor'
+	if key in d and d[key] > t:
+		nao.say('engage and pull them in')
+
+	key = 'hailing'
+	if key in d and d[key] > t:
+		nao.say('bring up visuals')
+
+	key = 'torpedo'
+	if key in d and d[key] > t:
+		nao.say('shields up')
+
+	key = 'shields'
+	if key in d and d[key] > t:
+		nao.say('holding at 20 percent')
+
+	key = 'purple'
+	if key in d and d[key] > t:
+		nao.say('jovial loves that color')
 
 # speech recogn
-vocab = ['sit','wake', 'sleep']
+vocab = ['sit','wake', 'sleep', 'data', 'phasers', 'tractor', 'hailing', 'torpedo', 'shields', 'purple']
 nao.env.speechRecognition.setVocabulary(vocab, True)
 
 # on / off
