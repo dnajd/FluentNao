@@ -6,50 +6,52 @@ import fluentnao.nao as nao
 from datetime import datetime
 from naoutil import broker
 
-from naoqi import ALProxy
-from naoqi import ALBroker
-from naoqi import ALModule
-
-# broker (must come first)
+# naoutil broker & env
 naoIp = "192.168.2.13"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
-
-# nao env
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
 
-# fluent nao
+# FluentNao
 nao = nao.Nao(env, None)
 
-# events
+# callbacks
 def unsubscribe_callback(dataName, value, message):
 	memory.unsubscribeToEvent('FrontTactilTouched')
 	memory.unsubscribeToEvent('WordRecognized')
-
 
 def subscribe_callback(dataName, value, message):
 	memory.subscribeToEvent('FrontTactilTouched', tactil_callback)
 	memory.subscribeToEvent('WordRecognized', speech_callback)
 
-
 def tactil_callback(dataName, value, message):
-
 	if value==1:
 		print 'pressed'
 	else:
 		print 'released'
 
 def speech_callback(dataName, value, message):
+	print value
 
 	# zip into dictionary
 	d = dict(zip(value[0::2], value[1::2]))
 
-	if d['yes'] > 0.5:
-		print d['yes']
+	key = 'sit'
+	if key in d and d[key] > 0.6:
+		nao.sit()
 
-# set vocab
-vocab = ['yes','no']
+	key = 'wake'
+	if key in d and d[key] > 0.6:
+		nao.stiff()
+	
+	key = 'sleep'
+	if key in d and d[key] > 0.6:
+		nao.relax()
+
+# speech recogn
+vocab = ['sit','wake', 'sleep']
 nao.env.speechRecognition.setVocabulary(vocab, True)
 
+# on / off
 memory.subscribeToEvent('FrontTactilTouched', subscribe_callback)
 memory.subscribeToEvent('RearTactilTouched', unsubscribe_callback)
 
