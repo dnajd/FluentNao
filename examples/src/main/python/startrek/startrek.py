@@ -64,7 +64,7 @@ class Startrek(object):
 
 		key = 'phasers'
 		if key in d and d[key] > t:
-			self.self.nao.say('fire when ready')
+			self.nao.say('fire when ready')
 
 		key = 'tractor'
 		if key in d and d[key] > t:
