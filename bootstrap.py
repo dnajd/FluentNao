@@ -7,7 +7,7 @@ from datetime import datetime
 from naoutil import broker
 
 # naoutil broker & env
-naoIp = "192.168.2.9"
+naoIp = "192.168.2.12"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
 
@@ -67,7 +67,7 @@ def speech_callback(dataName, value, message):
 
 # speech recogn
 vocab = ['stand','sit', 'crouch', 'arms forward', 'arms out', 'hands open', 'hands closed']
-self.nao.env.speechRecognition.setVocabulary(vocab, True)
+nao.env.speechRecognition.setVocabulary(vocab, True)
 
 # on / off
 memory.subscribeToEvent('FrontTactilTouched', subscribe_callback)

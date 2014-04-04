@@ -245,39 +245,22 @@ class Nao(object):
     # movement
     ###################################
 
-    def zero(self):
-        # MoveChain(chain, angle, speed)
-        chain = self.chains.Body
-        angleInDegrees = 0.0
-        self.move_with_degrees(chain, self.get_target_angles_for_chain(chain, angleInDegrees))
-        return self;
-
-    def move(self, chain, angleListInRadians, fractionMaxSpeed = 0.3):
+    def move(self, chain, angleListInRadians, timeListInSeconds):
         
         # motion w/ blocking call
-        taskId = self.env.motion.post.angleInterpolationWithSpeed(chain, angleListInRadians, fractionMaxSpeed)    
+        taskId = self.env.motion.post.angleInterpolation(chain, angleListInRadians, timeListInSeconds, True)    
 
         # log
         self.log("|taskId=%s|chain=%s|angleList=%s" % (taskId, chain, angleListInRadians))
         self.jobs.append(taskId)
-        
-
-    def move_with_degrees(self, chain, angleListInDegrees, fractionMaxSpeed = 0.3):
-        # convert to radians        
-        angleListInRadians = [ x * almath.TO_RAD for x in angleListInDegrees]
-
-        # move
-        self.move(chain, angleListInRadians, fractionMaxSpeed)
 
     def move_with_degrees_and_duration(self, jointName, angleInDegrees, durationInSeconds):
-        # fraction of max speed
-        fractionMaxSpeed = self.get_fraction_max_speed(jointName, angleInDegrees, durationInSeconds)
 
         # convert to radians
         angleInRadians = angleInDegrees * almath.TO_RAD
 
         # move
-        self.move(jointName, [angleInRadians], fractionMaxSpeed)
+        self.move(jointName, [angleInRadians], durationInSeconds)
 
     ###################################
     # helpers
