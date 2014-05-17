@@ -197,7 +197,7 @@ class Nao(object):
 
         # stiffen body
         self.stiff()
-        self.whole_body_endable()
+        self.whole_body_enable()
 
         self.foot_state()
         self.constrain_motion()
