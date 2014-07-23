@@ -1,8 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<package version="0.0.2" uuid="naoscript_1-09ad51">
+<package version="1.0.3" uuid="naoscript_1-09ad51">
  <names>
   <name lang="en_US">naoscript_1</name>
  </names>
+ <descriptions>
+  <description lang="en_US">Program Nao in your Browser. 
+
+1.Install this app.
+
+2. Go to "my robot" on the aldebaran site. 
+
+3. Click on the NaoScript widget and follow the directions.
+</description>
+ </descriptions>
  <descriptionLanguages>
   <language>en_US</language>
  </descriptionLanguages>
@@ -12,4 +22,8 @@
    <permissions/>
   </behaviorContent>
  </contents>
+ <requirements>
+  <naoqiRequirement/>
+  <robotRequirement model="NAO"/>
+ </requirements>
 </package>

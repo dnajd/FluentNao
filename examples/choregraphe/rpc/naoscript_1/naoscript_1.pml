@@ -30,6 +30,7 @@
         <File name="memory" src="naoscript_1/src/main/python/naoutil/memory.py" />
         <File name="naoenv" src="naoscript_1/src/main/python/naoutil/naoenv.py" />
         <File name="README" src="naoscript_1/src/main/python/naoutil/README" />
+        <File name="icon" src="icon.png" />
     </Resources>
     <Topics />
     <IgnoredPaths />
