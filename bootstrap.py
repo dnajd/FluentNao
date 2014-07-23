@@ -7,12 +7,18 @@ from datetime import datetime
 from naoutil import broker
 
 # naoutil broker & env
-naoIp = "192.168.2.12"
+naoIp = "192.168.2.13"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
 
 # FluentNao
 nao = nao.Nao(env, None)
+
+
+def doSomething():
+	nao.arms.forward().elbows.bent()
+	nao.say('I did something')
+
 
 # subscribe
 # callbacks

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<package version="0.0.2" uuid="naoscript_1-09ad51">
+ <names>
+  <name lang="en_US">naoscript_1</name>
+ </names>
+ <descriptionLanguages>
+  <language>en_US</language>
+ </descriptionLanguages>
+ <contents>
+  <behaviorContent path="naoscript_1">
+   <nature></nature>
+   <permissions/>
+  </behaviorContent>
+ </contents>
+</package>
