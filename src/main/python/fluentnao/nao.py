@@ -89,7 +89,7 @@ class Nao(object):
         time.sleep(seconds)
         return self;
 
-    def say(self, key, text):
+    def animate_say(self, key, text):
         s = "^start(" + animations[key] + ") " + text
         self.animated_speech.say(s) 
 
