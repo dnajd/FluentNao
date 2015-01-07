@@ -41,10 +41,14 @@ class Nao(object):
         if not log_function:
             self.logger = logging.getLogger("fluentnao.nao.Nao")
 
+        # facetracker
+        nao.env.add_proxy("ALFaceDetection")   
+        self.face_detect = self.env.proxies["ALFaceDetection"] 
+    
         # animated speech proxy
         self.env.add_proxy("ALAnimatedSpeech")   
         self.animated_speech = self.env.proxies["ALAnimatedSpeech"] 
-
+    
         # joints
         self.joints = Joints()
         self.chains = self.joints.Chains
@@ -105,7 +109,6 @@ class Nao(object):
 
     def animate_say(self, text):
         self.animated_speech.say(text) 
-
 
     ###################################
     # Postures
@@ -322,6 +325,14 @@ class Nao(object):
         if fractionOfMaxSpeed > maxDegreesPerSecond:
             return maxDegreesPerSecond
         return fractionOfMaxSpeed
+
+    ###################################
+    # Misc
+    ###################################
+    
+    def learn_face(name):
+        self.face_detect.learnFace(name)
+
 
 ###################################
 # development
