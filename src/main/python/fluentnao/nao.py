@@ -48,6 +48,12 @@ class Nao(object):
         # animated speech proxy
         self.env.add_proxy("ALAnimatedSpeech")   
         self.animated_speech = self.env.proxies["ALAnimatedSpeech"] 
+
+        # dialog
+        self.env.add_proxy("ALDialog")   
+        self.dialog = self.env.proxies["ALDialog"] 
+        self.dialog.setLanguage("English")
+        self.dialog.setASRConfidenceThreshold(.3)
     
         # joints
         self.joints = Joints()
