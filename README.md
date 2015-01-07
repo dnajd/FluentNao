@@ -70,7 +70,7 @@ Include NaoUtil, FluentNao and the Python SDK in your python path; I put the fol
 
     export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/FluentNao/src/main/python/naoutil
     export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/FluentNao/src/main/python/fluentnao
-    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/pynaoqi-python-2.7-naoqi-1.14-linux64
+    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/pynaoqi-python2.7-2.1.2.17-linux64
 
 Then from the FluentNao folder run the following command
 
