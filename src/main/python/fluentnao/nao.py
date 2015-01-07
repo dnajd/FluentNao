@@ -42,7 +42,7 @@ class Nao(object):
             self.logger = logging.getLogger("fluentnao.nao.Nao")
 
         # facetracker
-        nao.env.add_proxy("ALFaceDetection")   
+        self.env.add_proxy("ALFaceDetection")   
         self.face_detect = self.env.proxies["ALFaceDetection"] 
     
         # animated speech proxy
