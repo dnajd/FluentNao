@@ -20,7 +20,7 @@ from autonao.autobody import Autobody
 ######################### 
 
 # Broker (must come first)
-naoIp = "nao.local"
+naoIp = "192.168.2.10"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # FluentNao
