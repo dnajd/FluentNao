@@ -18,7 +18,7 @@ from startrek import Startrek
 ######################### 
 
 # Broker (must come first)
-naoIp = "192.168.2.10"
+naoIp = "nao.local"
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 
 # FluentNao
