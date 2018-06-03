@@ -24,12 +24,15 @@ DEFAULT_DATA_DIR_NAME = "data"
 The short names are the ones used to generate python properties, so you can use env.tts instead of
 env.ALTextToSpeech
 '''
-PROXY_SHORT_NAMES = { 'audioDevice' : 'ALAudioDevice',
+PROXY_SHORT_NAMES = { 'animatedSpeech': 'ALAnimatedSpeech',
+                      'audioDevice' : 'ALAudioDevice',
                       'audioLocalisation' : 'ALAudioSourceLocalisation',
                       'audioPlayer' : 'ALAudioPlayer',
                       'audioRecorder' : 'ALAudioRecoder',
+                      'alife' : 'ALAutonomousLife',
                       'behaviourManager' : 'ALBehaviorManager',
                       'connectionManager' : 'ALConnectionManager',
+                      'dialog' : 'ALDialog',
                       'faceDetection' : 'ALFaceDetection',
                       'faceTracker' : 'ALFaceTracker',
                       'ballTracker' : 'ALRedBallTracker',
@@ -73,7 +76,7 @@ class NaoEnvironment(object):
             elif n in PROXY_SHORT_NAMES:
                 self.proxies[PROXY_SHORT_NAMES[n]] = v
 
-    # equivalent to logging at info level but also allows fallback to choreographe box 
+    # equivalent to logging at info level but also allows fallback to choreographe box
     # and print statements
     def log(self, msg):
         if self.box:
@@ -82,7 +85,7 @@ class NaoEnvironment(object):
             self.logger.info(msg)
         else:
             print msg
-    
+
     def _base_dir(self):
         this_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
         prefix_end_index = this_dir.rindex(SOURCE_DIR)
@@ -90,7 +93,7 @@ class NaoEnvironment(object):
 
     def application_name(self):
         return self.app_name
-    
+
     def set_application_name(self, name):
         self.app_name = name
 
@@ -100,7 +103,7 @@ class NaoEnvironment(object):
             # from src downwards with resources
             self.resources_path = os.path.join(self._base_dir(), RESOURCE_DIR)
         return self.resources_path
-    
+
     def set_resources_dir(self, dir_name):
         self.resources_path = dir_name
 
@@ -119,37 +122,37 @@ class NaoEnvironment(object):
             except OSError:
                 self.logger.error("Failed to create dir: {}".format(self.data_path))
         return self.data_path
-    
+
     def set_data_dir(self, dir_name):
         self.data_path = dir_name
-    
+
     def current_language(self):
         return self.tts.getLanguage()
-    
+
     # return the two letter ISO language code for the current language
     def current_language_code(self):
         return i18n.language_to_code(self.current_language())
-    
+
     def localized_text(self, basename, property_name):
         language_code = self.current_language_code()
-        lt = i18n.get_property(self.resources_dir(), 
-                               basename, 
-                               language_code, 
+        lt = i18n.get_property(self.resources_dir(),
+                               basename,
+                               language_code,
                                property_name)
         self.logger.debug("Property '{name}' resolved to text '{value}' in language '{lang}'"
-                          .format(name=property_name,value=lt,lang=language_code))
+                          .format(name=property_name, value=lt, lang=language_code))
         return lt
 
     # read the named property from the specified config file. The file extension does not need
-    # to be specified - both java style .properties & .json files will work 
+    # to be specified - both java style .properties & .json files will work
     def get_property(self, basename, propertyName, defaultValue=None):
         dir_name = self.resources_dir()
         for ext in [i18n.EXT_PROPERTIES, i18n.EXT_JSON ]:
             filename = basename + ext
-            path = dir_name + '/' + filename
-            if os.path.exists(path):
+            path = os.path.join(dir_name, filename)
+            if i18n.get_from_cache(path) or os.path.exists(path):
                 try:
-                    props = i18n.read_properties_file(path)
+                    props = i18n.read_properties_file_with_cache(path)
                     contents = props[propertyName]
                     if isinstance(contents, basestring):
                         return contents.encode("utf-8").strip()
@@ -168,10 +171,10 @@ class NaoEnvironment(object):
             key = name
             if name in PROXY_SHORT_NAMES:
                 key = PROXY_SHORT_NAMES[name]
-            
+
             if not key in self.proxies:
                 self.add_proxy(key)
-            
+
             return self.proxies[key]
         else:
             # not a valid short name or long name

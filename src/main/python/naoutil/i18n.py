@@ -11,7 +11,7 @@ import jprops
 import json
 
 # Map language names from TTS to ISO language code
-# ISO language codes from http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes        
+# ISO language codes from http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 LANGUAGE_MAP = {
                 "arabic" : "ar",
                 "brazilian" : "pt",
@@ -43,6 +43,24 @@ EXT_PROPERTIES = ".properties"
 EXT_JSON = ".json"
 EXT_TEXT = ".txt"
 
+# cache property data read from file to avoid need for a file read on every property access
+property_file_cache = {}
+
+def clear_cache():
+    global property_file_cache
+    property_file_cache = {}
+
+def get_from_cache(path):
+    global property_file_cache
+    try:
+        return property_file_cache[path]
+    except KeyError:
+        return None
+
+def put_in_cache(filename, properties):
+    global property_file_cache
+    property_file_cache[filename] = properties
+
 def language_to_code(languageName):
     global LANGUAGE_MAP
     return LANGUAGE_MAP[languageName.lower()]
@@ -71,16 +89,16 @@ def find_resource(dir_name, basename, language_code, exts):
     for ext in exts:
         filename = make_filename(basename, language_code, ext)
         path = dir_name + '/' + filename
-        if os.path.exists(path):
+        if get_from_cache(path) or os.path.exists(path):
             return path
-    
+
     # now try with default language
     for ext in exts:
         filename = make_filename(basename, DEFAULT_LANGUAGE_CODE, ext)
         path = dir_name + '/' + filename
-        if os.path.exists(path):
+        if get_from_cache(path) or os.path.exists(path):
             return path
-        
+
     return None
 
 def read_text_file(filename, encoding="utf-8"):
@@ -89,12 +107,28 @@ def read_text_file(filename, encoding="utf-8"):
         result = contents.encode("utf-8")
     return result
 
+def read_text_file_with_cache(filename, encoding="utf-8"):
+    contents = get_from_cache(filename)
+    if not contents:
+        contents = read_text_file(filename, encoding)
+        if contents:
+            put_in_cache(filename, contents)
+    return contents
+
 def read_properties_file(filename, encoding="utf-8"):
     with codecs.open(filename, encoding=encoding) as fp:
         if filename.endswith(EXT_PROPERTIES):
             properties = jprops.load_properties(fp)
         else:
             properties = json.load(fp)
+    return properties
+
+def read_properties_file_with_cache(filename, encoding="utf-8"):
+    properties = get_from_cache(filename)
+    if not properties:
+        properties = read_properties_file(filename, encoding)
+        if properties:
+            put_in_cache(filename, properties)
     return properties
 
 def read_text_options(dir_name, basename, language_code, property_name=None, separator='/'):
@@ -111,13 +145,13 @@ def read_text_options(dir_name, basename, language_code, property_name=None, sep
     if property_name is None:
         # should be a plain text file with one option per line
         path = find_resource(dir_name, basename, language_code, [ EXT_TEXT ])
-        contents = read_text_file(path)
+        contents = read_text_file_with_cache(path)
         return contents.strip().split('\n')
     else:
         # should be a properties or JSONfile
         path = find_resource(dir_name, basename, language_code, [EXT_PROPERTIES, EXT_JSON ])
         if not path is None:
-            props = read_properties_file(path)
+            props = read_properties_file_with_cache(path)
             value = props[property_name]
             # if we loaded from JSON this will already be a list
             if isinstance(value, basestring):
@@ -140,9 +174,8 @@ def get_property(dir_name, basename, language_code, property_name):
     language_code = check_language_code(language_code)
     path = find_resource(dir_name, basename, language_code, [ EXT_PROPERTIES, EXT_JSON ])
     if not path is None:
-        props = read_properties_file(path)
+        props = read_properties_file_with_cache(path)
         contents = props[property_name].strip()
         return contents.encode("utf-8")
     else:
         return None
-    

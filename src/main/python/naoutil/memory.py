@@ -4,64 +4,107 @@ Created on April 06, 2013
 @author: AxelVoitier
 @license: GNU LGPL v3
 
-Provide helper functions to easilly subscribe to ALMemory events and micro events.
+Provide helper functions to easilly subscribe to ALMemory
+events and micro events.
 '''
 
-from naoutil import ALModule
 from naoqi import ALProxy
-import weakref
 
-def singleton(cls):
-    instances = weakref.WeakValueDictionary()
-    def getinstance():
-        try:
-            return instances[cls]
-        except KeyError:
-            instance = cls() # Keep a strong ref until it is returned
-            instances[cls] = instance
-            return instance
-    return getinstance
+from naoutil.module import Module
+from naoutil.general import singleton
+
 
 @singleton
-class _SubscriberModule(ALModule):
+class _SubscriberModule(Module):
+    '''
+    Singleton ALModule used to subscribe to events and micro-events.
+    Not made to be used by a user.
+    Prefer to call the module functions.
+    '''
     def __init__(self):
-        ALModule.__init__(self)
+        Module.__init__(self)
         self.memory = ALProxy('ALMemory')
-        self.dataNameToMicroEventCallback = {}
-        self.dataNameToEventCallback = {}
-        
-    def subscribeToEvent(self, dataName, callback):
-        self.dataNameToEventCallback[dataName] = callback
-        self.memory.subscribeToEvent(dataName, self.moduleName, 'eventCB')
-        
-    def unsubscribeToEvent(self, dataName):
-        if dataName in self.dataNameToEventCallback:
-            self.memory.unsubscribeToEvent(dataName, self.moduleName)
-            del self.dataNameToEventCallback[dataName]
-        
-    def eventCB(self, dataName, value, message):
-        self.dataNameToEventCallback[dataName](dataName, value, message)
-        
-    def subscribeToMicroEvent(self, dataName, callback, cbMessage):
-        self.dataNameToMicroEventCallback[dataName] = callback
-        self.memory.subscribeToMicroEvent(dataName, self.moduleName, cbMessage, 'microEventCB')
-        
-    def unsubscribeToMicroEvent(self, dataName):
-        if dataName in self.dataNameToMicroEventCallback:
-            self.memory.unsubscribeToMicroEvent(dataName, self.moduleName)
-            del self.dataNameToMicroEventCallback[dataName]
-        
-    def microEventCB(self, dataName, value, message):
-        self.dataNameToMicroEventCallback[dataName](dataName, value, message)
-        
-def subscribeToEvent(dataName, callback):
-    _SubscriberModule().subscribeToEvent(dataName, callback)
-        
-def unsubscribeToEvent(dataName):
-    _SubscriberModule().unsubscribeToEvent(dataName)
-        
-def subscribeToMicroEvent(dataName, callback, cbMessage=''):
-    _SubscriberModule().subscribeToMicroEvent(dataName, callback, cbMessage)
-        
-def unsubscribeToMicroEvent(dataName):
-    _SubscriberModule().unsubscribeToMicroEvent(dataName)
+        self.data_name_to_micro_event_cb = {}
+        self.data_name_to_event_cb = {}
+
+    # Event
+    def subscribe_to_event(self, data_name, callback):
+        '''
+        Relay the subscription to ALMemory.
+        Keep trace of the (data_name, callback) association.
+        '''
+        self.data_name_to_event_cb[data_name] = callback
+        self.memory.subscribeToEvent(data_name, self.module_name, 'event_cb')
+
+    def unsubscribe_to_event(self, data_name):
+        '''
+        Relay the unsubscription to ALMemory.
+        Remove reference to the (data_name, callback) association.
+        '''
+        if data_name in self.data_name_to_event_cb:
+            self.memory.unsubscribeToEvent(data_name, self.module_name)
+            del self.data_name_to_event_cb[data_name]
+
+    def event_cb(self, data_name, value, message):
+        '''
+        Callback called by ALMemory when a value change on one of the
+        subscribed data_name.
+        Relay to user callback.
+        '''
+        self.data_name_to_event_cb[data_name](data_name, value, message)
+
+    # Micro-event
+    def subscribe_to_micro_event(self, data_name, callback, cb_message):
+        '''
+        Relay the subscription to ALMemory.
+        Keep trace of the (data_name, callback) association.
+        '''
+        self.data_name_to_micro_event_cb[data_name] = callback
+        self.memory.subscribeToMicroEvent(data_name, self.module_name,
+                                             cb_message, 'micro_event_cb')
+
+    def unsubscribe_to_micro_event(self, data_name):
+        '''
+        Relay the unsubscription to ALMemory.
+        Remove reference to the (data_name, callback) association.
+        '''
+        if data_name in self.data_name_to_micro_event_cb:
+            self.memory.unsubscribeToMicroEvent(data_name, self.module_name)
+            del self.data_name_to_micro_event_cb[data_name]
+
+    def micro_event_cb(self, data_name, value, message):
+        '''
+        Callback called by ALMemory when a value change on one of the
+        subscribed data_name.
+        Relay to user callback.
+        '''
+        self.data_name_to_micro_event_cb[data_name](data_name, value, message)
+
+def subscribe_to_event(data_name, callback):
+    '''
+    Subscribe to an event.
+    '''
+    _SubscriberModule().subscribe_to_event(data_name, callback)
+subscribeToEvent = subscribe_to_event
+
+def unsubscribe_to_event(data_name):
+    '''
+    Unsubscribe to an event.
+    '''
+    _SubscriberModule().unsubscribe_to_event(data_name)
+unsubscribeToEvent = unsubscribe_to_event
+
+def subscribe_to_micro_event(data_name, callback, cb_message=''):
+    '''
+    Subscribe to a micro-event.
+    '''
+    _SubscriberModule().subscribe_to_micro_event(data_name, callback,
+                                                 cb_message)
+subscribeToMicroEvent = subscribe_to_micro_event
+
+def unsubscribe_to_micro_event(data_name):
+    '''
+    Unsubscribe to an event.
+    '''
+    _SubscriberModule().unsubscribe_to_micro_event(data_name)
+unsubscribeToMicroEvent = unsubscribe_to_micro_event

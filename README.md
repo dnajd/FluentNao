@@ -3,6 +3,29 @@ FluentNao
 
 Control Nao using fluent stanza of python code.
 
+Docker
+==========================
+Times have changed and naoqi has not been kept up-to-date.  So we'll begin by building a docker image
+
+    docker-compose build fluentnao
+
+Starting up an interactive shell
+
+    docker-compose run fluentnao bash
+
+Edit the `bootstrap.py` and set your nao's ipaddress on line 10 (remember to use YOUR nao's ipaddress)
+
+    naoIp = "192.168.1.18"
+
+Running the old reliable bootstrap shell script
+
+    ./bootstrap
+
+That loads up the interactive python prompt and you can use the commands below to control nao
+
+    nao.say('wow this is awesome')
+
+
 Example Code
 ======================
 
@@ -58,27 +81,6 @@ To use FluentNao in choregraphe, check out the example behavior ./examples/chore
 
 This behavior includes the FluentNao modules and classes as project references.  It contains the python code needed to import and use FluentNao.
 
-In Python Interactive Shell
-==========================
-Try FluentNao in an python interactive shell, directly against a Nao on your local network 'nao.local'
-
-First download the correct python sdk from the nao developers site to your computer
-
-Then clone the FluentNao repository as well.
-
-Include NaoUtil, FluentNao and the Python SDK in your python path; I put the following in my .bashrc
-
-    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/FluentNao/src/main/python/naoutil
-    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/FluentNao/src/main/python/fluentnao
-    export PYTHONPATH=$PYTHONPATH:$HOME/development/opensource/pynaoqi-python2.7-2.1.4.13-linux64
-
-Then from the FluentNao folder run the following command
-
-    python -i bootstrap.py
-
-That loads up the interactive python prompt and you can begin executing FluentNao commands directly against nao
-
-    nao.say('wow this is awesome')
 
 Contributing
 ============

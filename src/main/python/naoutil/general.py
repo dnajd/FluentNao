@@ -6,6 +6,7 @@ Created on Feb 8, 2013
 
 import sys
 import inspect
+import weakref
 
 
 def class_to_name(klass):
@@ -60,4 +61,21 @@ def find_class(fqcn):
         
     raise TypeError("Can't find class {}".format(fqcn))
 
-
+def singleton(cls):
+    '''
+    Decorator for a class to transform it as a singleton.
+    '''
+    instances = weakref.WeakValueDictionary()
+    def getinstance(*args):
+        '''
+        Lookup for the class in the weak dict and return its singleton instance.
+        Called when creating an object.
+        Do not recall __init__ with the new parameters.
+        '''
+        try:
+            return instances[cls]
+        except KeyError:
+            instance = cls(*args) # Keep ref until we return it
+            instances[cls] = instance
+            return instance
+    return getinstance
