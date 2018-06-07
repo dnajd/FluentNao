@@ -336,9 +336,77 @@ class Nao(object):
     # Misc
     ###################################
     
-    def learn_face(name):
+    def learn_face(self, name):
         self.face_detect.learnFace(name)
 
+    def prep_sonar(self):
+        self.env.sonar.subscribe("nao")
+
+    def read_sonar(self):
+        left = self.env.memory.getData('Device/SubDeviceList/US/Left/Sensor/Value')
+        right = self.env.memory.getData('Device/SubDeviceList/US/Right/Sensor/Value')
+        return [left, right]
+    
+    def is_something_close(self):
+        r = self.read_sonar()
+        if r[0] < 0.3 or r[1] < 0.3:
+            return True
+        return False
+
+    ###################################
+    # walking
+    ###################################
+
+    def walk_and_avoid(self):
+        self.walk_until_something_close()
+        self.turn_away()
+        self.walk_and_avoid()
+
+    def turn_away(self):
+        self.walk_back(1,4)
+        self.turn_left(1,2)
+        while self.is_something_close():
+            self.turn_away()
+
+    def walk_until_something_close(self):
+        self.prep_sonar()
+        self.walk(1,0,0,1)
+        while not self.is_something_close():
+            self.wait(0.2)
+        self.stop_walking()
+
+    def prep_walk(self, with_arms=False):
+        self.env.motion.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", True]])
+        if with_arms:
+            self.env.motion.setWalkArmsEnabled(True, True)
+    
+    def unprep_walk(self):
+        self.env.motion.setMotionConfig([["ENABLE_FOOT_CONTACT_PROTECTION", False]])
+
+    def walk(self, x, y, theta, speed):
+        self.env.motion.setWalkTargetVelocity(x, y, theta, speed)
+
+    def stop_walking(self):
+        self.env.motion.setWalkTargetVelocity(0,0,0,0)
+
+    def walk_then_stop(self, x, y, theta, speed, duration):
+        self.prep_walk()    
+        self.walk(x, y, theta, speed)
+        self.wait(duration)
+        self.stop_walking()
+        self.unprep_walk()
+
+    def walk_back(self, speed=1, duration=1):
+        self.walk_then_stop(-1, 0, 0, speed, duration)
+
+    def walk_forward(self, speed=1, duration=1):
+        self.walk_then_stop(1, 0, 0, speed, duration)
+
+    def turn_left(self, speed=1, duration=1):
+        self.walk_then_stop(1, 0, 1, speed, duration)
+
+    def turn_right(self, speed=1, duration=1):
+        self.walk_then_stop(1, 0, -1, speed, duration)
 
 ###################################
 # development

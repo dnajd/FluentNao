@@ -3,6 +3,15 @@ FluentNao
 
 Control Nao using fluent stanza of python code.
 
+SETUP
+==========================
+
+Edit the `bootstrap.py` and set your nao's ipaddress on line 10 (remember to use YOUR nao's ipaddress)
+
+    naoIp = "192.168.1.18"
+
+Edit src/main/python/fluentnao/nao.py
+
 Docker
 ==========================
 Times have changed and naoqi has not been kept up-to-date.  So we'll begin by building a docker image
@@ -13,10 +22,6 @@ Starting up an interactive shell
 
     docker-compose run fluentnao bash
 
-Edit the `bootstrap.py` and set your nao's ipaddress on line 10 (remember to use YOUR nao's ipaddress)
-
-    naoIp = "192.168.1.18"
-
 Running the old reliable bootstrap shell script
 
     ./bootstrap
@@ -25,6 +30,11 @@ That loads up the interactive python prompt and you can use the commands below t
 
     nao.say('wow this is awesome')
 
+If you'd like to see nao be interactive and conscious run this one
+
+    ./nao-conscious
+
+tap the head sensor in the back to deactivate
 
 Example Code
 ======================
@@ -73,23 +83,4 @@ You can offset any motion, adding more or less degrees of movement.  For example
     nao.arms.up(0, -30)
 
 NOTE: the zero is duration telling the api to ignore that argument;
-
-
-In Choregraphe
-=================
-To use FluentNao in choregraphe, check out the example behavior ./examples/choregraphe/fluentnao.crg
-
-This behavior includes the FluentNao modules and classes as project references.  It contains the python code needed to import and use FluentNao.
-
-
-Contributing
-============
-I'm developing in [Sublime Text 2](http://www.sublimetext.com/2 "Sublime Text 2") and Eclipse. 
-
-1. Clone the github repository
-2. Check out ./examples/choregraphe/development/fluentnao_dev.crg
-
-This behavior will run FluentNao modules and classes from your clone of the repository.  This behavior can run the FluentNao modules and classes against the local naoqi or the simulator.  When you update FluentNao, everything will be reloaded and changes will take effect immediately.
-
-NOTE: you must update pathToFluentNao in the FluentNao Script Box
 
