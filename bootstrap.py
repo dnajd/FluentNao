@@ -1,4 +1,4 @@
-
+import os
 import math
 import naoutil.naoenv as naoenv
 import naoutil.memory as memory
@@ -7,7 +7,7 @@ from datetime import datetime
 from naoutil import broker
 
 # naoutil broker & env
-naoIp = "192.168.1.18"
+naoIp = os.environ["NAO_IP"]
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 env = naoenv.make_environment(None) #using broker don't need ->, ipaddr="nao.local", port=9559)
 

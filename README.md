@@ -1,30 +1,30 @@
-FluentNao
-=================
+# FluentNao
 
 Control Nao using fluent stanza of python code.
 
-SETUP
-==========================
+# Requirements
 
-Edit the `bootstrap.py` and set your nao's ipaddress on line 10 (remember to use YOUR nao's ipaddress)
+All you need is docker and a nao robot connected to the same network as your computer.
 
-    naoIp = "192.168.1.18"
+# Setup
 
-Edit src/main/python/fluentnao/nao.py
+Push the button on Nao's chest to get it's IP address and set it in your terminal
 
-Docker
-==========================
-Times have changed and naoqi has not been kept up-to-date.  So we'll begin by building a docker image
+```
+export NAO_IP=###.###.###.###
+```
 
-    docker-compose build fluentnao
+# Get Started
 
-Starting up an interactive shell
+`make`   - see all make targets
 
-    docker-compose run fluentnao bash
+Build the docker container
 
-Running the old reliable bootstrap shell script
+`init` - build the docker image
 
-    ./bootstrap
+Run the container
+
+`up`  - run interactive shell
 
 That loads up the interactive python prompt and you can use the commands below to control nao
 
@@ -36,8 +36,7 @@ If you'd like to see nao be interactive and conscious run this one
 
 tap the head sensor in the back to deactivate
 
-Example Code
-======================
+# Example Code
 
 Example code using Fluent Nao
 
@@ -54,8 +53,8 @@ Example code using Fluent Nao
     nao.hands.open()
     nao.go() 
 
-Duration of Movement
---------------------
+## Duration of Movement
+
 You can specify a number of seconds to take for each command or stanza. We use the setDuration() to set the duration globally for every function that follows
 
     # sets duration to half a second 
@@ -72,8 +71,8 @@ We can override the default duration in each motion function
 
 NOTE: passing in a duration of 0 will be ignored
 
-Offsets
---------------------
+## exOffsets
+
 You can offset any motion, adding more or less degrees of movement.  For example
 
     # zero out joints
