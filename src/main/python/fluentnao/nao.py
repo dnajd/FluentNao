@@ -19,6 +19,7 @@ from fluentnao.core.leds import Leds
 from fluentnao.core.audio import Audio
 from fluentnao.core.naoscript import NaoScript
 from fluentnao.core.animations import POD, STAND, SIT
+from fluentnao.core.recorder.recorder import Recorder
 
 import almath
 import math
@@ -77,6 +78,9 @@ class Nao(object):
         self.feet = Feet(self)
         self.legs = Legs(self, self.feet)
 
+        # recorder
+        self.recorder = Recorder(self)
+
         # global duration
         self.set_duration(1.5)
 
@@ -86,9 +90,12 @@ class Nao(object):
         else:
             self.logger.debug(str(datetime.now()) + "|" + msg)
 
+    def print_keyframe(self):
+        print(self.recorder.keyframe())
+
     ###################################
     # text to speech
-    ###################################        
+    ###################################
     def say(self, text):
         self.env.tts.post.say(text)
         return self;

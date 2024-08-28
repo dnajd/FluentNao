@@ -21,7 +21,7 @@ bash: ## bash prompt
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker-compose run -e NAO_IP=$$NAO_IP fluentnao bash
+	docker compose run -e NAO_IP=$$NAO_IP fluentnao bash
 
 up: ## up
 	@if [ -z "$$NAO_IP" ]; then \
@@ -30,4 +30,4 @@ up: ## up
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker-compose run -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap.sh"
+	docker compose run -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap.sh"
