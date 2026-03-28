@@ -108,11 +108,11 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if result != 0:
                 raise Exception('failed to push audio to NAO')
 
-            # play on NAO
-            nao.env.audioPlayer.playFile(remote_path)
-
-            # clean up from NAO after playback
-            _remove_from_nao(remote_path)
+            # play on NAO, always clean up
+            try:
+                nao.env.audioPlayer.playFile(remote_path)
+            finally:
+                _remove_from_nao(remote_path)
 
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
@@ -126,7 +126,7 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"ok": False, "error": str(e)}))
 
     def _handle_audio_play(self):
-        filename = self.path.replace('/audio/play/', '')
+        filename = os.path.basename(self.path.replace('/audio/play/', ''))
         nao = self.nao_ref
 
         try:
@@ -143,8 +143,10 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             if result != 0:
                 raise Exception('failed to push audio to NAO')
 
-            nao.env.audioPlayer.playFile(remote_path)
-            _remove_from_nao(remote_path)
+            try:
+                nao.env.audioPlayer.playFile(remote_path)
+            finally:
+                _remove_from_nao(remote_path)
 
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')

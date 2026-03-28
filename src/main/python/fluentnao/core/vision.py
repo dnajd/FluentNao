@@ -271,7 +271,7 @@ class Vision():
             return None
         try:
             return self.nao.env.memory.getData("DarknessDetection/DarknessDetected")
-        except:
+        except Exception:
             return None
 
     def _darkness_event_cb(self, dataName, value, message):
