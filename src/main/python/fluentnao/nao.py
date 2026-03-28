@@ -347,6 +347,22 @@ class Nao(object):
         self.log('unsubscribe_all: done')
         return self
 
+    def emit(self, event, value=None):
+        """Push a custom event to the long poll queue.
+
+        Args:
+            event: event name string (can be anything)
+            value: any value to include with the event
+
+        Examples:
+            nao.emit('greeting_complete', 'Don')
+            nao.emit('task_done')
+            nao.emit('object_found', {'name': 'mug', 'distance': 0.5})
+        """
+        import server
+        server._push_event(event, value)
+        return self
+
     def _event_dispatch(self, event, value):
         if hasattr(self, '_event_callback') and self._event_callback:
             self._event_callback(event, value)
