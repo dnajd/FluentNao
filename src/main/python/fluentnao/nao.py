@@ -363,7 +363,7 @@ class Nao(object):
         server._push_event(event, value)
         return self
 
-    def ask(self, message, answers, confidence=0.3):
+    def ask(self, message, answers, confidence=0.15):
         """Ask a question and wait for one of the expected answers.
 
         NAO speaks the message, enables speech recognition for the given

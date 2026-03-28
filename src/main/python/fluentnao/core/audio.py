@@ -139,6 +139,41 @@ class Audio():
     # volume & device control
     ###################################
 
+    def set_mic_sensitivity(self, sensitivity=0.5):
+        """Set speech recognition mic sensitivity.
+
+        Args:
+            sensitivity: 0.0 (low) to 1.0 (high). Higher picks up
+                quieter speech but also more background noise.
+                Default 0.5. Try 0.8-0.9 for noisy environments.
+        """
+        if not self.speech_recog:
+            self.log('audio.set_mic_sensitivity: speech recog not available')
+            return self
+        self.speech_recog.setParameter('Sensitivity', sensitivity)
+        self.log('audio.set_mic_sensitivity: {}'.format(sensitivity))
+        return self
+
+    def mic_energy(self):
+        """Return mic energy levels for all 4 microphones.
+
+        Returns:
+            dict with front/left/right/rear energy values, or None.
+            Automatically enables energy computation if needed.
+        """
+        if not self.device:
+            return None
+        try:
+            self.device.enableEnergyComputation()
+            return {
+                'front': self.device.getFrontMicEnergy(),
+                'left': self.device.getLeftMicEnergy(),
+                'right': self.device.getRightMicEnergy(),
+                'rear': self.device.getRearMicEnergy(),
+            }
+        except Exception:
+            return None
+
     def set_volume(self, volume):
         """Set master output volume (0-100)."""
         if not self.device:
