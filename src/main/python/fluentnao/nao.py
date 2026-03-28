@@ -407,6 +407,7 @@ class Nao(object):
         return self
 
     def shutdown(self):
+        self.abilities.stop_observing()
         self.unsubscribe_all()
         self.camera.stop_tracking()
         self.camera.stop_recording()

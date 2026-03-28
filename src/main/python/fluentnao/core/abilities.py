@@ -26,6 +26,88 @@ class Abilities():
         self.nao = nao
         self.log = nao.log
 
+    def observe(self, photo_interval=10, audio_interval=30, audio_duration=5):
+        """Start continuous background observation with photos and audio.
+
+        Runs two background threads that capture photos and audio at
+        regular intervals while NAO does other things. Emits events
+        for each capture so Claude Code can process them.
+
+        Args:
+            photo_interval: seconds between photo captures (default 10)
+            audio_interval: seconds between audio recordings (default 30)
+            audio_duration: length of each audio recording (default 5)
+
+        Emits 'observe_photo' with {path, index, timestamp} for each photo.
+        Emits 'observe_audio' with {path, index, timestamp} for each recording.
+
+        Call stop_observing() to stop.
+
+        Examples:
+            nao.abilities.observe()                   # default intervals
+            nao.abilities.observe(5, 20, 3)           # photos every 5s, audio every 20s for 3s
+            nao.abilities.observe(photo_interval=3)   # fast photos, default audio
+        """
+        self._observing = True
+        self._observe_photo_count = 0
+        self._observe_audio_count = 0
+
+        def photo_loop():
+            while self._observing:
+                try:
+                    name = 'observe_photo_{}'.format(self._observe_photo_count)
+                    path = self.nao.camera.photo(name)
+                    if path:
+                        self.nao.emit('observe_photo', {
+                            'path': path,
+                            'index': self._observe_photo_count,
+                            'timestamp': time.time(),
+                        })
+                        self._observe_photo_count += 1
+                except Exception:
+                    pass
+                time.sleep(photo_interval)
+
+        def audio_loop():
+            while self._observing:
+                try:
+                    name = 'observe_audio_{}'.format(self._observe_audio_count)
+                    self.nao.audio.start_recording(name, channels=[0, 0, 1, 0])
+                    time.sleep(audio_duration)
+                    path = self.nao.audio.stop_recording()
+                    if path:
+                        self.nao.emit('observe_audio', {
+                            'path': path,
+                            'index': self._observe_audio_count,
+                            'timestamp': time.time(),
+                        })
+                        self._observe_audio_count += 1
+                except Exception:
+                    pass
+                time.sleep(audio_interval - audio_duration)
+
+        pt = threading.Thread(target=photo_loop)
+        pt.daemon = True
+        pt.start()
+
+        at = threading.Thread(target=audio_loop)
+        at.daemon = True
+        at.start()
+
+        self._observe_threads = [pt, at]
+        self.log('observe: started (photos every {}s, audio every {}s for {}s)'.format(
+            photo_interval, audio_interval, audio_duration))
+        return self.nao
+
+    def stop_observing(self):
+        """Stop continuous background observation."""
+        self._observing = False
+        self.log('observe: stopped after {} photos, {} audio clips'.format(
+            getattr(self, '_observe_photo_count', 0),
+            getattr(self, '_observe_audio_count', 0),
+        ))
+        return self.nao
+
     def ask(self, message, answers, confidence=0.15):
         """Ask a question and wait for one of the expected answers.
 
