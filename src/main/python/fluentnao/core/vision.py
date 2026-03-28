@@ -126,7 +126,7 @@ class Vision():
             return self
         self._on_ball_callback = callback
         self.ball_detect.subscribe("fluentnao_ball")
-        memory.subscribeToEvent('redBallDetected', self._ball_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.redBallDetected, self._ball_event_cb)
         self.log('vision.on_ball: subscribed')
         return self
 
@@ -134,7 +134,7 @@ class Vision():
         """Unsubscribe from ball detection events."""
         if not self.ball_detect:
             return self
-        memory.unsubscribeToEvent('redBallDetected')
+        memory.unsubscribeToEvent(self.nao.events.vision.redBallDetected)
         self.ball_detect.unsubscribe("fluentnao_ball")
         self._on_ball_callback = None
         self.log('vision.stop_on_ball: unsubscribed')
@@ -238,7 +238,7 @@ class Vision():
             return self
         self._on_object_callback = callback
         self.vision_recog.subscribe("fluentnao_vision")
-        memory.subscribeToEvent('PictureDetected', self._object_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.PictureDetected, self._object_event_cb)
         self.log('vision.on_object: subscribed')
         return self
 
@@ -246,7 +246,7 @@ class Vision():
         """Unsubscribe from object detection events."""
         if not self.vision_recog:
             return self
-        memory.unsubscribeToEvent('PictureDetected')
+        memory.unsubscribeToEvent(self.nao.events.vision.PictureDetected)
         self.vision_recog.unsubscribe("fluentnao_vision")
         self._on_object_callback = None
         self.log('vision.stop_on_object: unsubscribed')
@@ -270,7 +270,7 @@ class Vision():
             return self
         self._on_movement_callback = callback
         self.movement_detect.subscribe("fluentnao_movement")
-        memory.subscribeToEvent('MovementDetection/MovementDetected', self._movement_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.MovementDetected, self._movement_event_cb)
         self.log('vision.on_movement: subscribed')
         return self
 
@@ -278,7 +278,7 @@ class Vision():
         """Unsubscribe from movement detection events."""
         if not self.movement_detect:
             return self
-        memory.unsubscribeToEvent('MovementDetection/MovementDetected')
+        memory.unsubscribeToEvent(self.nao.events.vision.MovementDetected)
         self.movement_detect.unsubscribe("fluentnao_movement")
         self._on_movement_callback = None
         self.log('vision.stop_on_movement: unsubscribed')
@@ -302,7 +302,7 @@ class Vision():
             return self
         self._on_darkness_callback = callback
         self.darkness_detect.subscribe("fluentnao_darkness")
-        memory.subscribeToEvent('DarknessDetection/DarknessDetected', self._darkness_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.DarknessDetected, self._darkness_event_cb)
         self.log('vision.on_darkness: subscribed')
         return self
 
@@ -310,7 +310,7 @@ class Vision():
         """Unsubscribe from darkness detection events."""
         if not self.darkness_detect:
             return self
-        memory.unsubscribeToEvent('DarknessDetection/DarknessDetected')
+        memory.unsubscribeToEvent(self.nao.events.vision.DarknessDetected)
         self.darkness_detect.unsubscribe("fluentnao_darkness")
         self._on_darkness_callback = None
         self.log('vision.stop_on_darkness: unsubscribed')
@@ -321,7 +321,7 @@ class Vision():
         if not self.darkness_detect:
             return None
         try:
-            return self.nao.env.memory.getData("DarknessDetection/DarknessDetected")
+            return self.nao.env.memory.getData(self.nao.events.vision.DarknessDetected)
         except Exception:
             return None
 

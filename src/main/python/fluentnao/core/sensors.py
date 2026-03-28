@@ -37,21 +37,22 @@ class Sensors():
         - All methods return self where possible for fluent chaining.
     """
 
-    # touch event names
-    HEAD_FRONT = 'FrontTactilTouched'
-    HEAD_MIDDLE = 'MiddleTactilTouched'
-    HEAD_REAR = 'RearTactilTouched'
-    BUMPER_RIGHT = 'RightBumperPressed'
-    BUMPER_LEFT = 'LeftBumperPressed'
-    CHEST_BUTTON = 'ChestButtonPressed'
-    HAND_RIGHT = 'HandRightBackTouched'
-    HAND_LEFT = 'HandLeftBackTouched'
-
     def __init__(self, nao):
         self.nao = nao
         self.log = nao.log
         self.body_temp = self._try_proxy("ALBodyTemperature")
         self._touch_callbacks = {}
+
+        # touch event names from events module
+        e = nao.events.touch
+        self.HEAD_FRONT = e.FrontTactilTouched
+        self.HEAD_MIDDLE = e.MiddleTactilTouched
+        self.HEAD_REAR = e.RearTactilTouched
+        self.BUMPER_RIGHT = e.RightBumperPressed
+        self.BUMPER_LEFT = e.LeftBumperPressed
+        self.CHEST_BUTTON = e.ChestButtonPressed
+        self.HAND_RIGHT = e.HandRightBackTouched
+        self.HAND_LEFT = e.HandLeftBackTouched
 
     def _try_proxy(self, name):
         try:
@@ -202,12 +203,12 @@ class Sensors():
 
     def on_hot_joint(self, callback):
         """Subscribe to HotJointDetected event."""
-        memory.subscribeToEvent('HotJointDetected', lambda dn, v, m: callback(v))
+        memory.subscribeToEvent(self.nao.events.sensors.HotJointDetected, lambda dn, v, m: callback(v))
         self.log('sensors.on_hot_joint: subscribed')
         return self
 
     def stop_on_hot_joint(self):
         """Unsubscribe from HotJointDetected event."""
-        memory.unsubscribeToEvent('HotJointDetected')
+        memory.unsubscribeToEvent(self.nao.events.sensors.HotJointDetected)
         self.log('sensors.stop_on_hot_joint: unsubscribed')
         return self

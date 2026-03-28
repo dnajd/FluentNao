@@ -248,7 +248,7 @@ class Audio():
             for _ in range(timeout * 2):
                 time.sleep(0.5)
                 try:
-                    value = self.nao.env.memory.getData("ALAudioSourceLocalization/SoundLocated")
+                    value = self.nao.env.memory.getData(self.nao.events.audio.SoundLocated)
                     if value:
                         return value
                 except Exception:
@@ -271,7 +271,7 @@ class Audio():
         self.localisation.setParameter("Sensitivity", sensitivity)
         self.localisation.subscribe("fluentnao_sound_track")
         memory.subscribeToMicroEvent(
-            'ALAudioSourceLocalization/SoundLocated',
+            self.nao.events.audio.SoundLocated,
             self._sound_event_cb,
             ''
         )
@@ -283,7 +283,7 @@ class Audio():
         if not self._sound_tracking:
             return self
 
-        memory.unsubscribeToMicroEvent('ALAudioSourceLocalization/SoundLocated')
+        memory.unsubscribeToMicroEvent(self.nao.events.audio.SoundLocated)
         self.localisation.unsubscribe("fluentnao_sound_track")
         self._sound_tracking = False
         self._sound_callback = None
@@ -309,7 +309,7 @@ class Audio():
         self._word_callback = callback
         self.speech_recog.setLanguage(language)
         self.speech_recog.setVocabulary(words, word_spotting)
-        memory.subscribeToEvent('WordRecognized', self._word_event_cb)
+        memory.subscribeToEvent(self.nao.events.audio.WordRecognized, self._word_event_cb)
         self._listening = True
         self.log('audio.listen_for: listening for {}'.format(words))
         return self
@@ -319,7 +319,7 @@ class Audio():
         if not self._listening:
             return self
 
-        memory.unsubscribeToEvent('WordRecognized')
+        memory.unsubscribeToEvent(self.nao.events.audio.WordRecognized)
         self._listening = False
         self._word_callback = None
         self.log('audio.stop_listening: stopped')

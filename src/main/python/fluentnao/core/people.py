@@ -87,7 +87,7 @@ class People():
             return self
         self._on_person_arrived = callback
         self.perception.subscribe("fluentnao_people")
-        memory.subscribeToEvent('PeoplePerception/JustArrived', self._arrived_cb)
+        memory.subscribeToEvent(self.nao.events.people.JustArrived, self._arrived_cb)
         self.log('people.on_person_arrived: subscribed')
         return self
 
@@ -95,7 +95,7 @@ class People():
         """Unsubscribe from person-arrived events."""
         if not self.perception:
             return self
-        memory.unsubscribeToEvent('PeoplePerception/JustArrived')
+        memory.unsubscribeToEvent(self.nao.events.people.JustArrived)
         self.perception.unsubscribe("fluentnao_people")
         self._on_person_arrived = None
         self.log('people.stop_on_person_arrived: unsubscribed')
@@ -112,7 +112,7 @@ class People():
             return self
         self._on_person_left = callback
         self.perception.subscribe("fluentnao_people_left")
-        memory.subscribeToEvent('PeoplePerception/JustLeft', self._left_cb)
+        memory.subscribeToEvent(self.nao.events.people.JustLeft, self._left_cb)
         self.log('people.on_person_left: subscribed')
         return self
 
@@ -120,7 +120,7 @@ class People():
         """Unsubscribe from person-left events."""
         if not self.perception:
             return self
-        memory.unsubscribeToEvent('PeoplePerception/JustLeft')
+        memory.unsubscribeToEvent(self.nao.events.people.JustLeft)
         self.perception.unsubscribe("fluentnao_people_left")
         self._on_person_left = None
         self.log('people.stop_on_person_left: unsubscribed')
@@ -151,7 +151,7 @@ class People():
             return self
         self._on_zone1 = callback
         self.engagement.subscribe("fluentnao_zone1")
-        memory.subscribeToEvent('EngagementZones/PersonEnteredZone1', self._zone1_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonEnteredZone1, self._zone1_cb)
         self.log('people.on_zone1: subscribed')
         return self
 
@@ -159,7 +159,7 @@ class People():
         """Unsubscribe from zone 1 entry events."""
         if not self.engagement:
             return self
-        memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone1')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonEnteredZone1)
         self.engagement.unsubscribe("fluentnao_zone1")
         self._on_zone1 = None
         return self
@@ -175,7 +175,7 @@ class People():
             return self
         self._on_zone2 = callback
         self.engagement.subscribe("fluentnao_zone2")
-        memory.subscribeToEvent('EngagementZones/PersonEnteredZone2', self._zone2_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonEnteredZone2, self._zone2_cb)
         self.log('people.on_zone2: subscribed')
         return self
 
@@ -183,7 +183,7 @@ class People():
         """Unsubscribe from zone 2 entry events."""
         if not self.engagement:
             return self
-        memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone2')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonEnteredZone2)
         self.engagement.unsubscribe("fluentnao_zone2")
         self._on_zone2 = None
         return self
@@ -199,7 +199,7 @@ class People():
             return self
         self._on_zone3 = callback
         self.engagement.subscribe("fluentnao_zone3")
-        memory.subscribeToEvent('EngagementZones/PersonEnteredZone3', self._zone3_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonEnteredZone3, self._zone3_cb)
         self.log('people.on_zone3: subscribed')
         return self
 
@@ -207,7 +207,7 @@ class People():
         """Unsubscribe from zone 3 entry events."""
         if not self.engagement:
             return self
-        memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone3')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonEnteredZone3)
         self.engagement.unsubscribe("fluentnao_zone3")
         self._on_zone3 = None
         return self
@@ -223,7 +223,7 @@ class People():
             return self
         self._on_approached = callback
         self.engagement.subscribe("fluentnao_approached")
-        memory.subscribeToEvent('EngagementZones/PersonApproached', self._approached_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonApproached, self._approached_cb)
         self.log('people.on_approached: subscribed')
         return self
 
@@ -231,7 +231,7 @@ class People():
         """Unsubscribe from person-approached events."""
         if not self.engagement:
             return self
-        memory.unsubscribeToEvent('EngagementZones/PersonApproached')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonApproached)
         self.engagement.unsubscribe("fluentnao_approached")
         self._on_approached = None
         return self
@@ -247,7 +247,7 @@ class People():
             return self
         self._on_moved_away = callback
         self.engagement.subscribe("fluentnao_moved_away")
-        memory.subscribeToEvent('EngagementZones/PersonMovedAway', self._moved_away_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonMovedAway, self._moved_away_cb)
         self.log('people.on_moved_away: subscribed')
         return self
 
@@ -255,7 +255,7 @@ class People():
         """Unsubscribe from person-moved-away events."""
         if not self.engagement:
             return self
-        memory.unsubscribeToEvent('EngagementZones/PersonMovedAway')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonMovedAway)
         self.engagement.unsubscribe("fluentnao_moved_away")
         self._on_moved_away = None
         return self
@@ -275,7 +275,7 @@ class People():
             return self
         self._on_looking = callback
         self.gaze.subscribe("fluentnao_gaze")
-        memory.subscribeToEvent('GazeAnalysis/PersonStartsLookingAtRobot', self._looking_cb)
+        memory.subscribeToEvent(self.nao.events.people.StartedLooking, self._looking_cb)
         self.log('people.on_looking: subscribed')
         return self
 
@@ -283,7 +283,7 @@ class People():
         """Unsubscribe from person-looking events."""
         if not self.gaze:
             return self
-        memory.unsubscribeToEvent('GazeAnalysis/PersonStartsLookingAtRobot')
+        memory.unsubscribeToEvent(self.nao.events.people.StartedLooking)
         self.gaze.unsubscribe("fluentnao_gaze")
         self._on_looking = None
         return self
@@ -299,7 +299,7 @@ class People():
             return self
         self._on_not_looking = callback
         self.gaze.subscribe("fluentnao_gaze_stop")
-        memory.subscribeToEvent('GazeAnalysis/PersonStopsLookingAtRobot', self._not_looking_cb)
+        memory.subscribeToEvent(self.nao.events.people.StoppedLooking, self._not_looking_cb)
         self.log('people.on_not_looking: subscribed')
         return self
 
@@ -307,7 +307,7 @@ class People():
         """Unsubscribe from person-not-looking events."""
         if not self.gaze:
             return self
-        memory.unsubscribeToEvent('GazeAnalysis/PersonStopsLookingAtRobot')
+        memory.unsubscribeToEvent(self.nao.events.people.StoppedLooking)
         self.gaze.unsubscribe("fluentnao_gaze_stop")
         self._on_not_looking = None
         return self
@@ -327,7 +327,7 @@ class People():
             return self
         self._on_sat_down = callback
         self.sitting.subscribe("fluentnao_sitting")
-        memory.subscribeToEvent('SittingPeopleDetection/PersonSittingDown', self._sat_down_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonSatDown, self._sat_down_cb)
         self.log('people.on_sat_down: subscribed')
         return self
 
@@ -335,7 +335,7 @@ class People():
         """Unsubscribe from person-sitting-down events."""
         if not self.sitting:
             return self
-        memory.unsubscribeToEvent('SittingPeopleDetection/PersonSittingDown')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonSatDown)
         self.sitting.unsubscribe("fluentnao_sitting")
         self._on_sat_down = None
         return self
@@ -351,7 +351,7 @@ class People():
             return self
         self._on_stood_up = callback
         self.sitting.subscribe("fluentnao_stood_up")
-        memory.subscribeToEvent('SittingPeopleDetection/PersonStandingUp', self._stood_up_cb)
+        memory.subscribeToEvent(self.nao.events.people.PersonStoodUp, self._stood_up_cb)
         self.log('people.on_stood_up: subscribed')
         return self
 
@@ -359,7 +359,7 @@ class People():
         """Unsubscribe from person-standing-up events."""
         if not self.sitting:
             return self
-        memory.unsubscribeToEvent('SittingPeopleDetection/PersonStandingUp')
+        memory.unsubscribeToEvent(self.nao.events.people.PersonStoodUp)
         self.sitting.unsubscribe("fluentnao_stood_up")
         self._on_stood_up = None
         return self
