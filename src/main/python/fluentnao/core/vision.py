@@ -37,7 +37,7 @@ class Vision():
         nao.vision.stop_tracking_ball()
         nao.vision.on_ball(my_callback)
         nao.vision.learn_object('coffee_mug')
-        nao.vision.learn_all('/object_detection')
+        nao.vision.learn_all('/data/object_detection')
     """
 
     def __init__(self, nao):
@@ -205,7 +205,7 @@ class Vision():
         self._push_and_learn(filepath, name)
         return self
 
-    def learn_all(self, folder='/object_detection'):
+    def learn_all(self, folder='/data/object_detection'):
         """Learn all image files in a folder as named objects."""
         if not self.vision_recog:
             self.log('vision.learn_all: not available')

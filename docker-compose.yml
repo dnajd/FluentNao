@@ -9,8 +9,8 @@ services:
       - NAO_IP=${NAO_IP}
     volumes:
       - .:/fluentnao
-      - ./photos:/photos
-      - ./video:/video
-      - ./audio:/audio
-      - ./object_detection:/object_detection
+      - ./data/photos:/data/photos
+      - ./data/video:/data/video
+      - ./data/audio:/data/audio
+      - ./data/object_detection:/data/object_detection
       - ~/.ssh:/root/.ssh:ro

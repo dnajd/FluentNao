@@ -20,7 +20,7 @@ class Audio():
     transferred to the local Docker volume via SCP on stop_recording().
 
     Storage Directory:
-        /audio -- default local directory for audio files (Docker-mounted volume)
+        /data/audio -- default local directory for audio files (Docker-mounted volume)
 
     Channel Configuration Constants:
         Audio.MONO_LEFT    = [1, 0, 0, 0]
@@ -55,7 +55,7 @@ class Audio():
     # temp path on NAO for recordings
     NAO_RECORD_DIR = '/home/nao'
 
-    def __init__(self, nao, audio_dir='/audio'):
+    def __init__(self, nao, audio_dir='/data/audio'):
         self.nao = nao
         self.joints = nao.joints
         self.chains = nao.chains

@@ -78,10 +78,10 @@ curl -s http://localhost:5050/audio
 
 | Host Path | Container Path | Purpose |
 |-----------|---------------|---------|
-| `./photos` | `/photos` | Photo captures (PPM format) |
-| `./video` | `/video` | Video frames and MP4 output |
-| `./audio` | `/audio` | Audio recordings (WAV) |
-| `./object_detection` | `/object_detection` | Images for object recognition learning |
+| `./data/photos` | `/data/photos` | Photo captures (PPM format) |
+| `./data/video` | `/data/video` | Video frames and MP4 output |
+| `./data/audio` | `/data/audio` | Audio recordings (WAV) |
+| `./data/object_detection` | `/data/object_detection` | Images for object recognition learning |
 | `~/.ssh` | `/root/.ssh` (read-only) | SSH keys for NAO file transfer |
 
 ## API Reference

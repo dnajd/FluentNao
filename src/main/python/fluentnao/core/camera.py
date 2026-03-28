@@ -17,8 +17,8 @@ class Camera():
     Frames can be stitched into MP4 video using avconv.
 
     Storage Directories:
-        /photos -- default directory for single photo captures (PPM format)
-        /video  -- default directory for video frame bursts and final MP4 output
+        /data/photos -- default directory for single photo captures (PPM format)
+        /data/video  -- default directory for video frame bursts and final MP4 output
 
     Resolution Constants:
         Camera.TOP (0), Camera.BOTTOM (1) -- camera selection
@@ -59,7 +59,7 @@ class Camera():
     RGB = 11
     YUV422 = 9
 
-    def __init__(self, nao, photo_dir='/photos', video_dir='/video'):
+    def __init__(self, nao, photo_dir='/data/photos', video_dir='/data/video'):
         self.nao = nao
         self.log = nao.log
         self.photo_dir = photo_dir

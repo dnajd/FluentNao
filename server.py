@@ -5,7 +5,7 @@ import threading
 
 from fluentnao.core.ssh import ssh, scp_to_nao
 
-AUDIO_DIR = '/audio'
+AUDIO_DIR = '/data/audio'
 NAO_AUDIO_DIR = '/home/nao/audio_playback'
 
 
