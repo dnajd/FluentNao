@@ -1,34 +1,20 @@
 import BaseHTTPServer
 import json
 import os
-import subprocess
 import threading
+
+from fluentnao.core.ssh import ssh, scp_to_nao
 
 AUDIO_DIR = '/audio'
 NAO_AUDIO_DIR = '/home/nao/audio_playback'
-NAO_USER = 'nao'
-SSH_OPTS = '-F /dev/null -i /root/.ssh/id_nao -o StrictHostKeyChecking=no -o BatchMode=yes'
 
-def _nao_ip():
-    return os.environ.get('NAO_IP', '192.168.68.96')
-
-_CLEAN_ENV = 'LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu'
-
-def _ssh(cmd):
-    ip = _nao_ip()
-    return subprocess.call(
-        '{} ssh {} {}@{} {}'.format(_CLEAN_ENV, SSH_OPTS, NAO_USER, ip, cmd),
-        shell=True)
 
 def _push_to_nao(local_path, remote_path):
-    ip = _nao_ip()
-    _ssh('mkdir -p {}'.format(NAO_AUDIO_DIR))
-    return subprocess.call(
-        '{} scp {} {} {}@{}:{}'.format(_CLEAN_ENV, SSH_OPTS, local_path, NAO_USER, ip, remote_path),
-        shell=True)
+    ssh('mkdir -p {}'.format(NAO_AUDIO_DIR))
+    return scp_to_nao(local_path, remote_path)
 
 def _remove_from_nao(remote_path):
-    _ssh('rm -f {}'.format(remote_path))
+    ssh('rm -f {}'.format(remote_path))
 
 class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     nao_ref = None

@@ -12,4 +12,5 @@ services:
       - ./photos:/photos
       - ./video:/video
       - ./audio:/audio
+      - ./object_detection:/object_detection
       - ~/.ssh:/root/.ssh:ro

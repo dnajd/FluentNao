@@ -1,10 +1,10 @@
 import glob
 import os
-import subprocess
 import time
 import threading
 
 import naoutil.memory as memory
+from fluentnao.core.ssh import ssh, scp_to_nao, scp_from_nao, nao_ip
 
 
 class Audio():
@@ -18,8 +18,6 @@ class Audio():
 
     # temp path on NAO for recordings
     NAO_RECORD_DIR = '/home/nao'
-    NAO_USER = 'nao'
-    SSH_OPTS = '-F /dev/null -i /root/.ssh/id_nao -o StrictHostKeyChecking=no -o BatchMode=yes'
 
     def __init__(self, nao, audio_dir='/audio'):
         self.nao = nao
@@ -76,7 +74,6 @@ class Audio():
     NAO_PLAYBACK_DIR = '/home/nao/audio_playback'
 
     def play_file(self, filename):
-        nao_ip = os.environ.get('NAO_IP', '192.168.68.96')
         local_path = '{}/{}'.format(self.audio_dir, filename)
 
         if not os.path.exists(local_path):
@@ -84,14 +81,14 @@ class Audio():
             return self
 
         # ensure remote dir exists
-        self._ssh(nao_ip, 'mkdir -p {}'.format(self.NAO_PLAYBACK_DIR))
+        ssh('mkdir -p {}'.format(self.NAO_PLAYBACK_DIR))
 
         remote_path = '{}/{}'.format(self.NAO_PLAYBACK_DIR, filename)
 
         # push to NAO, play, clean up
-        self._scp_to_nao(nao_ip, local_path, remote_path)
+        scp_to_nao(local_path, remote_path)
         self.nao.env.audioPlayer.playFile(remote_path)
-        self._ssh(nao_ip, 'rm -f {}'.format(remote_path))
+        ssh('rm -f {}'.format(remote_path))
 
         self.log('audio.play_file: played and cleaned up {}'.format(filename))
         return self
@@ -153,33 +150,14 @@ class Audio():
         )
         return local_path
 
-    # clean LD_LIBRARY_PATH to avoid pynaoqi libcrypto conflict with ssh
-    _CLEAN_ENV = 'LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu'
-
-    def _ssh(self, nao_ip, cmd):
-        return subprocess.call(
-            '{} ssh {} {}@{} {}'.format(self._CLEAN_ENV, self.SSH_OPTS, self.NAO_USER, nao_ip, cmd),
-            shell=True)
-
-    def _scp_to_nao(self, nao_ip, local_path, remote_path):
-        return subprocess.call(
-            '{} scp {} {} {}@{}:{}'.format(self._CLEAN_ENV, self.SSH_OPTS, local_path, self.NAO_USER, nao_ip, remote_path),
-            shell=True)
-
-    def _scp_from_nao(self, nao_ip, remote_path, local_path):
-        return subprocess.call(
-            '{} scp {} {}@{}:{} {}'.format(self._CLEAN_ENV, self.SSH_OPTS, self.NAO_USER, nao_ip, remote_path, local_path),
-            shell=True)
-
     def _pull_and_cleanup(self, nao_path, local_filename):
-        nao_ip = os.environ.get('NAO_IP', '192.168.68.96')
         local_path = '{}/{}'.format(self.audio_dir, local_filename)
 
-        result = self._scp_from_nao(nao_ip, nao_path, local_path)
+        result = scp_from_nao(nao_path, local_path)
 
         if result == 0:
             self.log('audio.pull: copied {} to {}'.format(nao_path, local_path))
-            self._ssh(nao_ip, 'rm -f {}'.format(nao_path))
+            ssh('rm -f {}'.format(nao_path))
             self.log('audio.pull: cleaned up {}'.format(nao_path))
         else:
             self.log('audio.pull: failed to copy {} (rc={})'.format(nao_path, result))
