@@ -85,10 +85,12 @@ class Audio():
 
         remote_path = '{}/{}'.format(self.NAO_PLAYBACK_DIR, filename)
 
-        # push to NAO, play, clean up
+        # push to NAO, play, always clean up
         scp_to_nao(local_path, remote_path)
-        self.nao.env.audioPlayer.playFile(remote_path)
-        ssh('rm -f {}'.format(remote_path))
+        try:
+            self.nao.env.audioPlayer.playFile(remote_path)
+        finally:
+            ssh('rm -f {}'.format(remote_path))
 
         self.log('audio.play_file: played and cleaned up {}'.format(filename))
         return self
@@ -98,17 +100,26 @@ class Audio():
     ###################################
 
     def set_volume(self, volume):
+        if not self.device:
+            self.log('audio.set_volume: device not available')
+            return self
         self.device.setOutputVolume(volume)
         return self
 
     def get_volume(self):
+        if not self.device:
+            return None
         return self.device.getOutputVolume()
 
     def mute(self):
+        if not self.device:
+            return self
         self.device.muteAudioOut(True)
         return self
 
     def unmute(self):
+        if not self.device:
+            return self
         self.device.muteAudioOut(False)
         return self
 
@@ -119,6 +130,9 @@ class Audio():
     def start_recording(self, filename='recording', channels=None, sample_rate=16000, audio_format='wav'):
         if self._recording:
             self.log('audio.start_recording: already recording')
+            return self
+        if not self.recorder:
+            self.log('audio.start_recording: recorder not available')
             return self
 
         if channels is None:
@@ -135,7 +149,7 @@ class Audio():
         return self
 
     def stop_recording(self):
-        if not self._recording:
+        if not self._recording or not self.recorder:
             self.log('audio.stop_recording: not recording')
             return None
 
@@ -182,7 +196,7 @@ class Audio():
                     value = self.nao.env.memory.getData("ALAudioSourceLocalization/SoundLocated")
                     if value:
                         return value
-                except:
+                except Exception:
                     pass
         finally:
             self.localisation.unsubscribe("fluentnao_sound_loc")
@@ -191,6 +205,9 @@ class Audio():
     def start_sound_tracking(self, callback, sensitivity=0.5):
         if self._sound_tracking:
             self.log('audio.start_sound_tracking: already tracking')
+            return self
+        if not self.localisation:
+            self.log('audio.start_sound_tracking: localisation not available')
             return self
 
         self._sound_callback = callback
@@ -227,6 +244,9 @@ class Audio():
     def listen_for(self, words, callback, language='English', word_spotting=False):
         if self._listening:
             self.stop_listening()
+        if not self.speech_recog:
+            self.log('audio.listen_for: speech recognition not available')
+            return self
 
         self._word_callback = callback
         self.speech_recog.setLanguage(language)
