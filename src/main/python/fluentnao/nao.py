@@ -277,7 +277,80 @@ class Nao(object):
         self.log('hot_reload: complete')
         return self
 
+    def subscribe(self, event_names, callback):
+        """Subscribe to a list of events, unsubscribing any previous subscriptions first.
+
+        Clears all existing event subscriptions managed by this method,
+        then subscribes to only the events in event_names.
+
+        Args:
+            event_names: list of event name strings, or a category set
+                (e.g. nao.events.touch, nao.events.vision, nao.events.all())
+            callback: function(event_name, value) called when any event fires
+
+        Returns:
+            self
+
+        Examples:
+            # subscribe to all touch events
+            nao.subscribe(nao.events.touch, my_callback)
+
+            # subscribe to specific events
+            nao.subscribe([
+                nao.events.touch.FrontTactilTouched,
+                nao.events.vision.FaceDetected,
+                nao.events.people.PersonEnteredZone1,
+            ], my_callback)
+
+            # subscribe to everything
+            nao.subscribe(nao.events.all(), my_callback)
+
+            # change to only vision events (auto-unsubscribes previous)
+            nao.subscribe(nao.events.vision, my_callback)
+        """
+        import naoutil.memory as memory
+
+        # unsubscribe previous
+        if not hasattr(self, '_subscribed_events'):
+            self._subscribed_events = []
+
+        for event in self._subscribed_events:
+            try:
+                memory.unsubscribeToEvent(event)
+            except Exception:
+                pass
+
+        self._subscribed_events = list(event_names)
+        self._event_callback = callback
+
+        # subscribe new
+        for event in self._subscribed_events:
+            memory.subscribeToEvent(event, lambda dn, v, m, e=event: self._event_dispatch(e, v))
+
+        self.log('subscribe: {} events'.format(len(self._subscribed_events)))
+        return self
+
+    def unsubscribe_all(self):
+        """Unsubscribe from all events registered via subscribe()."""
+        import naoutil.memory as memory
+
+        for event in getattr(self, '_subscribed_events', []):
+            try:
+                memory.unsubscribeToEvent(event)
+            except Exception:
+                pass
+
+        self._subscribed_events = []
+        self._event_callback = None
+        self.log('unsubscribe_all: done')
+        return self
+
+    def _event_dispatch(self, event, value):
+        if hasattr(self, '_event_callback') and self._event_callback:
+            self._event_callback(event, value)
+
     def shutdown(self):
+        self.unsubscribe_all()
         self.camera.stop_tracking()
         self.camera.stop_recording()
         self.vision.stop_on_ball()
