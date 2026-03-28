@@ -177,6 +177,80 @@ class Abilities():
         self.log('hear: recorded {}s to {}'.format(duration, path))
         return self.nao
 
+    def explore(self, photo_count=7, sonar=True):
+        """Scan surroundings and emit a full environment report.
+
+        NAO sweeps its head across positions, captures a photo at each,
+        reads sonar distances, and reports its current position. Emits
+        everything Claude Code needs to plan a path.
+
+        Args:
+            photo_count: number of photos to take (evenly spaced across
+                ~120 degree sweep). Default 7.
+            sonar: if True, read sonar at each position. Default True.
+
+        Emits 'explore_photo' for each photo with:
+            {index, yaw, pitch, path, sonar_left, sonar_right}
+
+        Emits 'explore_complete' with:
+            {count, photos, position, orientation}
+
+        Examples:
+            nao.abilities.explore()          # 7 photos with sonar
+            nao.abilities.explore(5, False)  # 5 photos, no sonar
+        """
+        # calculate evenly spaced yaw positions
+        sweep = 120.0
+        start = -sweep / 2
+        step = sweep / (photo_count - 1) if photo_count > 1 else 0
+        positions = [(start + i * step, 0) for i in range(photo_count)]
+
+        self.nao.head.stiff()
+        if sonar:
+            self.nao.prep_sonar()
+
+        photos = []
+        for i, (yaw, pitch) in enumerate(positions):
+            self.nao.move_with_degrees_and_duration('HeadYaw', yaw, 1.0)
+            self.nao.move_with_degrees_and_duration('HeadPitch', pitch, 1.0)
+            self.nao.go()
+            time.sleep(0.3)
+
+            path = self.nao.camera.photo('explore_{}'.format(i), resolution=2)
+
+            data = {
+                'index': i,
+                'yaw': yaw,
+                'pitch': pitch,
+                'path': path,
+            }
+
+            if sonar:
+                sonar_vals = self.nao.read_sonar()
+                data['sonar_left'] = sonar_vals[0]
+                data['sonar_right'] = sonar_vals[1]
+
+            photos.append(data)
+            self.nao.emit('explore_photo', data)
+
+        # return head to center
+        self.nao.head.forward()
+        self.nao.head.center()
+        self.nao.head.go()
+
+        # get robot position if localization is available
+        position = self.nao.navigation.position()
+        orientation = self.nao.navigation.orientation()
+
+        self.nao.emit('explore_complete', {
+            'count': len(photos),
+            'photos': photos,
+            'position': position,
+            'orientation': orientation,
+        })
+        self.log('explore: captured {} photos'.format(len(photos)))
+        return self.nao
+
     def watch(self, event_names=None, duration=30):
         """Monitor events and auto-capture a photo when any fires.
 
