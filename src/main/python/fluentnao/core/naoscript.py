@@ -55,7 +55,7 @@ class NaoScript():
                             cmd = "self.nao." + cmd
                             self.log("line " + str(line) + ": " + cmd)
                             eval(cmd)   
-        except:
-            self.log("errors occured")
+        except Exception:
+            self.log("errors occurred")
             self.nao.say("you have an error in your code on line " + str(line))
         

@@ -215,7 +215,7 @@ class Audio():
         self.localisation.setParameter("Sensitivity", sensitivity)
         self.localisation.subscribe("fluentnao_sound_track")
         memory.subscribeToMicroEvent(
-            'ALAudioSourceLocalisation/SoundLocated',
+            'ALAudioSourceLocalization/SoundLocated',
             self._sound_event_cb,
             ''
         )
@@ -226,7 +226,7 @@ class Audio():
         if not self._sound_tracking:
             return self
 
-        memory.unsubscribeToMicroEvent('ALAudioSourceLocalisation/SoundLocated')
+        memory.unsubscribeToMicroEvent('ALAudioSourceLocalization/SoundLocated')
         self.localisation.unsubscribe("fluentnao_sound_track")
         self._sound_tracking = False
         self._sound_callback = None

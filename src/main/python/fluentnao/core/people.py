@@ -64,6 +64,7 @@ class People():
         if not self.perception:
             return self
         memory.unsubscribeToEvent('PeoplePerception/JustArrived')
+        self.perception.unsubscribe("fluentnao_people")
         self._on_person_arrived = None
         self.log('people.stop_on_person_arrived: unsubscribed')
         return self
@@ -86,6 +87,7 @@ class People():
         if not self.perception:
             return self
         memory.unsubscribeToEvent('PeoplePerception/JustLeft')
+        self.perception.unsubscribe("fluentnao_people_left")
         self._on_person_left = None
         self.log('people.stop_on_person_left: unsubscribed')
         return self
@@ -121,6 +123,7 @@ class People():
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone1')
+        self.engagement.unsubscribe("fluentnao_zone1")
         self._on_zone1 = None
         return self
 
@@ -142,6 +145,7 @@ class People():
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone2')
+        self.engagement.unsubscribe("fluentnao_zone2")
         self._on_zone2 = None
         return self
 
@@ -163,6 +167,7 @@ class People():
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone3')
+        self.engagement.unsubscribe("fluentnao_zone3")
         self._on_zone3 = None
         return self
 
@@ -184,6 +189,7 @@ class People():
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonApproached')
+        self.engagement.unsubscribe("fluentnao_approached")
         self._on_approached = None
         return self
 
@@ -205,6 +211,7 @@ class People():
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonMovedAway')
+        self.engagement.unsubscribe("fluentnao_moved_away")
         self._on_moved_away = None
         return self
 
@@ -230,6 +237,7 @@ class People():
         if not self.gaze:
             return self
         memory.unsubscribeToEvent('GazeAnalysis/PersonStartsLookingAtRobot')
+        self.gaze.unsubscribe("fluentnao_gaze")
         self._on_looking = None
         return self
 
@@ -251,6 +259,7 @@ class People():
         if not self.gaze:
             return self
         memory.unsubscribeToEvent('GazeAnalysis/PersonStopsLookingAtRobot')
+        self.gaze.unsubscribe("fluentnao_gaze_stop")
         self._on_not_looking = None
         return self
 
@@ -276,6 +285,7 @@ class People():
         if not self.sitting:
             return self
         memory.unsubscribeToEvent('SittingPeopleDetection/PersonSittingDown')
+        self.sitting.unsubscribe("fluentnao_sitting")
         self._on_sat_down = None
         return self
 
@@ -297,6 +307,7 @@ class People():
         if not self.sitting:
             return self
         memory.unsubscribeToEvent('SittingPeopleDetection/PersonStandingUp')
+        self.sitting.unsubscribe("fluentnao_stood_up")
         self._on_stood_up = None
         return self
 

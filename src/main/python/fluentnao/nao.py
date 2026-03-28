@@ -49,18 +49,27 @@ class Nao(object):
             self.logger = logging.getLogger("fluentnao.nao.Nao")
 
         # facetracker
-        self.env.add_proxy("ALFaceDetection")   
-        self.face_detect = self.env.proxies["ALFaceDetection"] 
-    
+        try:
+            self.env.add_proxy("ALFaceDetection")
+            self.face_detect = self.env.proxies["ALFaceDetection"]
+        except Exception:
+            self.face_detect = None
+
         # animated speech proxy
-        self.env.add_proxy("ALAnimatedSpeech")   
-        self.animated_speech = self.env.proxies["ALAnimatedSpeech"] 
+        try:
+            self.env.add_proxy("ALAnimatedSpeech")
+            self.animated_speech = self.env.proxies["ALAnimatedSpeech"]
+        except Exception:
+            self.animated_speech = None
 
         # dialog
-        self.env.add_proxy("ALDialog")   
-        self.dialog = self.env.proxies["ALDialog"] 
-        self.dialog.setLanguage("English")
-        self.dialog.setASRConfidenceThreshold(.3)
+        try:
+            self.env.add_proxy("ALDialog")
+            self.dialog = self.env.proxies["ALDialog"]
+            self.dialog.setLanguage("English")
+            self.dialog.setASRConfidenceThreshold(.3)
+        except Exception:
+            self.dialog = None
     
         # joints
         self.joints = Joints()
@@ -97,6 +106,7 @@ class Nao(object):
         self.set_duration(1.5)
 
     def hot_reload(self):
+        import fluentnao.core.ssh
         import fluentnao.core.arms
         import fluentnao.core.elbows
         import fluentnao.core.feet
@@ -114,7 +124,9 @@ class Nao(object):
         import fluentnao.core.sensors
         import fluentnao.core.navigation
         import fluentnao.core.tracker
+        import fluentnao.core.animations
 
+        reload(fluentnao.core.ssh)
         reload(fluentnao.core.arms)
         reload(fluentnao.core.elbows)
         reload(fluentnao.core.feet)
@@ -132,6 +144,7 @@ class Nao(object):
         reload(fluentnao.core.sensors)
         reload(fluentnao.core.navigation)
         reload(fluentnao.core.tracker)
+        reload(fluentnao.core.animations)
 
         from fluentnao.core.joints import Joints
         from fluentnao.core.arms import Arms
@@ -151,6 +164,23 @@ class Nao(object):
         from fluentnao.core.navigation import Navigation
         from fluentnao.core.tracker import Tracker
         from fluentnao.core.recorder.recorder import Recorder
+
+        # refresh proxies created in __init__
+        try:
+            self.env.add_proxy("ALFaceDetection")
+            self.face_detect = self.env.proxies["ALFaceDetection"]
+        except Exception:
+            self.face_detect = None
+        try:
+            self.env.add_proxy("ALAnimatedSpeech")
+            self.animated_speech = self.env.proxies["ALAnimatedSpeech"]
+        except Exception:
+            self.animated_speech = None
+        try:
+            self.env.add_proxy("ALDialog")
+            self.dialog = self.env.proxies["ALDialog"]
+        except Exception:
+            self.dialog = None
 
         self.joints = Joints()
         self.chains = self.joints.Chains
@@ -173,6 +203,22 @@ class Nao(object):
         self.recorder = Recorder(self)
 
         self.log('hot_reload: complete')
+        return self
+
+    def shutdown(self):
+        self.camera.stop_tracking()
+        self.camera.stop_recording()
+        self.vision.stop_on_ball()
+        self.vision.stop_on_object()
+        self.vision.stop_on_movement()
+        self.vision.stop_on_darkness()
+        self.people.stop_all()
+        self.tracker.stop()
+        self.audio.stop_listening()
+        self.audio.stop_sound_tracking()
+        self.sensors.stop_all_touch()
+        self.sit()
+        self.log('shutdown: complete')
         return self
 
     def log(self, msg):
@@ -259,7 +305,8 @@ class Nao(object):
         self.animate_say(s)
 
     def animate_say(self, text):
-        self.animated_speech.say(text) 
+        if self.animated_speech:
+            self.animated_speech.say(text)
 
     ###################################
     # Autonomous behavior
@@ -378,11 +425,13 @@ class Nao(object):
         self.log("wbDisable")
         isEnabled  = False
         self.env.motion.wbEnable(isEnabled)
+        return self
 
     def whole_body_enable(self):
         self.log("wbEnable")
         isEnabled  = True
         self.env.motion.wbEnable(isEnabled)
+        return self
 
     def foot_state(self, supportLeg="Legs", stateName="Fixed"):
         # Legs are constrained fixed
@@ -413,6 +462,7 @@ class Nao(object):
         self.env.motion.wbGoToBalance(supportLeg, duration)
 
         self.whole_body_disable()
+        return self
 
 
     ###################################
@@ -504,8 +554,8 @@ class Nao(object):
         # fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
         fractionOfMaxSpeed = (distanceInDegrees) / (maxDegreesPerSecond * executionTimeInSeconds)
 
-        if fractionOfMaxSpeed > maxDegreesPerSecond:
-            return maxDegreesPerSecond
+        if fractionOfMaxSpeed > 1.0:
+            return 1.0
         return fractionOfMaxSpeed
 
     ###################################
@@ -513,7 +563,8 @@ class Nao(object):
     ###################################
     
     def learn_face(self, name):
-        self.face_detect.learnFace(name)
+        if self.face_detect:
+            self.face_detect.learnFace(name)
 
     def prep_sonar(self):
         self.env.sonar.subscribe("nao")
@@ -534,15 +585,16 @@ class Nao(object):
     ###################################
 
     def walk_and_avoid(self):
-        self.walk_until_something_close()
-        self.turn_away()
-        self.walk_and_avoid()
+        while True:
+            self.walk_until_something_close()
+            self.turn_away()
 
     def turn_away(self):
         self.walk_back(1,4)
         self.turn_left(1,2)
         while self.is_something_close():
-            self.turn_away()
+            self.walk_back(1,4)
+            self.turn_left(1,2)
 
     def walk_until_something_close(self):
         self.prep_sonar()
@@ -584,36 +636,5 @@ class Nao(object):
     def turn_right(self, speed=1, duration=1):
         self.walk_then_stop(1, 0, -1, speed, duration)
 
-###################################
-# development
-###################################
-def init_modules_for_development(pathToCore):
 
-    import sys
-    sys.path.append(pathToCore)
-    import fluentnao.core.arms
-    import fluentnao.core.elbows
-    import fluentnao.core.feet
-    import fluentnao.core.hands
-    import fluentnao.core.head
-    import fluentnao.core.joints
-    import fluentnao.core.legs
-    import fluentnao.core.wrists
-    import fluentnao.core.leds
-    import fluentnao.core.audio
-    import fluentnao.core.naoscript
-    import fluentnao.core.camera
-
-    reload(fluentnao.core.arms)
-    reload(fluentnao.core.joints)
-    reload(fluentnao.core.hands)
-    reload(fluentnao.core.elbows)
-    reload(fluentnao.core.wrists)
-    reload(fluentnao.core.legs)
-    reload(fluentnao.core.head)
-    reload(fluentnao.core.feet)
-    reload(fluentnao.core.leds)
-    reload(fluentnao.core.audio)
-    reload(fluentnao.core.naoscript)
-    reload(fluentnao.core.camera)
 

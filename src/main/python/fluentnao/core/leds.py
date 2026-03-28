@@ -10,6 +10,10 @@ class Leds():
 
         # http://html-color-codes.com/
 
+    def go(self):
+        self.nao.go()
+        return self.nao
+
     ###################################
     # LEDs
     ###################################
