@@ -23,6 +23,7 @@ from fluentnao.core.vision import Vision
 from fluentnao.core.people import People
 from fluentnao.core.sensors import Sensors
 from fluentnao.core.navigation import Navigation
+from fluentnao.core.tracker import Tracker
 from fluentnao.core.animations import POD, STAND, SIT
 from fluentnao.core.recorder.recorder import Recorder
 
@@ -74,6 +75,7 @@ class Nao(object):
         self.people = People(self)
         self.sensors = Sensors(self)
         self.navigation = Navigation(self)
+        self.tracker = Tracker(self)
 
         # head
         self.head = Head(self)
@@ -111,6 +113,7 @@ class Nao(object):
         import fluentnao.core.people
         import fluentnao.core.sensors
         import fluentnao.core.navigation
+        import fluentnao.core.tracker
 
         reload(fluentnao.core.arms)
         reload(fluentnao.core.elbows)
@@ -128,6 +131,7 @@ class Nao(object):
         reload(fluentnao.core.people)
         reload(fluentnao.core.sensors)
         reload(fluentnao.core.navigation)
+        reload(fluentnao.core.tracker)
 
         from fluentnao.core.joints import Joints
         from fluentnao.core.arms import Arms
@@ -145,6 +149,7 @@ class Nao(object):
         from fluentnao.core.people import People
         from fluentnao.core.sensors import Sensors
         from fluentnao.core.navigation import Navigation
+        from fluentnao.core.tracker import Tracker
         from fluentnao.core.recorder.recorder import Recorder
 
         self.joints = Joints()
@@ -157,6 +162,7 @@ class Nao(object):
         self.people = People(self)
         self.sensors = Sensors(self)
         self.navigation = Navigation(self)
+        self.tracker = Tracker(self)
         self.head = Head(self)
         self.hands = Hands(self)
         self.wrists = Wrists(self, self.hands)

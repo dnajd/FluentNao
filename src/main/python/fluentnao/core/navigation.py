@@ -29,10 +29,7 @@ class Navigation():
         return self
 
     def move_to(self, x, y, theta=0):
-        if not self.nav:
-            self.log('navigation.move_to: not available')
-            return self
-        self.nav.moveTo(x, y, theta)
+        self.nao.env.motion.moveTo(x, y, theta)
         self.log('navigation.move_to: ({}, {}, {})'.format(x, y, theta))
         return self
 
