@@ -204,6 +204,7 @@ class People():
         return self
 
     def stop_on_zone3(self):
+        """Unsubscribe from zone 3 entry events."""
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonEnteredZone3')
@@ -216,6 +217,7 @@ class People():
             self._throttled('zone3', self._on_zone3, value)
 
     def on_approached(self, callback):
+        """Subscribe to person-approached events."""
         if not self.engagement:
             self.log('people.on_approached: not available')
             return self
@@ -226,6 +228,7 @@ class People():
         return self
 
     def stop_on_approached(self):
+        """Unsubscribe from person-approached events."""
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonApproached')
@@ -238,6 +241,7 @@ class People():
             self._throttled('approached', self._on_approached, value)
 
     def on_moved_away(self, callback):
+        """Subscribe to person-moved-away events."""
         if not self.engagement:
             self.log('people.on_moved_away: not available')
             return self
@@ -248,6 +252,7 @@ class People():
         return self
 
     def stop_on_moved_away(self):
+        """Unsubscribe from person-moved-away events."""
         if not self.engagement:
             return self
         memory.unsubscribeToEvent('EngagementZones/PersonMovedAway')
@@ -264,6 +269,7 @@ class People():
     ###################################
 
     def on_looking(self, callback):
+        """Subscribe to person-starts-looking-at-robot events."""
         if not self.gaze:
             self.log('people.on_looking: not available')
             return self
@@ -274,6 +280,7 @@ class People():
         return self
 
     def stop_on_looking(self):
+        """Unsubscribe from person-looking events."""
         if not self.gaze:
             return self
         memory.unsubscribeToEvent('GazeAnalysis/PersonStartsLookingAtRobot')
@@ -286,6 +293,7 @@ class People():
             self._throttled('looking', self._on_looking, value)
 
     def on_not_looking(self, callback):
+        """Subscribe to person-stops-looking-at-robot events."""
         if not self.gaze:
             self.log('people.on_not_looking: not available')
             return self
@@ -296,6 +304,7 @@ class People():
         return self
 
     def stop_on_not_looking(self):
+        """Unsubscribe from person-not-looking events."""
         if not self.gaze:
             return self
         memory.unsubscribeToEvent('GazeAnalysis/PersonStopsLookingAtRobot')
@@ -312,6 +321,7 @@ class People():
     ###################################
 
     def on_sat_down(self, callback):
+        """Subscribe to person-sitting-down events."""
         if not self.sitting:
             self.log('people.on_sat_down: not available')
             return self
@@ -322,6 +332,7 @@ class People():
         return self
 
     def stop_on_sat_down(self):
+        """Unsubscribe from person-sitting-down events."""
         if not self.sitting:
             return self
         memory.unsubscribeToEvent('SittingPeopleDetection/PersonSittingDown')
@@ -334,6 +345,7 @@ class People():
             self._throttled('sat_down', self._on_sat_down, value)
 
     def on_stood_up(self, callback):
+        """Subscribe to person-standing-up events."""
         if not self.sitting:
             self.log('people.on_stood_up: not available')
             return self
@@ -344,6 +356,7 @@ class People():
         return self
 
     def stop_on_stood_up(self):
+        """Unsubscribe from person-standing-up events."""
         if not self.sitting:
             return self
         memory.unsubscribeToEvent('SittingPeopleDetection/PersonStandingUp')
@@ -360,6 +373,7 @@ class People():
     ###################################
 
     def stop_all(self):
+        """Unsubscribe from all events at once."""
         self.stop_on_person_arrived()
         self.stop_on_person_left()
         self.stop_on_zone1()
