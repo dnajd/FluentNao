@@ -18,6 +18,7 @@ from fluentnao.core.wrists import Wrists
 from fluentnao.core.leds import Leds
 from fluentnao.core.audio import Audio
 from fluentnao.core.naoscript import NaoScript
+from fluentnao.core.camera import Camera
 from fluentnao.core.animations import POD, STAND, SIT
 from fluentnao.core.recorder.recorder import Recorder
 
@@ -64,6 +65,7 @@ class Nao(object):
         self.naoscript = NaoScript(self)
         self.leds = Leds(self)
         self.audio = Audio(self)
+        self.camera = Camera(self)
 
         # head
         self.head = Head(self)
@@ -84,6 +86,65 @@ class Nao(object):
         # global duration
         self.set_duration(1.5)
 
+    def hot_reload(self):
+        import fluentnao.core.arms
+        import fluentnao.core.elbows
+        import fluentnao.core.feet
+        import fluentnao.core.hands
+        import fluentnao.core.head
+        import fluentnao.core.joints
+        import fluentnao.core.legs
+        import fluentnao.core.wrists
+        import fluentnao.core.leds
+        import fluentnao.core.audio
+        import fluentnao.core.naoscript
+        import fluentnao.core.camera
+
+        reload(fluentnao.core.arms)
+        reload(fluentnao.core.elbows)
+        reload(fluentnao.core.feet)
+        reload(fluentnao.core.hands)
+        reload(fluentnao.core.head)
+        reload(fluentnao.core.joints)
+        reload(fluentnao.core.legs)
+        reload(fluentnao.core.wrists)
+        reload(fluentnao.core.leds)
+        reload(fluentnao.core.audio)
+        reload(fluentnao.core.naoscript)
+        reload(fluentnao.core.camera)
+
+        from fluentnao.core.joints import Joints
+        from fluentnao.core.arms import Arms
+        from fluentnao.core.elbows import Elbows
+        from fluentnao.core.feet import Feet
+        from fluentnao.core.hands import Hands
+        from fluentnao.core.head import Head
+        from fluentnao.core.legs import Legs
+        from fluentnao.core.wrists import Wrists
+        from fluentnao.core.leds import Leds
+        from fluentnao.core.audio import Audio
+        from fluentnao.core.naoscript import NaoScript
+        from fluentnao.core.camera import Camera
+        from fluentnao.core.recorder.recorder import Recorder
+
+        self.joints = Joints()
+        self.chains = self.joints.Chains
+        self.naoscript = NaoScript(self)
+        self.leds = Leds(self)
+        self.audio = Audio(self)
+        self.camera = Camera(self)
+        self.head = Head(self)
+        self.hands = Hands(self)
+        self.wrists = Wrists(self, self.hands)
+        self.elbows = Elbows(self, self.wrists, self.hands)
+        self.arms = Arms(self, self.elbows, self.wrists, self.hands)
+        self.feet = Feet(self)
+        self.legs = Legs(self, self.feet)
+        self.recorder = Recorder(self)
+
+        self.log('hot_reload: complete')
+        return self
+
     def log(self, msg):
         if (self.log_function):
             self.log_function(str(datetime.now()) + "|" + msg)
@@ -92,6 +153,53 @@ class Nao(object):
 
     def print_keyframe(self):
         print(self.recorder.keyframe())
+
+    ###################################
+    # video recording (audio + video)
+    ###################################
+    def video(self, name='clip', fps=15, resolution=None):
+        self._video_name = name
+        if resolution is not None:
+            self.camera.set_resolution(resolution)
+        self.camera.start_recording(name, fps=fps)
+        self.audio.start_recording(name, channels=[0, 0, 1, 0], sample_rate=48000)
+        self.log('video: started recording {}'.format(name))
+        return self
+
+    def stop_video(self):
+        import os
+        import subprocess
+
+        self.camera.stop_recording()
+        audio_path = self.audio.stop_recording()
+
+        real_fps = getattr(self.camera, '_actual_fps', None) or self.camera._record_fps or 10
+        self.log('stop_video: using {:.1f} fps'.format(real_fps))
+
+        video_path = self.camera.to_video(fps=real_fps)
+
+        if video_path and audio_path:
+            merged = video_path.replace('.mp4', '_av.mp4')
+            cmd = 'avconv -y -i {} -i {} -c:v copy -c:a aac -strict experimental -ab 128k {}'.format(
+                video_path, audio_path, merged)
+            result = subprocess.call(cmd, shell=True)
+
+            if result == 0:
+                os.remove(video_path)
+                os.remove(audio_path)
+                final = video_path
+                os.rename(merged, final)
+                self.log('stop_video: created {}'.format(final))
+                return final
+            else:
+                self.log('stop_video: merge failed, keeping separate files')
+                return video_path
+        elif video_path:
+            self.log('stop_video: no audio, video only at {}'.format(video_path))
+            return video_path
+        else:
+            self.log('stop_video: failed')
+            return None
 
     ###################################
     # text to speech
@@ -433,6 +541,7 @@ def init_modules_for_development(pathToCore):
     import fluentnao.core.leds
     import fluentnao.core.audio
     import fluentnao.core.naoscript
+    import fluentnao.core.camera
 
     reload(fluentnao.core.arms)
     reload(fluentnao.core.joints)
@@ -445,4 +554,5 @@ def init_modules_for_development(pathToCore):
     reload(fluentnao.core.leds)
     reload(fluentnao.core.audio)
     reload(fluentnao.core.naoscript)
+    reload(fluentnao.core.camera)
 
