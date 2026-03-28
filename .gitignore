@@ -36,3 +36,9 @@ pip-log.txt
 
 #other
 urban_nao.py
+
+# media volumes
+photos/
+video/
+audio/
+object_detection/
