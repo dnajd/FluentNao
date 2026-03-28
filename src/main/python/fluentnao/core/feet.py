@@ -11,6 +11,7 @@ class Feet():
 
     def go(self):
         self.nao.go()
+        return self.nao
 
     ###################################
     # plane

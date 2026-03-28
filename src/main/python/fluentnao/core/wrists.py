@@ -13,7 +13,8 @@ class Wrists():
 
     def go(self):
         self.nao.go()
-        
+        return self.nao
+
     ###################################
     # Center
     ###################################

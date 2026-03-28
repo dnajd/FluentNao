@@ -13,7 +13,8 @@ class Hands():
 
     def go(self):
         self.nao.go()
-        
+        return self.nao
+
     ###################################
     # Hands Open
     ###################################

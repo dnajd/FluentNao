@@ -11,7 +11,8 @@ class NaoScript():
 
     def go(self):
         self.nao.go()
-        
+        return self.nao
+
     ###################################
     # noascript
     ###################################
