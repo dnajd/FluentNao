@@ -138,6 +138,9 @@ class Nao(object):
         self.joints = Joints()
         self.chains = self.joints.Chains
 
+        # events must be first (other modules reference nao.events)
+        self.events = Events()
+
         # other
         self.naoscript = NaoScript(self)
         self.leds = Leds(self)
@@ -149,7 +152,6 @@ class Nao(object):
         self.navigation = Navigation(self)
         self.tracker = Tracker(self)
         self.reach = Reach(self)
-        self.events = Events()
 
         # head
         self.head = Head(self)
@@ -252,6 +254,7 @@ class Nao(object):
         except Exception:
             self.dialog = None
 
+        self.events = Events()
         self.joints = Joints()
         self.chains = self.joints.Chains
         self.naoscript = NaoScript(self)
@@ -264,7 +267,6 @@ class Nao(object):
         self.navigation = Navigation(self)
         self.tracker = Tracker(self)
         self.reach = Reach(self)
-        self.events = Events()
         self.head = Head(self)
         self.hands = Hands(self)
         self.wrists = Wrists(self, self.hands)
@@ -348,6 +350,32 @@ class Nao(object):
     def _event_dispatch(self, event, value):
         if hasattr(self, '_event_callback') and self._event_callback:
             self._event_callback(event, value)
+
+    def listen(self, event_names=None):
+        """Subscribe to events and push them to the server's long poll queue.
+
+        Events are available via GET /events (long poll endpoint).
+        Call with no args to listen to all events.
+
+        Args:
+            event_names: list of event strings, a category set, or None for all.
+
+        Returns:
+            self
+
+        Examples:
+            nao.listen()                        # all events
+            nao.listen(nao.events.touch)        # only touch
+            nao.listen(nao.events.all())        # explicit all
+            nao.listen([nao.events.vision.FaceDetected, nao.events.touch.ChestButtonPressed])
+        """
+        if event_names is None:
+            event_names = self.events.all()
+
+        import server
+        self.subscribe(event_names, lambda event, value: server._push_event(event, value))
+        self.log('listen: {} events -> /events endpoint'.format(len(list(event_names))))
+        return self
 
     def shutdown(self):
         self.unsubscribe_all()

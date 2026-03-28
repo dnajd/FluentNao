@@ -2,11 +2,27 @@ import BaseHTTPServer
 import json
 import os
 import threading
+import time
 
 from fluentnao.core.ssh import ssh, scp_to_nao
 
 AUDIO_DIR = '/data/audio'
 NAO_AUDIO_DIR = '/home/nao/audio_playback'
+
+# event queue for long polling
+_event_queue = []
+_event_lock = threading.Lock()
+_event_condition = threading.Condition(_event_lock)
+
+
+def _push_event(event_name, value):
+    with _event_condition:
+        _event_queue.append({
+            'event': event_name,
+            'value': str(value),
+            'timestamp': time.time()
+        })
+        _event_condition.notify_all()
 
 
 def _push_to_nao(local_path, remote_path):
@@ -159,8 +175,36 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps({"ok": False, "error": str(e)}))
 
+    def _handle_events(self):
+        """Long poll endpoint. Blocks until events arrive or timeout."""
+        # parse timeout from query string (default 30s)
+        timeout = 30
+        if '?' in self.path:
+            for param in self.path.split('?')[1].split('&'):
+                if param.startswith('timeout='):
+                    try:
+                        timeout = int(param.split('=')[1])
+                    except ValueError:
+                        pass
+
+        with _event_condition:
+            # if events already queued, return immediately
+            if not _event_queue:
+                _event_condition.wait(timeout)
+
+            # grab and clear the queue
+            events = list(_event_queue)
+            del _event_queue[:]
+
+        self.send_response(200)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({"ok": True, "events": events}))
+
     def do_GET(self):
-        if self.path == '/audio':
+        if self.path == '/events' or self.path.startswith('/events?'):
+            self._handle_events()
+        elif self.path == '/audio':
             try:
                 files = [f for f in os.listdir(AUDIO_DIR) if not f.startswith('.')]
                 self.send_response(200)
