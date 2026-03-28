@@ -370,6 +370,53 @@ nao.audio_expression(False)                          # disable sound reactions
 nao.visual_expression(False)                         # disable eye LED animations
 ```
 
+### Events
+
+Event constants are grouped by category:
+
+```python
+nao.events.touch                                    # FrontTactilTouched, ChestButtonPressed, bumpers, hands
+nao.events.vision                                   # FaceDetected, redBallDetected, MovementDetected, DarknessDetected
+nao.events.people                                   # JustArrived, JustLeft, PersonEnteredZone1/2/3, StartedLooking
+nao.events.audio                                    # WordRecognized, SoundDetected, SoundLocated
+nao.events.sensors                                  # HotJointDetected, BatteryChargeChanged, sonar
+nao.events.nav                                      # ObstacleDetected
+
+nao.events.touch.FrontTactilTouched                 # 'FrontTactilTouched'
+nao.events.people.JustArrived                       # 'PeoplePerception/JustArrived'
+nao.events.all()                                    # flat list of every event
+```
+
+Subscribe and push events to the long poll queue:
+
+```python
+nao.listen()                                        # all events -> /events endpoint
+nao.listen(nao.events.touch)                        # only touch events
+nao.listen([nao.events.vision.FaceDetected,         # specific mix
+            nao.events.touch.ChestButtonPressed])
+nao.unsubscribe_all()                               # stop all
+```
+
+Subscribe with a custom callback (runs in the container):
+
+```python
+nao.subscribe(nao.events.touch, lambda e, v: nao.say('touched'))
+```
+
+Push custom events to the long poll queue:
+
+```python
+nao.emit('greeting_done', 'Don')                    # custom event name + value
+nao.emit('task_complete')                            # value is optional
+```
+
+Long poll from the host (blocks until event arrives):
+
+```bash
+curl -s "http://localhost:5050/events?timeout=30"
+# {"ok": true, "events": [{"event": "FrontTactilTouched", "value": "1.0", "timestamp": 1711612345}]}
+```
+
 ### Lifecycle
 
 ```python
