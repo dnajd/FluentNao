@@ -20,6 +20,7 @@ from fluentnao.core.audio import Audio
 from fluentnao.core.naoscript import NaoScript
 from fluentnao.core.camera import Camera
 from fluentnao.core.vision import Vision
+from fluentnao.core.people import People
 from fluentnao.core.animations import POD, STAND, SIT
 from fluentnao.core.recorder.recorder import Recorder
 
@@ -68,6 +69,7 @@ class Nao(object):
         self.audio = Audio(self)
         self.camera = Camera(self)
         self.vision = Vision(self)
+        self.people = People(self)
 
         # head
         self.head = Head(self)
@@ -102,6 +104,7 @@ class Nao(object):
         import fluentnao.core.naoscript
         import fluentnao.core.camera
         import fluentnao.core.vision
+        import fluentnao.core.people
 
         reload(fluentnao.core.arms)
         reload(fluentnao.core.elbows)
@@ -116,6 +119,7 @@ class Nao(object):
         reload(fluentnao.core.naoscript)
         reload(fluentnao.core.camera)
         reload(fluentnao.core.vision)
+        reload(fluentnao.core.people)
 
         from fluentnao.core.joints import Joints
         from fluentnao.core.arms import Arms
@@ -130,6 +134,7 @@ class Nao(object):
         from fluentnao.core.naoscript import NaoScript
         from fluentnao.core.camera import Camera
         from fluentnao.core.vision import Vision
+        from fluentnao.core.people import People
         from fluentnao.core.recorder.recorder import Recorder
 
         self.joints = Joints()
@@ -139,6 +144,7 @@ class Nao(object):
         self.audio = Audio(self)
         self.camera = Camera(self)
         self.vision = Vision(self)
+        self.people = People(self)
         self.head = Head(self)
         self.hands = Hands(self)
         self.wrists = Wrists(self, self.hands)
@@ -236,6 +242,37 @@ class Nao(object):
 
     def animate_say(self, text):
         self.animated_speech.say(text) 
+
+    ###################################
+    # Autonomous behavior
+    ###################################
+    def expressive_listening(self, enabled):
+        try:
+            self.env.add_proxy("ALAutonomousMoves")
+            self.env.proxies["ALAutonomousMoves"].setExpressiveListeningEnabled(enabled)
+        except Exception as e:
+            self.log('expressive_listening: {}'.format(e))
+        return self
+
+    def audio_expression(self, enabled):
+        try:
+            self.env.speechRecognition.setAudioExpression(enabled)
+        except Exception as e:
+            self.log('audio_expression: {}'.format(e))
+        return self
+
+    def visual_expression(self, enabled):
+        try:
+            self.env.speechRecognition.setVisualExpression(enabled)
+        except Exception as e:
+            self.log('visual_expression: {}'.format(e))
+        return self
+
+    def be_still(self):
+        self.expressive_listening(False)
+        self.audio_expression(False)
+        self.visual_expression(False)
+        return self
 
     ###################################
     # Postures
