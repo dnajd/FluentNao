@@ -135,6 +135,48 @@ class Abilities():
         self.log('scan: captured {} photos'.format(len(photos)))
         return self
 
+    def hear(self, duration=5, name=None):
+        """Record audio from NAO's microphones and emit the file path.
+
+        Turns head toward the loudest sound source first, then records
+        for the specified duration using the front microphone.
+
+        Args:
+            duration: recording length in seconds (default 5)
+            name: filename without extension. Defaults to 'hear_<timestamp>'
+
+        Emits 'heard' event with the local file path.
+
+        Examples:
+            nao.abilities.hear()           # 5 seconds
+            nao.abilities.hear(10)         # 10 seconds
+            nao.abilities.hear(3, 'clip')  # 3 seconds, named 'clip'
+        """
+        if not name:
+            name = 'hear_{}'.format(int(time.time()))
+
+        # try to detect sound direction and look toward it
+        direction = self.nao.audio.sound_direction(sensitivity=0.8, timeout=2)
+        if direction:
+            try:
+                azimuth = direction[1][0]
+                import math
+                yaw_deg = math.degrees(azimuth)
+                self.nao.head.stiff()
+                self.nao.move_with_degrees_and_duration('HeadYaw', yaw_deg, 1.0)
+                self.nao.go()
+            except Exception:
+                pass
+
+        # record
+        self.nao.audio.start_recording(name, channels=[0, 0, 1, 0])
+        time.sleep(duration)
+        path = self.nao.audio.stop_recording()
+
+        self.nao.emit('heard', {'path': path, 'duration': duration})
+        self.log('hear: recorded {}s to {}'.format(duration, path))
+        return self.nao
+
     def watch(self, event_names=None, duration=30):
         """Monitor events and auto-capture a photo when any fires.
 
