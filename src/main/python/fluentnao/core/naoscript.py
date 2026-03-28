@@ -1,3 +1,41 @@
+"""
+NaoScript module for fetching and executing scripts from the naoscript.herokuapp.com service.
+
+Python 2.7 compatible. Accessed via nao.naoscript (instance of NaoScript class).
+
+Methods
+-------
+  - get(scriptId)
+      Fetches a script by numeric ID from naoscript.herokuapp.com/behaviors/<id>.json,
+      parses the JSON response, and executes the 'script' field. Lines are split on
+      '\\r\\n'. Returns self.
+
+  - run_script(cmds, split_str=';')
+      Parses a string of semicolon-delimited (or custom delimiter) commands and
+      executes each one. Each command has 'nao.' stripped and is prefixed with
+      'self.nao.' before being passed to eval(). Lines containing '#' are skipped
+      (treated as comments). Returns nothing.
+
+  - go()
+      Calls nao.go() to wait for any queued movements to complete. Returns the
+      nao instance (not self).
+
+WARNING: run_script() uses eval() to execute arbitrary code strings and swallows
+all exceptions with a generic error message. This is a security and debugging
+concern. Prefer sending commands directly via the FluentNao HTTP bridge instead
+of using this module for new development.
+
+Usage Examples
+--------------
+    # Fetch and run a script from the naoscript service
+    nao.naoscript.get(42)
+
+    # Run a semicolon-delimited script string directly
+    nao.naoscript.run_script('say("hello"); hands.open(); go()')
+
+    # Wait for queued movements
+    nao.naoscript.go()
+"""
 import httplib
 import json
 

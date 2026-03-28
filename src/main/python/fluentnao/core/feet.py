@@ -1,3 +1,65 @@
+'''
+FluentNao Feet Module -- controls ankle joints and plane constraints on the NAO robot.
+
+This module provides the Feet class, which queues ankle pitch and roll
+movements and manages whole body balance plane constraints using a
+fluent chaining API.
+
+Key Methods
+-----------
+Ankle Pitch:
+    point_toes(duration=0, offset=0)  -- point toes down (AnklePitch, 52.8 deg)
+    raise_toes(duration=0, offset=0)  -- raise toes up (AnklePitch, -68.0 deg)
+
+Ankle Roll:
+    turn_out(duration=0, offset=0)    -- tilt feet outward (AnkleRoll, +/-22 deg)
+    turn_in(duration=0, offset=0)     -- tilt feet inward (AnkleRoll, +/-22.8 deg)
+
+Center:
+    center(duration=0, offset=0, offset2=0) -- center both ankles (roll and pitch to 0)
+
+Each ankle method has left_ and right_ variants, e.g. left_point_toes(),
+right_turn_out().
+
+Parameters:
+    duration -- movement duration in seconds; 0 uses the nao default.
+    offset   -- degrees added to the primary angle (roll or pitch).
+    offset2  -- degrees added to the secondary angle (used by center()).
+
+Plane Constraints (used by Legs for whole body balance):
+    left_plane_on()  -- stiffen body, enable whole body balance, set right
+                        foot Fixed and left foot Plane (left foot can move).
+    right_plane_on() -- stiffen body, enable whole body balance, set left
+                        foot Fixed and right foot Plane (right foot can move).
+    plane_off()      -- execute queued moves via go(), free both feet, and
+                        disable whole body balance.
+
+Execution:
+    go() -- execute all queued moves and return the nao object.
+
+Usage Examples
+--------------
+    # Point toes on both feet
+    nao.feet.point_toes().go()
+
+    # Turn right foot outward
+    nao.feet.right_turn_out().go()
+
+    # Center both feet
+    nao.feet.center().go()
+
+Notes
+-----
+- This is Python 2.7 code.
+- The plane constraint methods (left_plane_on, right_plane_on, plane_off)
+  do NOT return self -- they are typically called internally by Legs methods
+  and are not meant for fluent chaining.
+- plane_off() calls go() internally to execute queued moves before releasing
+  the balance constraints.
+- All ankle movement methods return self (the Feet instance) for chaining,
+  except go() which returns the nao object.
+'''
+
 class Feet():
 
     # init method

@@ -1,3 +1,113 @@
+"""
+Tracker module -- unified tracking system for NAO robot that can track any
+supported target type using head movement, whole body movement, or walking.
+
+This module provides the Tracker class, accessed via nao.tracker, which wraps
+the ALTracker NAOqi proxy. It provides a single consistent API for tracking
+faces, red balls, landmarks, people, and sound sources.
+
+Target Constants:
+    Tracker.FACE      = 'Face'
+    Tracker.RED_BALL  = 'RedBall'
+    Tracker.LANDMARK  = 'LandMark'
+    Tracker.LANDMARKS = 'LandMarks'
+    Tracker.PEOPLE    = 'People'
+    Tracker.SOUND     = 'Sound'
+
+Mode Constants:
+    Tracker.HEAD       = 'Head'       -- track using head movement only
+    Tracker.WHOLE_BODY = 'WholeBody'  -- track using head and torso
+    Tracker.MOVE       = 'Move'       -- walk toward the target
+
+Key Methods -- Tracking:
+    track(target, mode=None, size=0.1)
+        Register and track any target type. If mode is provided, sets the
+        tracking mode first. The size parameter is the target's physical
+        diameter in meters (relevant for landmarks). Returns self.
+
+    stop()
+        Stop tracking, unregister all targets. Returns self.
+
+Key Methods -- Convenience (default to HEAD mode):
+    face(mode=None)       -- track a face
+    red_ball(mode=None)   -- track a red ball
+    landmark(mode=None, size=0.1) -- track a landmark
+    people(mode=None)     -- track people
+    sound(mode=None)      -- track sound source
+
+Key Methods -- Follow (uses MOVE mode, NAO walks toward target):
+    follow_face()         -- walk toward detected face
+    follow_ball()         -- walk toward red ball
+    follow_people()       -- walk toward people
+    follow_sound()        -- walk toward sound source
+
+Key Methods -- Point and Look:
+    look_at(x, y, z, frame=0, speed=0.5)
+        Direct NAO's gaze to a 3D point. frame=0 is FRAME_TORSO.
+        Blocking call. Returns self.
+
+    point_at(x, y, z, frame=0, speed=0.5)
+        Point NAO's arm toward a 3D point. Uses 'Arms' effector.
+        Returns self.
+
+Key Methods -- State:
+    is_active()
+        Returns True if tracker is currently active.
+
+    is_target_lost()
+        Returns True if the current target has been lost.
+
+    target_position()
+        Returns the current target position as [x, y, z] in FRAME_TORSO,
+        or None if unavailable.
+
+    active_target()
+        Returns the name of the currently tracked target, or None.
+
+Key Methods -- Configuration:
+    set_mode(mode)
+        Set the tracking mode (HEAD, WHOLE_BODY, or MOVE). Returns self.
+
+    set_max_distance(distance)
+        Set maximum detection distance in meters. Returns self.
+
+    set_timeout(seconds)
+        Set target-lost timeout in seconds. Returns self.
+
+Usage Examples:
+    # Track a face with head only
+    nao.tracker.face()
+
+    # Track a face with whole body
+    nao.tracker.face(Tracker.WHOLE_BODY)
+
+    # Follow a person (walk toward them)
+    nao.tracker.follow_people()
+
+    # Generic tracking
+    nao.tracker.track(Tracker.RED_BALL, Tracker.HEAD)
+
+    # Check state
+    if not nao.tracker.is_target_lost():
+        pos = nao.tracker.target_position()
+
+    # Look at a specific point
+    nao.tracker.look_at(1.0, 0.0, 0.5)
+
+    # Stop all tracking
+    nao.tracker.stop()
+
+Important Notes:
+    - Only one target can be tracked at a time; calling track() replaces the
+      previous target.
+    - MOVE mode requires NAO to be standing and have body stiffness enabled.
+    - look_at() and point_at() use frame=0 (FRAME_TORSO) by default.
+    - Unavailable proxies are handled gracefully (methods log and return self).
+    - All chainable methods return self for fluent API usage.
+    - This is Python 2.7 code.
+"""
+
+
 class Tracker():
 
     # modes

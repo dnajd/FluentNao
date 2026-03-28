@@ -1,3 +1,99 @@
+"""
+Camera module for NAO robot photo capture, video frame recording, and face tracking.
+
+This module provides the Camera class, accessed via nao.camera, which wraps the
+ALVideoDevice and ALFaceTracker NAOqi proxies. Photos and video frames are saved
+as PPM files to Docker-mounted volumes, and frames can be stitched into MP4 video
+using avconv.
+
+Storage Directories:
+    /photos -- default directory for single photo captures (PPM format)
+    /video  -- default directory for video frame bursts and final MP4 output
+
+Resolution Constants:
+    Camera.TOP (0), Camera.BOTTOM (1)  -- camera selection
+    Camera.QQVGA (0) = 160x120
+    Camera.QVGA  (1) = 320x240   (default)
+    Camera.VGA   (2) = 640x480
+    Camera.K4VGA (3) = 1280x960
+
+Color Space Constants:
+    Camera.RGB    (11) -- use this for PPM photo output (only format that works)
+    Camera.YUV422 (9)  -- available but not compatible with PPM writing
+
+Key Methods:
+    photo(filename='photo', camera_index=None, resolution=None, color_space=None)
+        Capture a single photo. Saves as <filename>.ppm to photo_dir.
+        Returns the file path on success, None on failure.
+        All optional params default to the instance settings if not provided.
+
+    start_recording(name='video', camera_index=None, resolution=None,
+                    color_space=None, fps=None)
+        Begin burst-capturing PPM frames in a background thread.
+        Frames saved as <name>_00000.ppm, <name>_00001.ppm, etc. in video_dir.
+        Returns self for chaining.
+
+    stop_recording()
+        Stop the background frame capture thread. Returns self for chaining.
+
+    to_video(name=None, fps=None, output_dir=None)
+        Stitch captured PPM frames into an MP4 file using avconv (libx264).
+        Automatically deletes the PPM frames after stitching.
+        Returns the MP4 file path on success, None on failure.
+
+    track_face()
+        Start head-only face tracking using ALFaceTracker.
+
+    track_face_whole_body()
+        Start face tracking using both head and body movement.
+
+    stop_tracking()
+        Stop face tracking and release head stiffness.
+
+    face_position()
+        Returns the current tracked face position from ALFaceTracker, or None.
+
+    is_tracking()
+        Returns True if face tracking is currently active.
+
+    clear_photos()
+        Delete all files in the photo directory.
+
+    clear_video()
+        Delete all files in the video directory.
+
+    set_camera(camera_index), top(), bottom()
+        Select TOP or BOTTOM camera.
+
+    set_resolution(resolution), set_color_space(color_space), set_fps(fps)
+        Configure capture defaults. All return self for chaining.
+
+Usage Examples:
+    # Single photo
+    nao.camera.photo('snap')
+
+    # Photo with specific settings
+    nao.camera.top().set_resolution(Camera.VGA).photo('hi_res')
+
+    # Video recording workflow
+    nao.camera.start_recording('clip', fps=15)
+    # ... wait ...
+    nao.camera.stop_recording()
+    mp4_path = nao.camera.to_video()
+
+    # Face tracking
+    nao.camera.track_face()
+    pos = nao.camera.face_position()
+    nao.camera.stop_tracking()
+
+Important Notes:
+    - Only RGB color space works correctly for PPM photo output.
+    - Video stitching requires avconv to be installed and on the PATH.
+    - The recording thread is daemonized so it will not block process exit.
+    - All methods that do not return a value return self for fluent chaining.
+    - This is Python 2.7 code.
+"""
+
 import glob
 import os
 import subprocess

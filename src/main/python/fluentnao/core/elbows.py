@@ -1,3 +1,54 @@
+'''
+FluentNao Elbows Module -- controls elbow joints (ElbowRoll and ElbowYaw) on the NAO robot.
+
+This module provides the Elbows class, which queues elbow flex (roll) and
+rotation (yaw) movements using a fluent chaining API. Moves are queued
+until go() is called.
+
+Key Methods
+-----------
+Flex (ElbowRoll):
+    bent(duration=0, offset=0)      -- bend both elbows to 89 degrees
+    straight(duration=0, offset=0)  -- straighten both elbows to ~0.5 degrees
+
+Rotation (ElbowYaw):
+    turn_up(duration=0, offset=0)   -- rotate both elbows up (90 deg yaw)
+    turn_down(duration=0, offset=0) -- rotate both elbows down (-90 deg yaw)
+    turn_in(duration=0, offset=0)   -- rotate both elbows inward (0 deg yaw)
+
+Each method has left_ and right_ variants, e.g. left_bent(), right_turn_up().
+
+Parameters:
+    duration -- movement duration in seconds; 0 uses the nao default duration.
+    offset   -- degrees added to the base angle for fine adjustment.
+
+Execution:
+    go() -- execute all queued moves and return the nao object.
+
+Sub-objects (accessible for chaining):
+    elbows.wrists -- Wrists instance
+    elbows.hands  -- Hands instance
+
+Usage Examples
+--------------
+    # Bend both elbows
+    nao.elbows.bent().go()
+
+    # Arms up with elbows bent (chaining from arms)
+    nao.arms.up().elbows.bent().go()
+
+    # Right elbow bent with extra 10-degree offset
+    nao.elbows.right_bent(0, 10).go()
+
+Notes
+-----
+- This is Python 2.7 code.
+- All methods return self (the Elbows instance) for chaining, except go()
+  which returns the nao object.
+- Left and right angles are automatically mirrored (left uses negative roll
+  values, right uses positive) so the same offset produces symmetric movement.
+'''
+
 class Elbows():
 
     # init method

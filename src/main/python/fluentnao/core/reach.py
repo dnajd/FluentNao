@@ -1,3 +1,91 @@
+"""
+Reach module for cartesian (3D position) control of NAO robot end effectors.
+
+Python 2.7 compatible. Accessed via nao.reach (instance of Reach class).
+Instead of specifying joint angles, you specify X/Y/Z positions relative to
+a reference frame, and NaoQi's inverse kinematics solves the joint angles.
+
+All coordinates are in meters. Rotations are in radians.
+
+Frame Constants
+---------------
+  TORSO = 0   -- coordinates relative to the torso (default)
+  WORLD = 1   -- coordinates in the world frame
+  ROBOT = 2   -- coordinates in the robot base frame
+
+Axis Mask Constants
+-------------------
+  POSITION = 7    -- control X, Y, Z only (bits 0-2)
+  ROTATION = 56   -- control WX, WY, WZ only (bits 3-5)
+  ALL = 63        -- control all 6 degrees of freedom
+
+Querying Position
+-----------------
+  - position(chain='RArm', frame=TORSO) -- returns [x, y, z, wx, wy, wz] rounded to 4 decimals
+  - positions()                          -- returns dict of all chains to their positions
+
+Absolute Movement
+-----------------
+  - to(chain, x, y, z, speed=0.3, frame=TORSO)
+      Move end effector to absolute position, preserving current rotation.
+  - to_with_rotation(chain, x, y, z, wx, wy, wz, speed=0.3, frame=TORSO)
+      Move end effector to absolute position and rotation.
+
+Relative Movement
+-----------------
+All relative methods default to 'RArm' chain and return self for chaining.
+  - forward(chain, distance=0.1, speed=0.3)  -- move along +X axis
+  - back(chain, distance=0.1, speed=0.3)     -- move along -X axis
+  - left(chain, distance=0.05, speed=0.3)    -- move along +Y axis
+  - right(chain, distance=0.05, speed=0.3)   -- move along -Y axis
+  - up(chain, distance=0.05, speed=0.3)      -- move along +Z axis
+  - down(chain, distance=0.05, speed=0.3)    -- move along -Z axis
+
+Trajectory
+----------
+  - trace(chain, waypoints, duration=4.0, frame=TORSO)
+      Smooth path through a list of waypoints. Each waypoint is [x, y, z]
+      or [x, y, z, wx, wy, wz]. Timing is evenly distributed over duration.
+  - trace_relative(chain, deltas, duration=4.0, frame=TORSO)
+      Like trace, but each entry is a delta [dx, dy, dz] from the previous position.
+
+Gestures
+--------
+  - point_at(x, y, z, chain='RArm', speed=0.3)
+      Extends arm toward a target point. Normalizes direction and scales to
+      approximate arm length (~0.22m).
+  - wave(chain='RArm', cycles=2, duration=3.0)
+      Raises hand and waves side to side for the given number of cycles.
+
+Usage Examples
+--------------
+    # Get right arm position
+    pos = nao.reach.position('RArm')   # [0.12, -0.15, 0.08, ...]
+
+    # Move right arm to absolute position
+    nao.reach.to('RArm', 0.2, -0.1, 0.1)
+
+    # Relative: move left arm forward then up
+    nao.reach.forward('LArm', 0.1).up('LArm', 0.05)
+
+    # Trace a square with the right arm
+    nao.reach.trace('RArm', [
+        [0.2, -0.1, 0.1],
+        [0.2, -0.1, 0.2],
+        [0.2, -0.2, 0.2],
+        [0.2, -0.2, 0.1],
+    ], duration=5.0)
+
+    # Point at something and wave
+    nao.reach.point_at(1.0, 0.5, 0.3)
+    nao.reach.wave('RArm', cycles=3)
+
+Notes
+-----
+- Chain names: 'Head', 'LArm', 'RArm', 'LLeg', 'RLeg'.
+- All movement methods return self for fluent chaining.
+- speed parameter is a fraction from 0.0 to 1.0.
+"""
 import math
 
 

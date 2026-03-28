@@ -1,3 +1,122 @@
+"""
+Vision module for NAO robot red ball tracking, object/picture recognition,
+movement detection, and darkness detection.
+
+This module provides the Vision class, accessed via nao.vision, which wraps
+several NAOqi proxies: ALRedBallTracker, ALRedBallDetection, ALMovementDetection,
+ALDarknessDetection, and ALVisionRecognition.
+
+Event Callback Cooldown:
+    All event callbacks (on_ball, on_object, on_movement, on_darkness) enforce
+    a 3-second cooldown between firings to prevent callback spam from rapid
+    repeated detections.
+
+Key Methods -- Red Ball:
+    track_ball()
+        Start head-only red ball tracking via ALRedBallTracker.
+
+    track_ball_whole_body()
+        Track red ball using head and full body movement.
+
+    stop_tracking_ball()
+        Stop ball tracking and release head stiffness.
+
+    ball_position()
+        Returns current tracked ball position, or None.
+
+    is_tracking_ball()
+        Returns True if ball tracking is active.
+
+    on_ball(callback)
+        Subscribe to red ball detection events. Callback receives detection
+        data from the 'redBallDetected' event (with 3s cooldown).
+
+    stop_on_ball()
+        Unsubscribe from ball detection events.
+
+Key Methods -- Object/Picture Recognition:
+    learn_object(name, countdown=True)
+        Teach NAO to recognize an object by name. If countdown=True, NAO speaks
+        a countdown ("show me the <name>", "3", "2", "1") before capturing a
+        VGA photo with the camera module, then pushes it to NAO for learning.
+
+    learn_from_file(filepath, name=None)
+        Learn an object from a local image file. If name is not provided, the
+        filename (without extension) is used as the object name.
+
+    learn_all(folder='/object_detection')
+        Learn all image files in the given folder. Each file becomes a named
+        object (using filename as name). NAO announces how many objects it learned.
+
+    forget_all_objects()
+        Clear the entire ALVisionRecognition database.
+
+    on_object(callback)
+        Subscribe to object/picture detection events via 'PictureDetected'.
+        Callback receives detection data (with 3s cooldown).
+
+    stop_on_object()
+        Unsubscribe from object detection events.
+
+Key Methods -- Movement Detection:
+    on_movement(callback)
+        Subscribe to movement detection events. Callback receives data from
+        'MovementDetection/MovementDetected' (with 3s cooldown).
+
+    stop_on_movement()
+        Unsubscribe from movement detection events.
+
+Key Methods -- Darkness Detection:
+    on_darkness(callback)
+        Subscribe to darkness detection events. Callback receives data from
+        'DarknessDetection/DarknessDetected' (with 3s cooldown).
+
+    stop_on_darkness()
+        Unsubscribe from darkness detection events.
+
+    is_dark()
+        Returns the current darkness state from ALMemory, or None if unavailable.
+
+Usage Examples:
+    # Track a red ball
+    nao.vision.track_ball()
+    pos = nao.vision.ball_position()
+    nao.vision.stop_tracking_ball()
+
+    # React to ball detection
+    def ball_seen(data):
+        print('Ball detected!')
+    nao.vision.on_ball(ball_seen)
+
+    # Teach an object interactively
+    nao.vision.learn_object('coffee_mug')
+
+    # Learn all objects from a folder
+    nao.vision.learn_all('/object_detection')
+
+    # React to recognized objects
+    def obj_found(data):
+        print('Object recognized:', data)
+    nao.vision.on_object(obj_found)
+
+    # Movement detection
+    def moved(data):
+        print('Movement detected')
+    nao.vision.on_movement(moved)
+
+    # Darkness check
+    if nao.vision.is_dark():
+        nao.say('It is dark in here')
+
+Important Notes:
+    - Object learning uses SCP to push images to /home/nao/vision_learn on NAO.
+    - learn_object() captures a VGA photo via nao.camera, so camera must be available.
+    - All event callbacks have a 3-second cooldown to prevent rapid-fire invocations.
+    - Unavailable proxies are handled gracefully (methods log and return self/None).
+    - All chainable methods return self for fluent API usage.
+    - This is Python 2.7 code.
+"""
+
 import glob
 import os
 import time

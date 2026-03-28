@@ -1,3 +1,79 @@
+'''
+FluentNao Legs Module -- controls leg chains (LLeg, RLeg) on the NAO robot.
+
+This module provides the Legs class, which queues hip and knee joint
+movements using a fluent chaining API. Many methods support optional
+whole body balance via plane constraints to keep the robot stable.
+
+Key Methods
+-----------
+Hip (left_ and right_ variants only -- no both-legs version):
+    left_out / right_out(duration=0, offset=0, balance=True)
+        -- move leg outward (HipRoll, 35 deg)
+    left_in / right_in(duration=0, offset=0, offset2=0, balance=True)
+        -- move leg inward (HipPitch + HipRoll, 0 deg)
+    left_forward / right_forward(duration=0, offset=0, balance=True)
+        -- move leg forward (HipPitch, -50 deg)
+    left_back / right_back(duration=0, offset=0, balance=True)
+        -- move leg back (HipPitch, 50 deg)
+    left_up / right_up(duration=0, offset=0)
+        -- raise leg (HipPitch, -90 deg); auto-balances on opposite leg
+    left_down / right_down(duration=0, offset=0)
+        -- lower leg (HipPitch, 0 deg)
+
+Knee:
+    left_knee_bent / right_knee_bent(duration=0, offset=0)
+        -- bend knee (KneePitch, 90 deg)
+    left_knee_straight / right_knee_straight(duration=0, offset=0)
+        -- straighten knee (KneePitch, 0 deg)
+    left_knee_up / right_knee_up(duration=0, offset=0)
+        -- raise leg with bent knee (combines up + knee_bent + balance)
+
+Balance:
+    balance(duration=0)       -- balance on both legs
+    left_balance(duration=0)  -- balance on left leg
+    right_balance(duration=0) -- balance on right leg
+
+Stiffness:
+    stiff() / relax()         -- both legs
+    left_stiff() / right_stiff() / left_relax() / right_relax()
+
+Parameters:
+    duration -- movement duration in seconds; 0 uses the nao default.
+    offset   -- degrees added to the base angle for fine adjustment.
+    balance  -- when True (default), enables whole body balance by
+                constraining the support foot as Fixed and the moving
+                foot as Plane, then releasing after go().
+
+Execution:
+    go() -- execute all queued moves and return the nao object.
+
+Sub-objects (accessible for chaining):
+    legs.feet -- Feet instance
+
+Usage Examples
+--------------
+    # Move left leg out with balance
+    nao.legs.left_out().go()
+
+    # Right knee up (balances on left leg automatically)
+    nao.legs.right_knee_up().go()
+
+    # Move leg without balance
+    nao.legs.left_forward(2, 10, balance=False).go()
+
+Notes
+-----
+- This is Python 2.7 code.
+- Most leg methods only have left_ and right_ variants (no both-legs version)
+  because moving both legs simultaneously would cause the robot to fall.
+- When balance=True, the method calls feet.left_plane_on() or
+  feet.right_plane_on() before the move, and feet.plane_off() after,
+  which stiffens the body and enables whole body balancing.
+- All methods return self (the Legs instance) for chaining, except go()
+  which returns the nao object.
+'''
+
 class Legs():
 
     # init method

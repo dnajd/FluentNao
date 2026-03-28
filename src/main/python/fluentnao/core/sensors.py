@@ -1,3 +1,69 @@
+"""
+Sensors module for NAO robot touch events, battery status, and motor temperature monitoring.
+
+Python 2.7 compatible. Accessed via nao.sensors (instance of Sensors class).
+
+Touch Events
+------------
+Register callbacks that fire when a sensor is touched (value == 1 only).
+All touch methods return self for chaining.
+
+  - on_head(callback)          -- subscribes to all three head tactile sensors
+  - on_head_front(callback)    -- FrontTactilTouched
+  - on_head_middle(callback)   -- MiddleTactilTouched
+  - on_head_rear(callback)     -- RearTactilTouched
+  - on_bumper(callback)        -- subscribes to both foot bumpers
+  - on_bumper_left(callback)   -- LeftBumperPressed
+  - on_bumper_right(callback)  -- RightBumperPressed
+  - on_chest_button(callback)  -- ChestButtonPressed
+  - on_hand(callback)          -- subscribes to both hand back sensors
+  - on_hand_left(callback)     -- HandLeftBackTouched
+  - on_hand_right(callback)    -- HandRightBackTouched
+
+Callbacks receive one argument: the event name string (e.g. 'FrontTactilTouched').
+
+  - stop_on_touch(event)       -- unsubscribe a specific event
+  - stop_all_touch()           -- unsubscribe all registered touch events
+
+Battery
+-------
+  - battery_level()            -- returns 0-100 (int) or None on error
+  - is_charging()              -- returns True/False or None on error
+  - battery_temperature()      -- returns temperature value or None on error
+
+Motor Temperature
+-----------------
+  - temperatures()             -- returns dict of all 26 joint names to temperature values
+  - hottest_joint()            -- returns (joint_name, temperature) tuple or None
+  - on_hot_joint(callback)     -- subscribes to HotJointDetected event; callback receives the event value
+  - stop_on_hot_joint()        -- unsubscribes from HotJointDetected
+
+Usage Examples
+--------------
+    # Touch: print which sensor was touched
+    def touched(event):
+        print('Touched: ' + event)
+
+    nao.sensors.on_head(touched)
+    nao.sensors.on_bumper(touched)
+
+    # Battery
+    print(nao.sensors.battery_level())   # e.g. 87
+    print(nao.sensors.is_charging())     # True or False
+
+    # Temperature
+    temps = nao.sensors.temperatures()   # {'HeadYaw': 38.2, ...}
+    name, temp = nao.sensors.hottest_joint()
+
+    # Cleanup
+    nao.sensors.stop_all_touch()
+
+Notes
+-----
+- Touch callbacks only fire on press (value == 1), not release.
+- ALBodyTemperature proxy is optional; if unavailable, temp features log a warning.
+- All methods return self where possible to support fluent chaining.
+"""
 import naoutil.memory as memory
 
 

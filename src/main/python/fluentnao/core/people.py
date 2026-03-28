@@ -1,3 +1,105 @@
+"""
+People module for NAO robot people perception, engagement zones, gaze analysis,
+and sitting detection.
+
+This module provides the People class, accessed via nao.people, which wraps
+several NAOqi proxies: ALPeoplePerception, ALEngagementZones, ALGazeAnalysis,
+and ALSittingPeopleDetection.
+
+Engagement Zones:
+    Zone 1 -- 0 to 1.5 meters (close/intimate range)
+    Zone 2 -- 1.5 to 2.5 meters (conversation range)
+    Zone 3 -- 2.5 meters and beyond (far/awareness range)
+
+Event Callback Cooldown:
+    All event callbacks enforce a 3-second cooldown between firings to prevent
+    callback spam from rapid repeated detections. This is handled by the
+    internal _throttled() method.
+
+Key Methods -- People Detection:
+    on_person_arrived(callback)
+        Subscribe to PeoplePerception/JustArrived events. Callback fires when
+        a new person is detected (with 3s cooldown).
+
+    stop_on_person_arrived()
+        Unsubscribe from person arrival events.
+
+    on_person_left(callback)
+        Subscribe to PeoplePerception/JustLeft events. Callback fires when
+        a tracked person leaves the field of view (with 3s cooldown).
+
+    stop_on_person_left()
+        Unsubscribe from person departure events.
+
+    people_count()
+        Returns the current number of detected people as an integer.
+        Returns 0 if perception is unavailable or no people are detected.
+
+Key Methods -- Engagement Zones:
+    on_zone1(callback) / stop_on_zone1()
+        Subscribe/unsubscribe to EngagementZones/PersonEnteredZone1.
+
+    on_zone2(callback) / stop_on_zone2()
+        Subscribe/unsubscribe to EngagementZones/PersonEnteredZone2.
+
+    on_zone3(callback) / stop_on_zone3()
+        Subscribe/unsubscribe to EngagementZones/PersonEnteredZone3.
+
+    on_approached(callback) / stop_on_approached()
+        Subscribe/unsubscribe to EngagementZones/PersonApproached.
+
+    on_moved_away(callback) / stop_on_moved_away()
+        Subscribe/unsubscribe to EngagementZones/PersonMovedAway.
+
+Key Methods -- Gaze Analysis:
+    on_looking(callback) / stop_on_looking()
+        Subscribe/unsubscribe to GazeAnalysis/PersonStartsLookingAtRobot.
+
+    on_not_looking(callback) / stop_on_not_looking()
+        Subscribe/unsubscribe to GazeAnalysis/PersonStopsLookingAtRobot.
+
+Key Methods -- Sitting Detection:
+    on_sat_down(callback) / stop_on_sat_down()
+        Subscribe/unsubscribe to SittingPeopleDetection/PersonSittingDown.
+
+    on_stood_up(callback) / stop_on_stood_up()
+        Subscribe/unsubscribe to SittingPeopleDetection/PersonStandingUp.
+
+Key Methods -- Utility:
+    stop_all()
+        Unsubscribe from all events at once. Calls every stop_on_* method.
+        Returns self.
+
+Usage Examples:
+    # React when someone arrives
+    def greeter(data):
+        nao.say('Hello there!')
+    nao.people.on_person_arrived(greeter)
+
+    # Monitor close proximity
+    def too_close(data):
+        nao.say('You are very close')
+    nao.people.on_zone1(too_close)
+
+    # Detect eye contact
+    def eye_contact(data):
+        nao.say('I see you looking at me')
+    nao.people.on_looking(eye_contact)
+
+    # Check how many people are visible
+    count = nao.people.people_count()
+
+    # Clean up all subscriptions
+    nao.people.stop_all()
+
+Important Notes:
+    - All event callbacks have a 3-second cooldown to prevent rapid-fire invocations.
+    - Each on_* method has a corresponding stop_on_* method for cleanup.
+    - Unavailable proxies are handled gracefully (methods log and return self).
+    - All chainable methods return self for fluent API usage.
+    - This is Python 2.7 code.
+"""
+
 import time
 
 import naoutil.memory as memory

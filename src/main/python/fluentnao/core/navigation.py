@@ -1,3 +1,65 @@
+"""
+Navigation module for NAO robot walking, localization, and visual compass.
+
+Python 2.7 compatible. Accessed via nao.navigation (instance of Navigation class).
+Uses three optional NaoQi proxies: ALNavigation, ALLocalization, ALVisualCompass.
+If a proxy is unavailable, its methods log a warning and return self.
+
+Movement
+--------
+  - move_to(x, y, theta=0)        -- precise movement using ALMotion.moveTo directly.
+                                      x/y in meters, theta in radians. Accurate for turns.
+                                      Blocks until movement completes.
+  - navigate_to(x, y)             -- obstacle-avoiding navigation using ALNavigation.navigateTo.
+                                      Blocks until destination reached or path fails.
+  - move_toward(x, y, theta=0)    -- continuous velocity command via ALNavigation.moveToward.
+                                      Does not block; call stop() to halt.
+  - stop()                        -- stops both ALNavigation and ALMotion movement.
+  - set_safety_distance(d=0.4)    -- sets obstacle avoidance safety distance in meters.
+
+Localization
+------------
+  - learn_home()                   -- performs panoramic scan and saves current position as home.
+  - go_home()                      -- navigates back to learned home position.
+  - go_to_position(x, y, theta=0) -- navigates to an absolute map position.
+  - position()                     -- returns current [x, y, theta] from ALLocalization, or None.
+  - orientation()                  -- returns current orientation, or None.
+  - is_home()                      -- returns True if robot is near home, or None.
+  - save_map(name='map')           -- persists the learned map.
+  - load_map(name='map')           -- loads a previously saved map.
+  - clear_map()                    -- clears the current map.
+
+Visual Compass
+--------------
+  - set_compass_reference()        -- captures current camera image as compass reference.
+  - compass_to(x, y)              -- moves toward a position using visual compass.
+  - stop_compass()                 -- unsubscribes from the visual compass.
+
+Usage Examples
+--------------
+    # Walk forward 1 meter
+    nao.navigation.move_to(1.0, 0, 0)
+
+    # Turn 90 degrees left in place
+    import math
+    nao.navigation.move_to(0, 0, math.pi / 2)
+
+    # Navigate with obstacle avoidance
+    nao.navigation.navigate_to(2.0, 1.0)
+
+    # Learn and return to home
+    nao.navigation.learn_home()
+    # ... robot walks around ...
+    nao.navigation.go_home()
+
+Notes
+-----
+- move_to() uses ALMotion directly -- good for precise turns and short distances.
+- navigate_to() uses ALNavigation -- adds obstacle avoidance but may be less precise.
+- All methods return self for fluent chaining (except position/orientation/is_home
+  which return data or None).
+"""
+
 class Navigation():
 
     def __init__(self, nao):
