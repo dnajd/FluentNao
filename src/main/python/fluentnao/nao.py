@@ -404,6 +404,50 @@ class Nao(object):
         self.audio.listen_for(answers, on_word)
         return self
 
+    def snap(self, message='touch my head to take a photo', filename=None):
+        """Face-tracking photo capture triggered by head touch.
+
+        NAO speaks the message, enables face tracking, and waits for any
+        head tactile sensor to be touched. On touch, captures a VGA photo,
+        stops tracking, and emits a 'photo' event with the file path.
+
+        Args:
+            message: what NAO says before waiting
+            filename: photo filename (without extension). Defaults to 'snap_<timestamp>'
+
+        Returns:
+            self
+
+        The event pushed to /events:
+            {"event": "photo", "value": "/data/photos/snap_1711612345.ppm", ...}
+
+        Examples:
+            nao.snap()
+            nao.snap('smile for the camera', 'portrait')
+        """
+        import time as _time
+
+        if not filename:
+            filename = 'snap_{}'.format(int(_time.time()))
+
+        self.camera.track_face()
+        self.say_and_block(message)
+
+        snapped = [False]
+
+        def on_touch(event):
+            if snapped[0]:
+                return
+            snapped[0] = True
+            self.camera.stop_tracking()
+            path = self.camera.photo(filename, resolution=2)
+            self.say('got it')
+            self.emit('photo', path)
+            self.sensors.stop_all_touch()
+
+        self.sensors.on_head(on_touch)
+        return self
+
     def _event_dispatch(self, event, value):
         if hasattr(self, '_event_callback') and self._event_callback:
             self._event_callback(event, value)
