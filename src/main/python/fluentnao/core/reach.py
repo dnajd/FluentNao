@@ -1,95 +1,31 @@
-"""
-Reach module for cartesian (3D position) control of NAO robot end effectors.
+"""Cartesian (3D position) control of NAO robot end effectors.
 
-Python 2.7 compatible. Accessed via nao.reach (instance of Reach class).
-Instead of specifying joint angles, you specify X/Y/Z positions relative to
-a reference frame, and NaoQi's inverse kinematics solves the joint angles.
-
-All coordinates are in meters. Rotations are in radians.
-
-Frame Constants
----------------
-  TORSO = 0   -- coordinates relative to the torso (default)
-  WORLD = 1   -- coordinates in the world frame
-  ROBOT = 2   -- coordinates in the robot base frame
-
-Axis Mask Constants
--------------------
-  POSITION = 7    -- control X, Y, Z only (bits 0-2)
-  ROTATION = 56   -- control WX, WY, WZ only (bits 3-5)
-  ALL = 63        -- control all 6 degrees of freedom
-
-Querying Position
------------------
-  - position(chain='RArm', frame=TORSO) -- returns [x, y, z, wx, wy, wz] rounded to 4 decimals
-  - positions()                          -- returns dict of all chains to their positions
-
-Absolute Movement
------------------
-  - to(chain, x, y, z, speed=0.3, frame=TORSO)
-      Move end effector to absolute position, preserving current rotation.
-  - to_with_rotation(chain, x, y, z, wx, wy, wz, speed=0.3, frame=TORSO)
-      Move end effector to absolute position and rotation.
-
-Relative Movement
------------------
-All relative methods default to 'RArm' chain and return self for chaining.
-  - forward(chain, distance=0.1, speed=0.3)  -- move along +X axis
-  - back(chain, distance=0.1, speed=0.3)     -- move along -X axis
-  - left(chain, distance=0.05, speed=0.3)    -- move along +Y axis
-  - right(chain, distance=0.05, speed=0.3)   -- move along -Y axis
-  - up(chain, distance=0.05, speed=0.3)      -- move along +Z axis
-  - down(chain, distance=0.05, speed=0.3)    -- move along -Z axis
-
-Trajectory
-----------
-  - trace(chain, waypoints, duration=4.0, frame=TORSO)
-      Smooth path through a list of waypoints. Each waypoint is [x, y, z]
-      or [x, y, z, wx, wy, wz]. Timing is evenly distributed over duration.
-  - trace_relative(chain, deltas, duration=4.0, frame=TORSO)
-      Like trace, but each entry is a delta [dx, dy, dz] from the previous position.
-
-Gestures
---------
-  - point_at(x, y, z, chain='RArm', speed=0.3)
-      Extends arm toward a target point. Normalizes direction and scales to
-      approximate arm length (~0.22m).
-  - wave(chain='RArm', cycles=2, duration=3.0)
-      Raises hand and waves side to side for the given number of cycles.
-
-Usage Examples
---------------
-    # Get right arm position
-    pos = nao.reach.position('RArm')   # [0.12, -0.15, 0.08, ...]
-
-    # Move right arm to absolute position
-    nao.reach.to('RArm', 0.2, -0.1, 0.1)
-
-    # Relative: move left arm forward then up
-    nao.reach.forward('LArm', 0.1).up('LArm', 0.05)
-
-    # Trace a square with the right arm
-    nao.reach.trace('RArm', [
-        [0.2, -0.1, 0.1],
-        [0.2, -0.1, 0.2],
-        [0.2, -0.2, 0.2],
-        [0.2, -0.2, 0.1],
-    ], duration=5.0)
-
-    # Point at something and wave
-    nao.reach.point_at(1.0, 0.5, 0.3)
-    nao.reach.wave('RArm', cycles=3)
-
-Notes
------
-- Chain names: 'Head', 'LArm', 'RArm', 'LLeg', 'RLeg'.
-- All movement methods return self for fluent chaining.
-- speed parameter is a fraction from 0.0 to 1.0.
+Accessed via nao.reach. Python 2.7 compatible.
 """
 import math
 
 
 class Reach():
+    """Cartesian end-effector control using NaoQi inverse kinematics.
+
+    Instead of specifying joint angles, you specify X/Y/Z positions
+    relative to a reference frame, and NaoQi solves the joint angles.
+    All coordinates are in meters. Rotations are in radians.
+
+    Frame Constants:
+        TORSO = 0 -- coordinates relative to the torso (default)
+        WORLD = 1 -- coordinates in the world frame
+        ROBOT = 2 -- coordinates in the robot base frame
+
+    Axis Mask Constants:
+        POSITION = 7  -- control X, Y, Z only (bits 0-2)
+        ROTATION = 56 -- control WX, WY, WZ only (bits 3-5)
+        ALL = 63      -- control all 6 degrees of freedom
+
+    Chain names: 'Head', 'LArm', 'RArm', 'LLeg', 'RLeg'.
+    All movement methods return self for fluent chaining.
+    Speed parameter is a fraction from 0.0 to 1.0.
+    """
 
     # frames
     TORSO = 0
@@ -110,12 +46,14 @@ class Reach():
     ###################################
 
     def position(self, chain='RArm', frame=None):
+        """Return [x, y, z, wx, wy, wz] for the given chain, rounded to 4 decimals."""
         if frame is None:
             frame = self.TORSO
         pos = self.nao.env.motion.getPosition(chain, frame, True)
         return [round(p, 4) for p in pos]
 
     def positions(self):
+        """Return dict mapping all chain names to their positions."""
         result = {}
         for chain in ['Head', 'LArm', 'RArm', 'LLeg', 'RLeg']:
             result[chain] = self.position(chain)
@@ -126,6 +64,7 @@ class Reach():
     ###################################
 
     def to(self, chain, x, y, z, speed=0.3, frame=None):
+        """Move end effector to absolute position, preserving current rotation."""
         if frame is None:
             frame = self.TORSO
         current = self.nao.env.motion.getPosition(chain, frame, True)
@@ -135,6 +74,7 @@ class Reach():
         return self
 
     def to_with_rotation(self, chain, x, y, z, wx, wy, wz, speed=0.3, frame=None):
+        """Move end effector to absolute position and rotation."""
         if frame is None:
             frame = self.TORSO
         target = [x, y, z, wx, wy, wz]
@@ -147,6 +87,7 @@ class Reach():
     ###################################
 
     def forward(self, chain='RArm', distance=0.1, speed=0.3, frame=None):
+        """Move end effector forward along the +X axis."""
         if frame is None:
             frame = self.TORSO
         self.nao.env.motion.changePosition(chain, frame, [distance, 0, 0, 0, 0, 0], speed, self.POSITION)
@@ -154,9 +95,11 @@ class Reach():
         return self
 
     def back(self, chain='RArm', distance=0.1, speed=0.3, frame=None):
+        """Move end effector backward along the -X axis."""
         return self.forward(chain, -distance, speed, frame)
 
     def left(self, chain='RArm', distance=0.05, speed=0.3, frame=None):
+        """Move end effector left along the +Y axis."""
         if frame is None:
             frame = self.TORSO
         self.nao.env.motion.changePosition(chain, frame, [0, distance, 0, 0, 0, 0], speed, self.POSITION)
@@ -164,9 +107,11 @@ class Reach():
         return self
 
     def right(self, chain='RArm', distance=0.05, speed=0.3, frame=None):
+        """Move end effector right along the -Y axis."""
         return self.left(chain, -distance, speed, frame)
 
     def up(self, chain='RArm', distance=0.05, speed=0.3, frame=None):
+        """Move end effector up along the +Z axis."""
         if frame is None:
             frame = self.TORSO
         self.nao.env.motion.changePosition(chain, frame, [0, 0, distance, 0, 0, 0], speed, self.POSITION)
@@ -174,6 +119,7 @@ class Reach():
         return self
 
     def down(self, chain='RArm', distance=0.05, speed=0.3, frame=None):
+        """Move end effector down along the -Z axis."""
         return self.up(chain, -distance, speed, frame)
 
     ###################################
@@ -181,6 +127,14 @@ class Reach():
     ###################################
 
     def trace(self, chain, waypoints, duration=4.0, frame=None):
+        """Move smoothly through a list of waypoints over the given duration.
+
+        Args:
+            chain: Chain name (e.g. 'RArm').
+            waypoints: List of [x, y, z] or [x, y, z, wx, wy, wz] positions.
+            duration: Total time in seconds for the trajectory.
+            frame: Reference frame (default TORSO).
+        """
         if frame is None:
             frame = self.TORSO
         current = self.nao.env.motion.getPosition(chain, frame, True)
@@ -200,6 +154,7 @@ class Reach():
         return self
 
     def trace_relative(self, chain, deltas, duration=4.0, frame=None):
+        """Like trace, but each entry is a delta [dx, dy, dz] from the previous position."""
         if frame is None:
             frame = self.TORSO
         current = self.nao.env.motion.getPosition(chain, frame, True)
@@ -224,6 +179,7 @@ class Reach():
     ###################################
 
     def point_at(self, x, y, z, chain='RArm', speed=0.3, frame=None):
+        """Extend arm toward a target point, scaled to arm length (~0.22m)."""
         if frame is None:
             frame = self.TORSO
         current = self.nao.env.motion.getPosition(chain, frame, True)
@@ -247,6 +203,7 @@ class Reach():
         return self
 
     def wave(self, chain='RArm', cycles=2, duration=3.0):
+        """Raise hand and wave side to side for the given number of cycles."""
         current = self.position(chain)
         x, y, z = current[0], current[1], current[2]
 

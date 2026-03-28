@@ -1,120 +1,7 @@
-"""
-Vision module for NAO robot red ball tracking, object/picture recognition,
-movement detection, and darkness detection.
+"""Red ball tracking, object recognition, movement and darkness detection.
 
-This module provides the Vision class, accessed via nao.vision, which wraps
-several NAOqi proxies: ALRedBallTracker, ALRedBallDetection, ALMovementDetection,
-ALDarknessDetection, and ALVisionRecognition.
-
-Event Callback Cooldown:
-    All event callbacks (on_ball, on_object, on_movement, on_darkness) enforce
-    a 3-second cooldown between firings to prevent callback spam from rapid
-    repeated detections.
-
-Key Methods -- Red Ball:
-    track_ball()
-        Start head-only red ball tracking via ALRedBallTracker.
-
-    track_ball_whole_body()
-        Track red ball using head and full body movement.
-
-    stop_tracking_ball()
-        Stop ball tracking and release head stiffness.
-
-    ball_position()
-        Returns current tracked ball position, or None.
-
-    is_tracking_ball()
-        Returns True if ball tracking is active.
-
-    on_ball(callback)
-        Subscribe to red ball detection events. Callback receives detection
-        data from the 'redBallDetected' event (with 3s cooldown).
-
-    stop_on_ball()
-        Unsubscribe from ball detection events.
-
-Key Methods -- Object/Picture Recognition:
-    learn_object(name, countdown=True)
-        Teach NAO to recognize an object by name. If countdown=True, NAO speaks
-        a countdown ("show me the <name>", "3", "2", "1") before capturing a
-        VGA photo with the camera module, then pushes it to NAO for learning.
-
-    learn_from_file(filepath, name=None)
-        Learn an object from a local image file. If name is not provided, the
-        filename (without extension) is used as the object name.
-
-    learn_all(folder='/object_detection')
-        Learn all image files in the given folder. Each file becomes a named
-        object (using filename as name). NAO announces how many objects it learned.
-
-    forget_all_objects()
-        Clear the entire ALVisionRecognition database.
-
-    on_object(callback)
-        Subscribe to object/picture detection events via 'PictureDetected'.
-        Callback receives detection data (with 3s cooldown).
-
-    stop_on_object()
-        Unsubscribe from object detection events.
-
-Key Methods -- Movement Detection:
-    on_movement(callback)
-        Subscribe to movement detection events. Callback receives data from
-        'MovementDetection/MovementDetected' (with 3s cooldown).
-
-    stop_on_movement()
-        Unsubscribe from movement detection events.
-
-Key Methods -- Darkness Detection:
-    on_darkness(callback)
-        Subscribe to darkness detection events. Callback receives data from
-        'DarknessDetection/DarknessDetected' (with 3s cooldown).
-
-    stop_on_darkness()
-        Unsubscribe from darkness detection events.
-
-    is_dark()
-        Returns the current darkness state from ALMemory, or None if unavailable.
-
-Usage Examples:
-    # Track a red ball
-    nao.vision.track_ball()
-    pos = nao.vision.ball_position()
-    nao.vision.stop_tracking_ball()
-
-    # React to ball detection
-    def ball_seen(data):
-        print('Ball detected!')
-    nao.vision.on_ball(ball_seen)
-
-    # Teach an object interactively
-    nao.vision.learn_object('coffee_mug')
-
-    # Learn all objects from a folder
-    nao.vision.learn_all('/object_detection')
-
-    # React to recognized objects
-    def obj_found(data):
-        print('Object recognized:', data)
-    nao.vision.on_object(obj_found)
-
-    # Movement detection
-    def moved(data):
-        print('Movement detected')
-    nao.vision.on_movement(moved)
-
-    # Darkness check
-    if nao.vision.is_dark():
-        nao.say('It is dark in here')
-
-Important Notes:
-    - Object learning uses SCP to push images to /home/nao/vision_learn on NAO.
-    - learn_object() captures a VGA photo via nao.camera, so camera must be available.
-    - All event callbacks have a 3-second cooldown to prevent rapid-fire invocations.
-    - Unavailable proxies are handled gracefully (methods log and return self/None).
-    - All chainable methods return self for fluent API usage.
-    - This is Python 2.7 code.
+Wraps ALRedBallTracker, ALRedBallDetection, ALMovementDetection,
+ALDarknessDetection, and ALVisionRecognition NAOqi proxies. Accessed via nao.vision.
 """
 
 import glob
@@ -128,6 +15,30 @@ NAO_LEARN_DIR = '/home/nao/vision_learn'
 
 
 class Vision():
+    """Red ball tracking, object/picture recognition, movement and darkness detection.
+
+    Wraps several NAOqi vision proxies to provide event-driven callbacks and
+    active tracking for the NAO robot.
+
+    Event Callback Cooldown:
+        All event callbacks (on_ball, on_object, on_movement, on_darkness)
+        enforce a 3-second cooldown between firings to prevent callback spam.
+
+    Important Notes:
+        - Object learning uses SCP to push images to /home/nao/vision_learn.
+        - learn_object() captures a VGA photo via nao.camera.
+        - Unavailable proxies are handled gracefully (methods log and return self/None).
+        - All chainable methods return self for fluent API usage.
+
+    Usage Examples::
+
+        nao.vision.track_ball()
+        pos = nao.vision.ball_position()
+        nao.vision.stop_tracking_ball()
+        nao.vision.on_ball(my_callback)
+        nao.vision.learn_object('coffee_mug')
+        nao.vision.learn_all('/object_detection')
+    """
 
     def __init__(self, nao):
         self.nao = nao
@@ -164,6 +75,7 @@ class Vision():
     ###################################
 
     def track_ball(self):
+        """Start head-only red ball tracking."""
         if not self.ball_tracker:
             self.log('vision.track_ball: tracker not available')
             return self
@@ -175,6 +87,7 @@ class Vision():
         return self
 
     def track_ball_whole_body(self):
+        """Track red ball using head and full body movement."""
         if not self.ball_tracker:
             self.log('vision.track_ball_whole_body: tracker not available')
             return self
@@ -187,6 +100,7 @@ class Vision():
         return self
 
     def stop_tracking_ball(self):
+        """Stop ball tracking and release head stiffness."""
         if not self.ball_tracker:
             return self
         self.ball_tracker.stopTracker()
@@ -196,14 +110,17 @@ class Vision():
         return self
 
     def ball_position(self):
+        """Return the current tracked ball position, or None."""
         if not self.ball_tracker:
             return None
         return self.ball_tracker.getPosition()
 
     def is_tracking_ball(self):
+        """Return True if ball tracking is currently active."""
         return self._tracking_ball
 
     def on_ball(self, callback):
+        """Subscribe to red ball detection events (3s cooldown)."""
         if not self.ball_detect:
             self.log('vision.on_ball: detection not available')
             return self
@@ -214,6 +131,7 @@ class Vision():
         return self
 
     def stop_on_ball(self):
+        """Unsubscribe from ball detection events."""
         if not self.ball_detect:
             return self
         memory.unsubscribeToEvent('redBallDetected')
@@ -248,6 +166,10 @@ class Vision():
         return success
 
     def learn_object(self, name, countdown=True):
+        """Teach NAO to recognize an object by capturing a VGA photo.
+
+        If countdown is True, NAO speaks a countdown before capturing.
+        """
         if not self.vision_recog:
             self.log('vision.learn_object: not available')
             return self
@@ -272,6 +194,7 @@ class Vision():
         return self
 
     def learn_from_file(self, filepath, name=None):
+        """Learn an object from a local image file."""
         if not self.vision_recog:
             self.log('vision.learn_from_file: not available')
             return self
@@ -283,6 +206,7 @@ class Vision():
         return self
 
     def learn_all(self, folder='/object_detection'):
+        """Learn all image files in a folder as named objects."""
         if not self.vision_recog:
             self.log('vision.learn_all: not available')
             return self
@@ -300,6 +224,7 @@ class Vision():
         return self
 
     def forget_all_objects(self):
+        """Clear the entire ALVisionRecognition database."""
         if not self.vision_recog:
             return self
         self.vision_recog.clearCurrentDatabase()
@@ -307,6 +232,7 @@ class Vision():
         return self
 
     def on_object(self, callback):
+        """Subscribe to object/picture detection events (3s cooldown)."""
         if not self.vision_recog:
             self.log('vision.on_object: not available')
             return self
@@ -317,6 +243,7 @@ class Vision():
         return self
 
     def stop_on_object(self):
+        """Unsubscribe from object detection events."""
         if not self.vision_recog:
             return self
         memory.unsubscribeToEvent('PictureDetected')
@@ -337,6 +264,7 @@ class Vision():
     ###################################
 
     def on_movement(self, callback):
+        """Subscribe to movement detection events (3s cooldown)."""
         if not self.movement_detect:
             self.log('vision.on_movement: not available')
             return self
@@ -347,6 +275,7 @@ class Vision():
         return self
 
     def stop_on_movement(self):
+        """Unsubscribe from movement detection events."""
         if not self.movement_detect:
             return self
         memory.unsubscribeToEvent('MovementDetection/MovementDetected')
@@ -367,6 +296,7 @@ class Vision():
     ###################################
 
     def on_darkness(self, callback):
+        """Subscribe to darkness detection events (3s cooldown)."""
         if not self.darkness_detect:
             self.log('vision.on_darkness: not available')
             return self
@@ -377,6 +307,7 @@ class Vision():
         return self
 
     def stop_on_darkness(self):
+        """Unsubscribe from darkness detection events."""
         if not self.darkness_detect:
             return self
         memory.unsubscribeToEvent('DarknessDetection/DarknessDetected')
@@ -386,6 +317,7 @@ class Vision():
         return self
 
     def is_dark(self):
+        """Return the current darkness state, or None if unavailable."""
         if not self.darkness_detect:
             return None
         try:
