@@ -54,6 +54,48 @@ class Nao(object):
     Chaining:
         nao.arms.up().go().say('done').hands.open().go()
         nao.video('clip').say_and_block('hi').stop_video()
+
+    Raw SDK access (nao.env):
+        For anything not wrapped by FluentNao, use nao.env to access NAOqi
+        proxies directly. The env object provides every ALModule on the robot.
+
+        Common proxies already available:
+            nao.env.motion        -- ALMotion (joint control, walking, cartesian)
+            nao.env.memory        -- ALMemory (sensor data, event subscription)
+            nao.env.tts           -- ALTextToSpeech
+            nao.env.robotPosture  -- ALRobotPosture
+            nao.env.audioPlayer   -- ALAudioPlayer
+            nao.env.leds          -- ALLeds
+            nao.env.sonar         -- ALSonar
+
+        Adding new proxies on the fly:
+            nao.env.add_proxy('ALBehaviorManager')
+            mgr = nao.env.proxies['ALBehaviorManager']
+            mgr.runBehavior('animations/Stand/Gestures/Hey_1')
+
+        Useful raw SDK examples:
+            # Simultaneous multi-chain cartesian movement
+            nao.env.motion.positionInterpolations(
+                ['LArm', 'RArm'], 0, [left_path, right_path],
+                [7, 7], [times, times], True)
+
+            # Read any sensor value from ALMemory
+            nao.env.memory.getData('Device/SubDeviceList/Battery/Charge/Sensor/Value')
+
+            # Get robot system info
+            nao.env.add_proxy('ALSystem')
+            nao.env.proxies['ALSystem'].robotName()
+
+            # List all running behaviors
+            nao.env.add_proxy('ALBehaviorManager')
+            nao.env.proxies['ALBehaviorManager'].getRunningBehaviors()
+
+        Available NAOqi modules (confirmed on this robot):
+            ALAutonomousLife, ALBehaviorManager, ALSystem, ALConnectionManager,
+            ALNotificationManager, ALPreferences, ALResourceManager,
+            ALBacklightingDetection, ALPhotoCapture, ALVideoRecorder,
+            ALLandMarkDetection, ALTracker, ALInfrared, ALRobotModel,
+            ALWorldRepresentation, ALChestButton, ALDiagnosis
     """
 
     def __init__(self, env, log_function=None):
