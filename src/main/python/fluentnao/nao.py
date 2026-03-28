@@ -21,6 +21,7 @@ from fluentnao.core.navigation import Navigation
 from fluentnao.core.tracker import Tracker
 from fluentnao.core.reach import Reach
 from fluentnao.core.events import Events
+from fluentnao.core.abilities import Abilities
 from fluentnao.core.animations import POD, STAND, SIT
 from fluentnao.core.recorder.recorder import Recorder
 
@@ -140,6 +141,7 @@ class Nao(object):
 
         # events must be first (other modules reference nao.events)
         self.events = Events()
+        self.abilities = Abilities(self)
 
         # other
         self.naoscript = NaoScript(self)
@@ -193,6 +195,7 @@ class Nao(object):
         import fluentnao.core.tracker
         import fluentnao.core.reach
         import fluentnao.core.events
+        import fluentnao.core.abilities
         import fluentnao.core.animations
 
         reload(fluentnao.core.ssh)
@@ -215,6 +218,7 @@ class Nao(object):
         reload(fluentnao.core.tracker)
         reload(fluentnao.core.reach)
         reload(fluentnao.core.events)
+        reload(fluentnao.core.abilities)
         reload(fluentnao.core.animations)
 
         from fluentnao.core.joints import Joints
@@ -267,6 +271,7 @@ class Nao(object):
         self.navigation = Navigation(self)
         self.tracker = Tracker(self)
         self.reach = Reach(self)
+        self.abilities = Abilities(self)
         self.head = Head(self)
         self.hands = Hands(self)
         self.wrists = Wrists(self, self.hands)
@@ -364,89 +369,12 @@ class Nao(object):
         return self
 
     def ask(self, message, answers, confidence=0.15):
-        """Ask a question and wait for one of the expected answers.
-
-        NAO speaks the message, enables speech recognition for the given
-        answer words, and when one is heard with sufficient confidence,
-        stops listening and emits an 'answer' event with the question
-        and recognized word.
-
-        Args:
-            message: text for NAO to speak
-            answers: list of words/phrases to listen for
-            confidence: minimum confidence threshold (0.0-1.0)
-
-        Returns:
-            self
-
-        The event pushed to /events will be:
-            {"event": "answer", "value": "{'question': '...', 'answer': '...'}", "timestamp": ...}
-
-        Examples:
-            nao.ask('is it raining outside', ['yes', 'no'])
-            nao.ask('what color is it', ['red', 'blue', 'green'])
-            nao.ask('are you ready', ['ready', 'not yet', 'wait'])
-        """
-        self.be_still()
-        self.say_and_block(message)
-        answered = [False]
-
-        def on_word(words):
-            if answered[0]:
-                return
-            best = max(words, key=words.get)
-            if words[best] >= confidence:
-                answered[0] = True
-                import threading
-                threading.Timer(0.5, self.audio.stop_listening).start()
-                self.emit('answer', {'question': message, 'answer': best})
-
-        self.audio.listen_for(answers, on_word)
-        return self
+        """Shortcut for nao.abilities.ask(). See Abilities.ask()."""
+        return self.abilities.ask(message, answers, confidence)
 
     def snap(self, message='touch my head to take a photo', filename=None):
-        """Face-tracking photo capture triggered by head touch.
-
-        NAO speaks the message, enables face tracking, and waits for any
-        head tactile sensor to be touched. On touch, captures a VGA photo,
-        stops tracking, and emits a 'photo' event with the file path.
-
-        Args:
-            message: what NAO says before waiting
-            filename: photo filename (without extension). Defaults to 'snap_<timestamp>'
-
-        Returns:
-            self
-
-        The event pushed to /events:
-            {"event": "photo", "value": "/data/photos/snap_1711612345.ppm", ...}
-
-        Examples:
-            nao.snap()
-            nao.snap('smile for the camera', 'portrait')
-        """
-        import time as _time
-
-        if not filename:
-            filename = 'snap_{}'.format(int(_time.time()))
-
-        self.camera.track_face()
-        self.say_and_block(message)
-
-        snapped = [False]
-
-        def on_touch(event):
-            if snapped[0]:
-                return
-            snapped[0] = True
-            self.camera.stop_tracking()
-            path = self.camera.photo(filename, resolution=2)
-            self.say('got it')
-            self.emit('photo', path)
-            self.sensors.stop_all_touch()
-
-        self.sensors.on_head(on_touch)
-        return self
+        """Shortcut for nao.abilities.snap(). See Abilities.snap()."""
+        return self.abilities.snap(message, filename)
 
     def _event_dispatch(self, event, value):
         if hasattr(self, '_event_callback') and self._event_callback:
