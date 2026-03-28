@@ -9,4 +9,6 @@ RUN apt-get update && apt-get install -y \
     libpython2.7 \
     libboost1.55-all-dev \
     python-pygments \
+    openssh-client \
+    libav-tools \
 ;

@@ -3,6 +3,13 @@ services:
   fluentnao:
     build: .
     image: fluentnao:dev
-    ports: ['127.0.0.1:3000:3000']
+    platform: linux/amd64
+    ports: ['127.0.0.1:5050:5050']
+    environment:
+      - NAO_IP=${NAO_IP}
     volumes:
       - .:/fluentnao
+      - ./photos:/photos
+      - ./video:/video
+      - ./audio:/audio
+      - ~/.ssh:/root/.ssh:ro
