@@ -1,73 +1,41 @@
-"""
-Sensors module for NAO robot touch events, battery status, and motor temperature monitoring.
+"""Touch events, battery status, and motor temperature for the NAO robot.
 
-Python 2.7 compatible. Accessed via nao.sensors (instance of Sensors class).
-
-Touch Events
-------------
-Register callbacks that fire when a sensor is touched (value == 1 only).
-All touch methods return self for chaining.
-
-  - on_head(callback)          -- subscribes to all three head tactile sensors
-  - on_head_front(callback)    -- FrontTactilTouched
-  - on_head_middle(callback)   -- MiddleTactilTouched
-  - on_head_rear(callback)     -- RearTactilTouched
-  - on_bumper(callback)        -- subscribes to both foot bumpers
-  - on_bumper_left(callback)   -- LeftBumperPressed
-  - on_bumper_right(callback)  -- RightBumperPressed
-  - on_chest_button(callback)  -- ChestButtonPressed
-  - on_hand(callback)          -- subscribes to both hand back sensors
-  - on_hand_left(callback)     -- HandLeftBackTouched
-  - on_hand_right(callback)    -- HandRightBackTouched
-
-Callbacks receive one argument: the event name string (e.g. 'FrontTactilTouched').
-
-  - stop_on_touch(event)       -- unsubscribe a specific event
-  - stop_all_touch()           -- unsubscribe all registered touch events
-
-Battery
--------
-  - battery_level()            -- returns 0-100 (int) or None on error
-  - is_charging()              -- returns True/False or None on error
-  - battery_temperature()      -- returns temperature value or None on error
-
-Motor Temperature
------------------
-  - temperatures()             -- returns dict of all 26 joint names to temperature values
-  - hottest_joint()            -- returns (joint_name, temperature) tuple or None
-  - on_hot_joint(callback)     -- subscribes to HotJointDetected event; callback receives the event value
-  - stop_on_hot_joint()        -- unsubscribes from HotJointDetected
-
-Usage Examples
---------------
-    # Touch: print which sensor was touched
-    def touched(event):
-        print('Touched: ' + event)
-
-    nao.sensors.on_head(touched)
-    nao.sensors.on_bumper(touched)
-
-    # Battery
-    print(nao.sensors.battery_level())   # e.g. 87
-    print(nao.sensors.is_charging())     # True or False
-
-    # Temperature
-    temps = nao.sensors.temperatures()   # {'HeadYaw': 38.2, ...}
-    name, temp = nao.sensors.hottest_joint()
-
-    # Cleanup
-    nao.sensors.stop_all_touch()
-
-Notes
------
-- Touch callbacks only fire on press (value == 1), not release.
-- ALBodyTemperature proxy is optional; if unavailable, temp features log a warning.
-- All methods return self where possible to support fluent chaining.
+Accessed via nao.sensors. Python 2.7 compatible.
 """
 import naoutil.memory as memory
 
 
 class Sensors():
+    """NAO sensor interface for touch events, battery, and motor temperatures.
+
+    Touch Events:
+        Register callbacks that fire when a sensor is touched (value == 1 only).
+        All touch methods return self for chaining. Callbacks receive one
+        argument: the event name string (e.g. 'FrontTactilTouched').
+
+        - on_head(cb) -- subscribes to all three head tactile sensors
+        - on_head_front(cb), on_head_middle(cb), on_head_rear(cb)
+        - on_bumper(cb) -- subscribes to both foot bumpers
+        - on_bumper_left(cb), on_bumper_right(cb)
+        - on_chest_button(cb), on_hand(cb), on_hand_left(cb), on_hand_right(cb)
+        - stop_on_touch(event) / stop_all_touch()
+
+    Battery:
+        - battery_level() -- returns 0-100 (int) or None on error
+        - is_charging() -- returns True/False or None on error
+        - battery_temperature() -- returns temperature value or None
+
+    Motor Temperature:
+        - temperatures() -- dict of all 26 joint names to temperature values
+        - hottest_joint() -- (joint_name, temperature) tuple or None
+        - on_hot_joint(cb) / stop_on_hot_joint()
+
+    Notes:
+        - Touch callbacks only fire on press (value == 1), not release.
+        - ALBodyTemperature proxy is optional; if unavailable, temp methods
+          log a warning.
+        - All methods return self where possible for fluent chaining.
+    """
 
     # touch event names
     HEAD_FRONT = 'FrontTactilTouched'
@@ -98,12 +66,14 @@ class Sensors():
     ###################################
 
     def on_touch(self, event, callback):
+        """Subscribe to a touch event with a callback."""
         self._touch_callbacks[event] = callback
         memory.subscribeToEvent(event, lambda dn, v, m: self._touch_cb(event, v))
         self.log('sensors.on_touch: subscribed to {}'.format(event))
         return self
 
     def stop_on_touch(self, event):
+        """Unsubscribe from a specific touch event."""
         memory.unsubscribeToEvent(event)
         self._touch_callbacks.pop(event, None)
         self.log('sensors.stop_on_touch: unsubscribed from {}'.format(event))
@@ -115,46 +85,58 @@ class Sensors():
             cb(event)
 
     def on_head_front(self, callback):
+        """Subscribe to front head tactile sensor."""
         return self.on_touch(self.HEAD_FRONT, callback)
 
     def on_head_middle(self, callback):
+        """Subscribe to middle head tactile sensor."""
         return self.on_touch(self.HEAD_MIDDLE, callback)
 
     def on_head_rear(self, callback):
+        """Subscribe to rear head tactile sensor."""
         return self.on_touch(self.HEAD_REAR, callback)
 
     def on_head(self, callback):
+        """Subscribe to all three head tactile sensors."""
         self.on_head_front(callback)
         self.on_head_middle(callback)
         self.on_head_rear(callback)
         return self
 
     def on_bumper_right(self, callback):
+        """Subscribe to right foot bumper."""
         return self.on_touch(self.BUMPER_RIGHT, callback)
 
     def on_bumper_left(self, callback):
+        """Subscribe to left foot bumper."""
         return self.on_touch(self.BUMPER_LEFT, callback)
 
     def on_bumper(self, callback):
+        """Subscribe to both foot bumpers."""
         self.on_bumper_right(callback)
         self.on_bumper_left(callback)
         return self
 
     def on_chest_button(self, callback):
+        """Subscribe to chest button press."""
         return self.on_touch(self.CHEST_BUTTON, callback)
 
     def on_hand_right(self, callback):
+        """Subscribe to right hand back sensor."""
         return self.on_touch(self.HAND_RIGHT, callback)
 
     def on_hand_left(self, callback):
+        """Subscribe to left hand back sensor."""
         return self.on_touch(self.HAND_LEFT, callback)
 
     def on_hand(self, callback):
+        """Subscribe to both hand back sensors."""
         self.on_hand_right(callback)
         self.on_hand_left(callback)
         return self
 
     def stop_all_touch(self):
+        """Unsubscribe from all registered touch events."""
         for event in list(self._touch_callbacks.keys()):
             self.stop_on_touch(event)
         return self
@@ -164,6 +146,7 @@ class Sensors():
     ###################################
 
     def battery_level(self):
+        """Return battery charge as 0-100 int, or None on error."""
         try:
             value = self.nao.env.memory.getData('Device/SubDeviceList/Battery/Charge/Sensor/Value')
             return int(value * 100)
@@ -171,6 +154,7 @@ class Sensors():
             return None
 
     def is_charging(self):
+        """Return True if charging, False if not, None on error."""
         try:
             value = self.nao.env.memory.getData('Device/SubDeviceList/Battery/Current/Sensor/Value')
             return value > 0
@@ -178,6 +162,7 @@ class Sensors():
             return None
 
     def battery_temperature(self):
+        """Return battery temperature value, or None on error."""
         try:
             return self.nao.env.memory.getData('Device/SubDeviceList/Battery/Temperature/Sensor/Value')
         except Exception:
@@ -196,6 +181,7 @@ class Sensors():
     ]
 
     def temperatures(self):
+        """Return dict mapping all 26 joint names to their temperatures."""
         temps = {}
         for joint in self.TEMP_JOINTS:
             try:
@@ -207,6 +193,7 @@ class Sensors():
         return temps
 
     def hottest_joint(self):
+        """Return (joint_name, temperature) for the hottest joint, or None."""
         temps = self.temperatures()
         if not temps:
             return None
@@ -214,11 +201,13 @@ class Sensors():
         return (joint, temps[joint])
 
     def on_hot_joint(self, callback):
+        """Subscribe to HotJointDetected event."""
         memory.subscribeToEvent('HotJointDetected', lambda dn, v, m: callback(v))
         self.log('sensors.on_hot_joint: subscribed')
         return self
 
     def stop_on_hot_joint(self):
+        """Unsubscribe from HotJointDetected event."""
         memory.unsubscribeToEvent('HotJointDetected')
         self.log('sensors.stop_on_hot_joint: unsubscribed')
         return self

@@ -1,111 +1,7 @@
-"""
-Audio module for NAO robot playback, microphone recording, volume control,
-speech recognition, and sound source localization.
+"""Audio playback, recording, volume control, speech recognition, and sound localization.
 
-This module provides the Audio class, accessed via nao.audio, which wraps
-several NAOqi proxies: ALAudioRecorder, ALAudioDevice, ALAudioSourceLocalization,
-and ALSpeechRecognition.
-
-Recording Workflow:
-    start_recording() records audio on the NAO robot itself (to /home/nao/).
-    stop_recording() stops recording, then SCPs the file from NAO to the local
-    /audio Docker volume, and deletes the temporary file from NAO.
-
-Storage Directory:
-    /audio -- default local directory for audio files (Docker-mounted volume)
-
-Channel Configuration Constants:
-    Audio.MONO_LEFT    = [1, 0, 0, 0]
-    Audio.MONO_RIGHT   = [0, 1, 0, 0]
-    Audio.MONO_FRONT   = [0, 0, 1, 0]
-    Audio.MONO_REAR    = [0, 0, 0, 1]
-    Audio.ALL_CHANNELS = [1, 1, 1, 1]  (default for recording)
-
-Key Methods:
-    play(url, volume=1, pan=0)
-        Stream audio from a URL via ALAudioPlayer.post.playWebStream.
-        Non-blocking (uses post). Returns self.
-
-    play_file(filename)
-        Play a local file from audio_dir. SCPs to NAO, plays via ALAudioPlayer,
-        then cleans up the remote copy. Blocking call. Returns self.
-
-    stop_all()
-        Stop all audio playback immediately.
-
-    set_volume(volume)
-        Set master output volume (0-100 integer). Returns self.
-
-    get_volume()
-        Returns current output volume as integer, or None if unavailable.
-
-    mute() / unmute()
-        Mute or unmute audio output. Returns self.
-
-    start_recording(filename='recording', channels=None, sample_rate=16000,
-                    audio_format='wav')
-        Begin recording from NAO microphones. Records to /home/nao/ on the robot.
-        Default format is WAV at 16kHz with all 4 channels. Returns self.
-
-    stop_recording()
-        Stop recording, SCP file from NAO to local audio_dir, delete from NAO.
-        Returns the local file path on success, or None on failure.
-
-    listen_for(words, callback, language='English', word_spotting=False)
-        Subscribe to speech recognition for a list of words.
-        Callback receives a dict of {word: confidence} when words are detected.
-        Set word_spotting=True to detect words within continuous speech.
-        Returns self.
-
-    stop_listening()
-        Stop speech recognition subscription. Returns self.
-
-    sound_direction(sensitivity=0.5, timeout=3)
-        Blocking call to detect sound direction. Polls for up to timeout seconds.
-        Returns ALAudioSourceLocalization data or None.
-
-    start_sound_tracking(callback, sensitivity=0.5)
-        Subscribe to continuous sound localization events.
-        Callback receives raw localization data on each event.
-
-    stop_sound_tracking()
-        Unsubscribe from sound localization events.
-
-    clear()
-        Delete all files in the audio directory.
-
-Usage Examples:
-    # Play a stream
-    nao.audio.play('http://example.com/song.mp3')
-
-    # Record audio
-    nao.audio.start_recording('greeting', sample_rate=16000)
-    # ... wait ...
-    path = nao.audio.stop_recording()
-    # path is now '/audio/greeting.wav'
-
-    # Volume control
-    nao.audio.set_volume(50)
-    nao.audio.mute()
-    nao.audio.unmute()
-
-    # Speech recognition
-    def on_word(words):
-        print(words)  # e.g. {'hello': 0.85, 'goodbye': 0.12}
-
-    nao.audio.listen_for(['hello', 'goodbye'], on_word)
-    # ... later ...
-    nao.audio.stop_listening()
-
-    # Sound direction (blocking)
-    direction = nao.audio.sound_direction(sensitivity=0.7, timeout=5)
-
-Important Notes:
-    - Recording happens on the NAO robot; files are transferred via SCP.
-    - Requires SSH access to NAO (uses fluentnao.core.ssh utilities).
-    - Unavailable proxies are handled gracefully (methods log and return self/None).
-    - All chainable methods return self for fluent API usage.
-    - This is Python 2.7 code.
+Wraps ALAudioRecorder, ALAudioDevice, ALAudioSourceLocalization, and
+ALSpeechRecognition NAOqi proxies. Accessed via nao.audio.
 """
 
 import glob
@@ -118,6 +14,36 @@ from fluentnao.core.ssh import ssh, scp_to_nao, scp_from_nao, nao_ip
 
 
 class Audio():
+    """Audio playback, microphone recording, volume, speech recognition, and sound localization.
+
+    Recording happens on the NAO robot itself (to /home/nao/). Files are
+    transferred to the local Docker volume via SCP on stop_recording().
+
+    Storage Directory:
+        /audio -- default local directory for audio files (Docker-mounted volume)
+
+    Channel Configuration Constants:
+        Audio.MONO_LEFT    = [1, 0, 0, 0]
+        Audio.MONO_RIGHT   = [0, 1, 0, 0]
+        Audio.MONO_FRONT   = [0, 0, 1, 0]
+        Audio.MONO_REAR    = [0, 0, 0, 1]
+        Audio.ALL_CHANNELS = [1, 1, 1, 1]  (default for recording)
+
+    Important Notes:
+        - Recording happens on the NAO robot; files are transferred via SCP.
+        - Requires SSH access to NAO (uses fluentnao.core.ssh utilities).
+        - Unavailable proxies are handled gracefully.
+        - All chainable methods return self for fluent API usage.
+
+    Usage Examples::
+
+        nao.audio.play('http://example.com/song.mp3')
+        nao.audio.start_recording('greeting', sample_rate=16000)
+        path = nao.audio.stop_recording()
+        nao.audio.set_volume(50)
+        nao.audio.listen_for(['hello', 'goodbye'], on_word)
+        nao.audio.stop_listening()
+    """
 
     # channel configs for ALAudioRecorder
     MONO_LEFT = [1, 0, 0, 0]
@@ -163,6 +89,7 @@ class Audio():
     ###################################
 
     def clear(self):
+        """Delete all files in the audio directory."""
         files = glob.glob('{}/*'.format(self.audio_dir))
         for f in files:
             os.remove(f)
@@ -174,16 +101,19 @@ class Audio():
     ###################################
 
     def play(self, url, volume=1, pan=0):
+        """Stream audio from a URL (non-blocking)."""
         self.nao.env.audioPlayer.post.playWebStream(url, volume, pan)
         return self
 
     def stop_all(self):
+        """Stop all audio playback immediately."""
         self.nao.env.audioPlayer.stopAll()
         return self
 
     NAO_PLAYBACK_DIR = '/home/nao/audio_playback'
 
     def play_file(self, filename):
+        """Play a local audio file by SCPing it to NAO (blocking)."""
         local_path = '{}/{}'.format(self.audio_dir, filename)
 
         if not os.path.exists(local_path):
@@ -210,6 +140,7 @@ class Audio():
     ###################################
 
     def set_volume(self, volume):
+        """Set master output volume (0-100)."""
         if not self.device:
             self.log('audio.set_volume: device not available')
             return self
@@ -217,17 +148,20 @@ class Audio():
         return self
 
     def get_volume(self):
+        """Return current output volume, or None if unavailable."""
         if not self.device:
             return None
         return self.device.getOutputVolume()
 
     def mute(self):
+        """Mute audio output."""
         if not self.device:
             return self
         self.device.muteAudioOut(True)
         return self
 
     def unmute(self):
+        """Unmute audio output."""
         if not self.device:
             return self
         self.device.muteAudioOut(False)
@@ -238,6 +172,7 @@ class Audio():
     ###################################
 
     def start_recording(self, filename='recording', channels=None, sample_rate=16000, audio_format='wav'):
+        """Begin recording from NAO microphones to /home/nao/ on the robot."""
         if self._recording:
             self.log('audio.start_recording: already recording')
             return self
@@ -259,6 +194,11 @@ class Audio():
         return self
 
     def stop_recording(self):
+        """Stop recording, SCP file from NAO to local audio_dir, and clean up.
+
+        Returns:
+            Local file path on success, None on failure.
+        """
         if not self._recording or not self.recorder:
             self.log('audio.stop_recording: not recording')
             return None
@@ -294,6 +234,11 @@ class Audio():
     ###################################
 
     def sound_direction(self, sensitivity=0.5, timeout=3):
+        """Poll for a sound direction within the given timeout.
+
+        Returns:
+            Sound location data from ALMemory, or None if no sound detected.
+        """
         if not self.localisation:
             self.log('audio.sound_direction: localisation not available')
             return None
@@ -313,6 +258,7 @@ class Audio():
         return None
 
     def start_sound_tracking(self, callback, sensitivity=0.5):
+        """Subscribe to continuous sound localization events."""
         if self._sound_tracking:
             self.log('audio.start_sound_tracking: already tracking')
             return self
@@ -333,6 +279,7 @@ class Audio():
         return self
 
     def stop_sound_tracking(self):
+        """Unsubscribe from sound localization events."""
         if not self._sound_tracking:
             return self
 
@@ -352,6 +299,7 @@ class Audio():
     ###################################
 
     def listen_for(self, words, callback, language='English', word_spotting=False):
+        """Subscribe to speech recognition for a list of words."""
         if self._listening:
             self.stop_listening()
         if not self.speech_recog:
@@ -367,6 +315,7 @@ class Audio():
         return self
 
     def stop_listening(self):
+        """Unsubscribe from speech recognition events."""
         if not self._listening:
             return self
 

@@ -1,48 +1,4 @@
-'''
-FluentNao - Main Nao Class
-@author: Don Najd
-
-The central class for controlling a NAO robot through a fluent Python API.
-All commands are sent via an HTTP bridge running inside a Docker container
-that connects to the robot over the NAOqi protocol.
-
-Architecture:
-    - The Nao object is created once at server startup (bootstrap_server.py)
-    - It holds references to all sub-modules (arms, camera, audio, etc.)
-    - Commands are sent via HTTP POST to /exec with Python code that references `nao`
-    - Most methods return `self` for fluent chaining: nao.say('hi').arms.up().go()
-
-Sub-modules accessible via nao.<module>:
-    Body:       nao.arms, nao.elbows, nao.wrists, nao.hands, nao.head, nao.legs, nao.feet
-    Media:      nao.camera, nao.audio, nao.leds
-    Vision:     nao.vision, nao.tracker
-    People:     nao.people
-    Sensors:    nao.sensors
-    Movement:   nao.navigation, nao.reach
-    Other:      nao.recorder, nao.naoscript
-
-Key concepts:
-    - Duration: nao.set_duration(1.5) sets the default time for movements
-    - Blocking: nao.go() waits for all queued movements to finish
-    - Stiffness: nao.stiff() enables motors, nao.relax() disables them
-    - Postures: nao.stand_init(), nao.sit(), nao.crouch() are safe positions
-    - Safety: always end sessions with nao.sit() to prevent falls
-
-Fluent chaining pattern:
-    # Body part methods return self (the body part), go() returns nao
-    nao.arms.up().go().say('hands up').hands.open().go()
-
-    # Combined video recording with audio
-    nao.video('clip').say_and_block('hello').arms.up().go().stop_video()
-
-Hot reload:
-    # Reload all modules without restarting the server
-    nao.hot_reload()  # or POST /reload
-
-Shutdown:
-    # Clean up all subscriptions and sit the robot
-    nao.shutdown()  # also called automatically via atexit
-'''
+'''Central class for controlling a NAO robot. @author: Don Najd'''
 import logging
 
 from naoutil.naoenv import NaoEnvironment, make_environment
@@ -74,8 +30,32 @@ import time
 from datetime import datetime, timedelta
 
 class Nao(object):
+    """Fluent API for controlling a NAO robot.
 
-    # init method
+    Created once at server startup. Holds references to all sub-modules.
+    Most methods return self for chaining: nao.say('hi').arms.up().go()
+
+    Sub-modules:
+        Body:     nao.arms, nao.elbows, nao.wrists, nao.hands, nao.head, nao.legs, nao.feet
+        Media:    nao.camera, nao.audio, nao.leds
+        Vision:   nao.vision, nao.tracker
+        People:   nao.people
+        Sensors:  nao.sensors
+        Movement: nao.navigation, nao.reach
+        Other:    nao.recorder, nao.naoscript
+
+    Key concepts:
+        Duration:  nao.set_duration(1.5) sets default movement time
+        Blocking:  nao.go() waits for all queued movements
+        Stiffness: nao.stiff() enables motors, nao.relax() disables
+        Postures:  nao.stand_init(), nao.sit(), nao.crouch()
+        Safety:    always end with nao.sit() to prevent falls
+
+    Chaining:
+        nao.arms.up().go().say('done').hands.open().go()
+        nao.video('clip').say_and_block('hi').stop_video()
+    """
+
     def __init__(self, env, log_function=None):
         super(Nao, self).__init__()
         

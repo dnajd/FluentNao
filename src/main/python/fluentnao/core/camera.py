@@ -1,97 +1,6 @@
-"""
-Camera module for NAO robot photo capture, video frame recording, and face tracking.
+"""Photo capture, video recording, and face tracking for the NAO robot.
 
-This module provides the Camera class, accessed via nao.camera, which wraps the
-ALVideoDevice and ALFaceTracker NAOqi proxies. Photos and video frames are saved
-as PPM files to Docker-mounted volumes, and frames can be stitched into MP4 video
-using avconv.
-
-Storage Directories:
-    /photos -- default directory for single photo captures (PPM format)
-    /video  -- default directory for video frame bursts and final MP4 output
-
-Resolution Constants:
-    Camera.TOP (0), Camera.BOTTOM (1)  -- camera selection
-    Camera.QQVGA (0) = 160x120
-    Camera.QVGA  (1) = 320x240   (default)
-    Camera.VGA   (2) = 640x480
-    Camera.K4VGA (3) = 1280x960
-
-Color Space Constants:
-    Camera.RGB    (11) -- use this for PPM photo output (only format that works)
-    Camera.YUV422 (9)  -- available but not compatible with PPM writing
-
-Key Methods:
-    photo(filename='photo', camera_index=None, resolution=None, color_space=None)
-        Capture a single photo. Saves as <filename>.ppm to photo_dir.
-        Returns the file path on success, None on failure.
-        All optional params default to the instance settings if not provided.
-
-    start_recording(name='video', camera_index=None, resolution=None,
-                    color_space=None, fps=None)
-        Begin burst-capturing PPM frames in a background thread.
-        Frames saved as <name>_00000.ppm, <name>_00001.ppm, etc. in video_dir.
-        Returns self for chaining.
-
-    stop_recording()
-        Stop the background frame capture thread. Returns self for chaining.
-
-    to_video(name=None, fps=None, output_dir=None)
-        Stitch captured PPM frames into an MP4 file using avconv (libx264).
-        Automatically deletes the PPM frames after stitching.
-        Returns the MP4 file path on success, None on failure.
-
-    track_face()
-        Start head-only face tracking using ALFaceTracker.
-
-    track_face_whole_body()
-        Start face tracking using both head and body movement.
-
-    stop_tracking()
-        Stop face tracking and release head stiffness.
-
-    face_position()
-        Returns the current tracked face position from ALFaceTracker, or None.
-
-    is_tracking()
-        Returns True if face tracking is currently active.
-
-    clear_photos()
-        Delete all files in the photo directory.
-
-    clear_video()
-        Delete all files in the video directory.
-
-    set_camera(camera_index), top(), bottom()
-        Select TOP or BOTTOM camera.
-
-    set_resolution(resolution), set_color_space(color_space), set_fps(fps)
-        Configure capture defaults. All return self for chaining.
-
-Usage Examples:
-    # Single photo
-    nao.camera.photo('snap')
-
-    # Photo with specific settings
-    nao.camera.top().set_resolution(Camera.VGA).photo('hi_res')
-
-    # Video recording workflow
-    nao.camera.start_recording('clip', fps=15)
-    # ... wait ...
-    nao.camera.stop_recording()
-    mp4_path = nao.camera.to_video()
-
-    # Face tracking
-    nao.camera.track_face()
-    pos = nao.camera.face_position()
-    nao.camera.stop_tracking()
-
-Important Notes:
-    - Only RGB color space works correctly for PPM photo output.
-    - Video stitching requires avconv to be installed and on the PATH.
-    - The recording thread is daemonized so it will not block process exit.
-    - All methods that do not return a value return self for fluent chaining.
-    - This is Python 2.7 code.
+Wraps ALVideoDevice and ALFaceTracker NAOqi proxies. Accessed via nao.camera.
 """
 
 import glob
@@ -102,6 +11,43 @@ import threading
 
 
 class Camera():
+    """Photo capture, video frame recording, and face tracking.
+
+    Photos and video frames are saved as PPM files to Docker-mounted volumes.
+    Frames can be stitched into MP4 video using avconv.
+
+    Storage Directories:
+        /photos -- default directory for single photo captures (PPM format)
+        /video  -- default directory for video frame bursts and final MP4 output
+
+    Resolution Constants:
+        Camera.TOP (0), Camera.BOTTOM (1) -- camera selection
+        Camera.QQVGA (0) = 160x120
+        Camera.QVGA  (1) = 320x240  (default)
+        Camera.VGA   (2) = 640x480
+        Camera.K4VGA (3) = 1280x960
+
+    Color Space Constants:
+        Camera.RGB    (11) -- use for PPM photo output (only format that works)
+        Camera.YUV422 (9)  -- available but not compatible with PPM writing
+
+    Important Notes:
+        - Only RGB color space works correctly for PPM photo output.
+        - Video stitching requires avconv to be installed and on the PATH.
+        - The recording thread is daemonized so it will not block process exit.
+        - All methods that do not return a value return self for fluent chaining.
+
+    Usage Examples::
+
+        nao.camera.photo('snap')
+        nao.camera.top().set_resolution(Camera.VGA).photo('hi_res')
+        nao.camera.start_recording('clip', fps=15)
+        nao.camera.stop_recording()
+        mp4_path = nao.camera.to_video()
+        nao.camera.track_face()
+        pos = nao.camera.face_position()
+        nao.camera.stop_tracking()
+    """
 
     # defaults
     TOP = 0
@@ -144,31 +90,38 @@ class Camera():
 
     # settings
     def set_camera(self, camera_index):
+        """Select which camera to use (TOP or BOTTOM)."""
         self.camera_index = camera_index
         return self
 
     def set_resolution(self, resolution):
+        """Set capture resolution (QQVGA, QVGA, VGA, or K4VGA)."""
         self.resolution = resolution
         return self
 
     def set_color_space(self, color_space):
+        """Set capture color space (RGB or YUV422)."""
         self.color_space = color_space
         return self
 
     def set_fps(self, fps):
+        """Set capture frames per second."""
         self.fps = fps
         return self
 
     def top(self):
+        """Select the top camera."""
         self.camera_index = self.TOP
         return self
 
     def bottom(self):
+        """Select the bottom camera."""
         self.camera_index = self.BOTTOM
         return self
 
     # cleanup
     def clear_photos(self):
+        """Delete all files in the photo directory."""
         files = glob.glob('{}/*'.format(self.photo_dir))
         for f in files:
             os.remove(f)
@@ -176,6 +129,7 @@ class Camera():
         return self
 
     def clear_video(self):
+        """Delete all files in the video directory."""
         files = glob.glob('{}/*'.format(self.video_dir))
         for f in files:
             os.remove(f)
@@ -184,6 +138,11 @@ class Camera():
 
     # photo capture
     def photo(self, filename='photo', camera_index=None, resolution=None, color_space=None):
+        """Capture a single photo and save as PPM.
+
+        Returns:
+            File path on success, None on failure.
+        """
         cam = camera_index if camera_index is not None else self.camera_index
         res = resolution if resolution is not None else self.resolution
         cs = color_space if color_space is not None else self.color_space
@@ -213,6 +172,7 @@ class Camera():
 
     # video capture (burst of frames saved as PPMs)
     def start_recording(self, name='video', camera_index=None, resolution=None, color_space=None, fps=None):
+        """Begin burst-capturing PPM frames in a background thread."""
         if self._recording:
             self.log('camera.start_recording: already recording')
             return self
@@ -235,6 +195,7 @@ class Camera():
         return self
 
     def stop_recording(self):
+        """Stop the background frame capture thread."""
         if not self._recording:
             self.log('camera.stop_recording: not recording')
             return self
@@ -246,6 +207,13 @@ class Camera():
         return self
 
     def to_video(self, name=None, fps=None, output_dir=None):
+        """Stitch captured PPM frames into an MP4 using avconv.
+
+        Deletes PPM frames after stitching.
+
+        Returns:
+            MP4 file path on success, None on failure.
+        """
         vid_name = name or self._record_name or 'video'
         vid_fps = fps or self._record_fps or 10
         out_dir = output_dir or self.video_dir
@@ -297,6 +265,7 @@ class Camera():
 
     # face tracking
     def track_face(self):
+        """Start head-only face tracking."""
         if not self.face_tracker:
             self.log('camera.track_face: not available')
             return self
@@ -308,6 +277,7 @@ class Camera():
         return self
 
     def track_face_whole_body(self):
+        """Start face tracking using both head and body movement."""
         if not self.face_tracker:
             self.log('camera.track_face_whole_body: not available')
             return self
@@ -320,6 +290,7 @@ class Camera():
         return self
 
     def stop_tracking(self):
+        """Stop face tracking and release head stiffness."""
         if not self.face_tracker:
             return self
         self.face_tracker.stopTracker()
@@ -329,9 +300,11 @@ class Camera():
         return self
 
     def is_tracking(self):
+        """Return True if face tracking is currently active."""
         return self._face_tracking
 
     def face_position(self):
+        """Return the current tracked face position, or None."""
         if not self.face_tracker:
             return None
         return self.face_tracker.getPosition()

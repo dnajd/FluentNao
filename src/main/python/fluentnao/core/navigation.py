@@ -1,66 +1,38 @@
-"""
-Navigation module for NAO robot walking, localization, and visual compass.
+"""Walking, localization, and visual compass for the NAO robot.
 
-Python 2.7 compatible. Accessed via nao.navigation (instance of Navigation class).
-Uses three optional NaoQi proxies: ALNavigation, ALLocalization, ALVisualCompass.
-If a proxy is unavailable, its methods log a warning and return self.
-
-Movement
---------
-  - move_to(x, y, theta=0)        -- precise movement using ALMotion.moveTo directly.
-                                      x/y in meters, theta in radians. Accurate for turns.
-                                      Blocks until movement completes.
-  - navigate_to(x, y)             -- obstacle-avoiding navigation using ALNavigation.navigateTo.
-                                      Blocks until destination reached or path fails.
-  - move_toward(x, y, theta=0)    -- continuous velocity command via ALNavigation.moveToward.
-                                      Does not block; call stop() to halt.
-  - stop()                        -- stops both ALNavigation and ALMotion movement.
-  - set_safety_distance(d=0.4)    -- sets obstacle avoidance safety distance in meters.
-
-Localization
-------------
-  - learn_home()                   -- performs panoramic scan and saves current position as home.
-  - go_home()                      -- navigates back to learned home position.
-  - go_to_position(x, y, theta=0) -- navigates to an absolute map position.
-  - position()                     -- returns current [x, y, theta] from ALLocalization, or None.
-  - orientation()                  -- returns current orientation, or None.
-  - is_home()                      -- returns True if robot is near home, or None.
-  - save_map(name='map')           -- persists the learned map.
-  - load_map(name='map')           -- loads a previously saved map.
-  - clear_map()                    -- clears the current map.
-
-Visual Compass
---------------
-  - set_compass_reference()        -- captures current camera image as compass reference.
-  - compass_to(x, y)              -- moves toward a position using visual compass.
-  - stop_compass()                 -- unsubscribes from the visual compass.
-
-Usage Examples
---------------
-    # Walk forward 1 meter
-    nao.navigation.move_to(1.0, 0, 0)
-
-    # Turn 90 degrees left in place
-    import math
-    nao.navigation.move_to(0, 0, math.pi / 2)
-
-    # Navigate with obstacle avoidance
-    nao.navigation.navigate_to(2.0, 1.0)
-
-    # Learn and return to home
-    nao.navigation.learn_home()
-    # ... robot walks around ...
-    nao.navigation.go_home()
-
-Notes
------
-- move_to() uses ALMotion directly -- good for precise turns and short distances.
-- navigate_to() uses ALNavigation -- adds obstacle avoidance but may be less precise.
-- All methods return self for fluent chaining (except position/orientation/is_home
-  which return data or None).
+Accessed via nao.navigation. Python 2.7 compatible.
 """
 
 class Navigation():
+    """NAO navigation using ALNavigation, ALLocalization, and ALVisualCompass.
+
+    Uses three optional NaoQi proxies. If a proxy is unavailable, its
+    methods log a warning and return self.
+
+    Movement:
+        - move_to(x, y, theta) -- precise blocking move via ALMotion.moveTo
+        - navigate_to(x, y) -- obstacle-avoiding navigation via ALNavigation
+        - move_toward(x, y, theta) -- continuous velocity (non-blocking)
+        - stop() -- stops all movement
+        - set_safety_distance(d) -- obstacle avoidance distance in meters
+
+    Localization:
+        - learn_home() / go_home() -- save and return to home position
+        - go_to_position(x, y, theta) -- navigate to absolute map position
+        - position() / orientation() / is_home() -- query current state
+        - save_map(name) / load_map(name) / clear_map()
+
+    Visual Compass:
+        - set_compass_reference() -- capture current view as reference
+        - compass_to(x, y) -- move using visual compass
+        - stop_compass() -- unsubscribe from visual compass
+
+    Notes:
+        - move_to() uses ALMotion directly -- good for precise turns.
+        - navigate_to() uses ALNavigation -- adds obstacle avoidance.
+        - All methods return self for fluent chaining except
+          position/orientation/is_home which return data or None.
+    """
 
     def __init__(self, nao):
         self.nao = nao
@@ -83,6 +55,7 @@ class Navigation():
     ###################################
 
     def navigate_to(self, x, y):
+        """Navigate to (x, y) with obstacle avoidance. Blocks until done."""
         if not self.nav:
             self.log('navigation.navigate_to: not available')
             return self
@@ -91,11 +64,13 @@ class Navigation():
         return self
 
     def move_to(self, x, y, theta=0):
+        """Precise blocking move. x/y in meters, theta in radians."""
         self.nao.env.motion.moveTo(x, y, theta)
         self.log('navigation.move_to: ({}, {}, {})'.format(x, y, theta))
         return self
 
     def move_toward(self, x, y, theta=0):
+        """Continuous velocity command (non-blocking). Call stop() to halt."""
         if not self.nav:
             self.log('navigation.move_toward: not available')
             return self
@@ -104,6 +79,7 @@ class Navigation():
         return self
 
     def stop(self):
+        """Stop all navigation and motion movement."""
         if not self.nav:
             return self
         self.nav.stopNavigateTo()
@@ -112,6 +88,7 @@ class Navigation():
         return self
 
     def set_safety_distance(self, distance=0.4):
+        """Set obstacle avoidance safety distance in meters."""
         if not self.nav:
             return self
         self.nav.setSecurityDistance(distance)
@@ -123,6 +100,7 @@ class Navigation():
     ###################################
 
     def learn_home(self):
+        """Save current position as home via panoramic scan."""
         if not self.loc:
             self.log('navigation.learn_home: not available')
             return self
@@ -132,6 +110,7 @@ class Navigation():
         return self
 
     def go_home(self):
+        """Navigate back to learned home position."""
         if not self.loc:
             self.log('navigation.go_home: not available')
             return self
@@ -140,6 +119,7 @@ class Navigation():
         return self
 
     def go_to_position(self, x, y, theta=0):
+        """Navigate to an absolute map position."""
         if not self.loc:
             self.log('navigation.go_to_position: not available')
             return self
@@ -148,6 +128,7 @@ class Navigation():
         return self
 
     def position(self):
+        """Return current robot position, or None if unavailable."""
         if not self.loc:
             return None
         try:
@@ -156,6 +137,7 @@ class Navigation():
             return None
 
     def orientation(self):
+        """Return current robot orientation, or None if unavailable."""
         if not self.loc:
             return None
         try:
@@ -164,6 +146,7 @@ class Navigation():
             return None
 
     def is_home(self):
+        """Return True if robot is at home position, or None if unavailable."""
         if not self.loc:
             return None
         try:
@@ -172,6 +155,7 @@ class Navigation():
             return None
 
     def save_map(self, name='map'):
+        """Save the current localization map."""
         if not self.loc:
             return self
         self.loc.save(name)
@@ -179,6 +163,7 @@ class Navigation():
         return self
 
     def load_map(self, name='map'):
+        """Load a previously saved localization map."""
         if not self.loc:
             return self
         self.loc.load(name)
@@ -186,6 +171,7 @@ class Navigation():
         return self
 
     def clear_map(self):
+        """Clear the current localization map."""
         if not self.loc:
             return self
         self.loc.clear()
@@ -197,6 +183,7 @@ class Navigation():
     ###################################
 
     def set_compass_reference(self):
+        """Capture current camera view as the visual compass reference."""
         if not self.compass:
             self.log('navigation.set_compass_reference: not available')
             return self
@@ -206,6 +193,7 @@ class Navigation():
         return self
 
     def compass_to(self, x, y):
+        """Move to (x, y) using visual compass guidance."""
         if not self.compass:
             self.log('navigation.compass_to: not available')
             return self
@@ -214,6 +202,7 @@ class Navigation():
         return self
 
     def stop_compass(self):
+        """Unsubscribe from the visual compass."""
         if not self.compass:
             return self
         try:
