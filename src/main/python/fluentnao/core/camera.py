@@ -2,7 +2,6 @@ import glob
 import os
 import subprocess
 import time
-import struct
 import threading
 
 
@@ -162,15 +161,16 @@ class Camera():
             vid_fps, pattern, output)
         result = subprocess.call(cmd, shell=True)
 
+        # always clean up PPM frames
+        frames = glob.glob('{}/{}_*.ppm'.format(self.video_dir, vid_name))
+        for f in frames:
+            os.remove(f)
+
         if result == 0:
-            # clean up PPM frames
-            frames = glob.glob('{}/{}_*.ppm'.format(self.video_dir, vid_name))
-            for f in frames:
-                os.remove(f)
             self.log('camera.to_video: created {} from {} frames'.format(output, len(frames)))
             return output
         else:
-            self.log('camera.to_video: ffmpeg failed (rc={})'.format(result))
+            self.log('camera.to_video: avconv failed (rc={})'.format(result))
             return None
 
     def _record_loop(self, name, cam, res, cs, capture_fps):
@@ -200,7 +200,10 @@ class Camera():
                 frame_num, elapsed, self._actual_fps))
 
     # face tracking
-    def track_face(self, width=0.1):
+    def track_face(self):
+        if not self.face_tracker:
+            self.log('camera.track_face: not available')
+            return self
         self.nao.env.motion.setStiffnesses("Head", 1.0)
         self.face_tracker.setWholeBodyOn(False)
         self.face_tracker.startTracker()
@@ -208,7 +211,10 @@ class Camera():
         self.log('camera.track_face: started')
         return self
 
-    def track_face_whole_body(self, width=0.1):
+    def track_face_whole_body(self):
+        if not self.face_tracker:
+            self.log('camera.track_face_whole_body: not available')
+            return self
         self.nao.env.motion.setStiffnesses("Head", 1.0)
         self.nao.env.motion.setStiffnesses("Body", 1.0)
         self.face_tracker.setWholeBodyOn(True)
@@ -218,6 +224,8 @@ class Camera():
         return self
 
     def stop_tracking(self):
+        if not self.face_tracker:
+            return self
         self.face_tracker.stopTracker()
         self.nao.env.motion.setStiffnesses("Head", 0)
         self._face_tracking = False
@@ -228,4 +236,6 @@ class Camera():
         return self._face_tracking
 
     def face_position(self):
+        if not self.face_tracker:
+            return None
         return self.face_tracker.getPosition()
