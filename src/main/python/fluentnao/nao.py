@@ -20,6 +20,7 @@ from fluentnao.core.sensors import Sensors
 from fluentnao.core.navigation import Navigation
 from fluentnao.core.tracker import Tracker
 from fluentnao.core.reach import Reach
+from fluentnao.core.events import Events
 from fluentnao.core.animations import POD, STAND, SIT
 from fluentnao.core.recorder.recorder import Recorder
 
@@ -148,6 +149,7 @@ class Nao(object):
         self.navigation = Navigation(self)
         self.tracker = Tracker(self)
         self.reach = Reach(self)
+        self.events = Events()
 
         # head
         self.head = Head(self)
@@ -188,6 +190,7 @@ class Nao(object):
         import fluentnao.core.navigation
         import fluentnao.core.tracker
         import fluentnao.core.reach
+        import fluentnao.core.events
         import fluentnao.core.animations
 
         reload(fluentnao.core.ssh)
@@ -209,6 +212,7 @@ class Nao(object):
         reload(fluentnao.core.navigation)
         reload(fluentnao.core.tracker)
         reload(fluentnao.core.reach)
+        reload(fluentnao.core.events)
         reload(fluentnao.core.animations)
 
         from fluentnao.core.joints import Joints
@@ -260,6 +264,7 @@ class Nao(object):
         self.navigation = Navigation(self)
         self.tracker = Tracker(self)
         self.reach = Reach(self)
+        self.events = Events()
         self.head = Head(self)
         self.hands = Hands(self)
         self.wrists = Wrists(self, self.hands)
