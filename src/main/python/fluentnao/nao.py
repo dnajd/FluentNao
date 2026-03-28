@@ -519,6 +519,27 @@ class Nao(object):
         self.move(jointName, [angleInRadians], durationInSeconds)
 
     ###################################
+    # joint info
+    ###################################
+
+    def joint_limits(self, chain='Body'):
+        joints = self.env.motion.getJointNames(chain)
+        limits = {}
+        for j in joints:
+            lim = self.env.motion.getLimits(j)
+            limits[j] = {
+                'min': round(math.degrees(lim[0][0]), 1),
+                'max': round(math.degrees(lim[0][1]), 1),
+                'max_speed': round(math.degrees(lim[0][2]), 1)
+            }
+        return limits
+
+    def joint_angles(self, chain='Body', use_sensors=False):
+        joints = self.env.motion.getJointNames(chain)
+        angles = self.env.motion.getAngles(chain, use_sensors)
+        return dict(zip(joints, [round(math.degrees(a), 1) for a in angles]))
+
+    ###################################
     # helpers
     ###################################
 
