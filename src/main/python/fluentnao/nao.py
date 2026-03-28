@@ -363,6 +363,47 @@ class Nao(object):
         server._push_event(event, value)
         return self
 
+    def ask(self, message, answers, confidence=0.3):
+        """Ask a question and wait for one of the expected answers.
+
+        NAO speaks the message, enables speech recognition for the given
+        answer words, and when one is heard with sufficient confidence,
+        stops listening and emits an 'answer' event with the question
+        and recognized word.
+
+        Args:
+            message: text for NAO to speak
+            answers: list of words/phrases to listen for
+            confidence: minimum confidence threshold (0.0-1.0)
+
+        Returns:
+            self
+
+        The event pushed to /events will be:
+            {"event": "answer", "value": "{'question': '...', 'answer': '...'}", "timestamp": ...}
+
+        Examples:
+            nao.ask('is it raining outside', ['yes', 'no'])
+            nao.ask('what color is it', ['red', 'blue', 'green'])
+            nao.ask('are you ready', ['ready', 'not yet', 'wait'])
+        """
+        self.be_still()
+        self.say_and_block(message)
+        answered = [False]
+
+        def on_word(words):
+            if answered[0]:
+                return
+            best = max(words, key=words.get)
+            if words[best] >= confidence:
+                answered[0] = True
+                import threading
+                threading.Timer(0.5, self.audio.stop_listening).start()
+                self.emit('answer', {'question': message, 'answer': best})
+
+        self.audio.listen_for(answers, on_word)
+        return self
+
     def _event_dispatch(self, event, value):
         if hasattr(self, '_event_callback') and self._event_callback:
             self._event_callback(event, value)
