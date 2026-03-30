@@ -533,3 +533,34 @@ class Abilities():
         self.nao.emit('patrol_complete', {'count': len(waypoints)})
         self.log('patrol: complete')
         return self
+
+    def push_to_sense(self):
+        """Enable front head button for snap photo and rear head button for hold-to-record.
+
+        Front tap: countdown tones (C-E-G), red eye flash, VGA photo capture,
+            emits 'photo_captured' event.
+        Rear hold: hold to record audio, release to stop,
+            emits 'audio_captured' event.
+
+        Call stop_push_to_sense() to disable both.
+
+        Examples:
+            nao.abilities.push_to_sense()
+            nao.abilities.stop_push_to_sense()
+        """
+        import time as _time
+
+        def on_front_tap(event):
+            self.nao.camera.snap_photo('tap_' + str(int(_time.time())), resolution=2)
+
+        self.nao.sensors.on_head_front(on_front_tap)
+        self.nao.audio.hold_to_record('RearTactilTouched')
+        self.log('push_to_sense: front=snap_photo, rear=hold_to_record')
+        return self.nao
+
+    def stop_push_to_sense(self):
+        """Disable push_to_sense bindings."""
+        self.nao.sensors.stop_on_touch('FrontTactilTouched')
+        self.nao.audio.stop_hold_to_record()
+        self.log('stop_push_to_sense: disabled')
+        return self.nao

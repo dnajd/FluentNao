@@ -44,6 +44,7 @@ class Leds():
 
     def eyes(self, hex=0xCC0033, intensity=0):
         """Set face/eye LED color."""
+        self.nao._eye_color = hex
         self.nao.env.leds.fadeRGB(self.joints.LEDs.FaceLeds, hex, intensity) # intensity & duration
         return self;
 

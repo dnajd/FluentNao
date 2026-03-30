@@ -365,3 +365,58 @@ class Audio():
             # value is [word1, confidence1, word2, confidence2, ...]
             words = dict(zip(value[0::2], value[1::2]))
             self._word_callback(words)
+
+    ###################################
+    # hold-to-record (push-to-talk)
+    ###################################
+
+    def hold_to_record(self, event='MiddleTactilTouched', channels=None):
+        """Start/stop recording by holding a touch sensor.
+
+        Press the sensor to start recording, release to stop.
+        Plays a low tone on start and a higher tone on stop.
+        Emits 'audio_captured' event with the file path on release.
+
+        Args:
+            event: Touch event name to bind (default middle head button).
+            channels: Mic channel config (default front mic).
+
+        Returns:
+            self
+
+        Examples:
+            nao.audio.hold_to_record()
+            nao.audio.hold_to_record('RearTactilTouched')
+            nao.audio.stop_hold_to_record()
+        """
+        import time as _time
+
+        if channels is None:
+            channels = [0, 0, 1, 0]
+
+        self._hold_event = event
+        self._hold_channels = channels
+
+        def on_touch(dataName, value, msg):
+            if value == 1.0:
+                self.nao.env.audioPlayer.post.playSine(262, 40, 0, 0.15)
+                name = 'hold_{}'.format(int(_time.time()))
+                self.start_recording(name, channels=self._hold_channels)
+            elif value == 0.0:
+                path = self.stop_recording()
+                self.nao.env.audioPlayer.post.playSine(392, 40, 0, 0.15)
+                if path:
+                    self.nao.emit('audio_captured', path)
+
+        self._hold_callback = on_touch
+        memory.subscribeToEvent(event, on_touch)
+        self.log('audio.hold_to_record: bound to {}'.format(event))
+        return self
+
+    def stop_hold_to_record(self):
+        """Unbind the hold-to-record touch event."""
+        if hasattr(self, '_hold_event'):
+            memory.unsubscribeToEvent(self._hold_event)
+            self._hold_callback = None
+            self.log('audio.stop_hold_to_record: unbound')
+        return self

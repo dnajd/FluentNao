@@ -170,6 +170,37 @@ class Camera():
         self.log('camera.photo: saved {}x{} to {}'.format(width, height, path))
         return path
 
+    def snap_photo(self, filename='photo', camera_index=None, resolution=None, color_space=None):
+        """Photo with countdown tones, eye flash, and event emission.
+
+        Plays low-mid-high tones, flashes eyes red on capture,
+        restores previous eye color, and emits 'photo_captured' event.
+
+        Returns:
+            File path on success, None on failure.
+        """
+        prev_eye_color = getattr(self.nao, '_eye_color', 0x000000)
+
+        # countdown tones: C major triad (C4, E4, G4)
+        self.nao.env.audioPlayer.post.playSine(262, 40, 0, 0.25)
+        time.sleep(0.55)
+        self.nao.env.audioPlayer.post.playSine(330, 40, 0, 0.25)
+        time.sleep(0.55)
+        self.nao.env.audioPlayer.post.playSine(392, 40, 0, 0.25)
+        time.sleep(0.55)
+
+        # flash eyes red and capture
+        self.nao.env.leds.fadeRGB("FaceLeds", 0xFF0000, 0)
+        path = self.photo(filename, camera_index, resolution, color_space)
+
+        # snap eyes back instantly
+        self.nao.env.leds.fadeRGB("FaceLeds", prev_eye_color, 0)
+
+        if path:
+            self.nao.emit('photo_captured', path)
+
+        return path
+
     # video capture (burst of frames saved as PPMs)
     def start_recording(self, name='video', camera_index=None, resolution=None, color_space=None, fps=None):
         """Begin burst-capturing PPM frames in a background thread."""
