@@ -209,10 +209,10 @@ class Audio():
     def start_recording(self, filename='recording', channels=None, sample_rate=16000, audio_format='wav'):
         """Begin recording from NAO microphones to /home/nao/ on the robot."""
         if self._recording:
-            self.log('audio.start_recording: already recording')
+            self.log('[audio] start_recording: already recording')
             return self
         if not self.recorder:
-            self.log('audio.start_recording: recorder not available')
+            self.log('[audio] start_recording: recorder not available')
             return self
 
         if channels is None:
@@ -222,10 +222,11 @@ class Audio():
         self._recording_filename = filename
         self._recording_format = audio_format
         self._recording_nao_path = nao_path
+        self._recording_start_time = time.time()
 
         self.recorder.startMicrophonesRecording(nao_path, audio_format, sample_rate, channels)
         self._recording = True
-        self.log('audio.start_recording: started -> {}'.format(nao_path))
+        self.log('[audio] recording START -> {} (sr={}, ch={})'.format(nao_path, sample_rate, channels))
         return self
 
     def stop_recording(self):
@@ -235,31 +236,42 @@ class Audio():
             Local file path on success, None on failure.
         """
         if not self._recording or not self.recorder:
-            self.log('audio.stop_recording: not recording')
+            self.log('[audio] stop_recording: not recording')
             return None
 
+        t0 = time.time()
+        record_duration = t0 - getattr(self, '_recording_start_time', t0)
         self.recorder.stopMicrophonesRecording()
         self._recording = False
-        self.log('audio.stop_recording: stopped')
+        t1 = time.time()
+        self.log('[audio] recording STOP ({:.1f}s recorded, {:.3f}s to stop)'.format(
+            record_duration, t1 - t0))
 
         # pull from NAO and clean up
         local_path = self._pull_and_cleanup(
             self._recording_nao_path,
             '{}.{}'.format(self._recording_filename, self._recording_format)
         )
+        t2 = time.time()
+        self.log('[audio] recording DONE ({:.3f}s scp+cleanup, {:.3f}s total stop-to-ready)'.format(
+            t2 - t1, t2 - t0))
         return local_path
 
     def _pull_and_cleanup(self, nao_path, local_filename):
         local_path = '{}/{}'.format(self.audio_dir, local_filename)
 
+        t0 = time.time()
+        self.log('[audio] scp START {} -> {}'.format(nao_path, local_path))
         result = scp_from_nao(nao_path, local_path)
+        t1 = time.time()
 
         if result == 0:
-            self.log('audio.pull: copied {} to {}'.format(nao_path, local_path))
+            self.log('[audio] scp DONE ({:.3f}s)'.format(t1 - t0))
             ssh('rm -f {}'.format(nao_path))
-            self.log('audio.pull: cleaned up {}'.format(nao_path))
+            t2 = time.time()
+            self.log('[audio] cleanup DONE ({:.3f}s)'.format(t2 - t1))
         else:
-            self.log('audio.pull: failed to copy {} (rc={})'.format(nao_path, result))
+            self.log('[audio] scp FAILED (rc={}, {:.3f}s)'.format(result, t1 - t0))
             local_path = None
 
         return local_path
@@ -399,14 +411,19 @@ class Audio():
 
         def on_touch(dataName, value, msg):
             if value == 1.0:
+                self.log('[hold_to_record] PRESS detected, starting recording')
                 self.nao.env.audioPlayer.post.playSine(262, 40, 0, 0.15)
                 name = 'hold_{}'.format(int(_time.time()))
                 self.start_recording(name, channels=self._hold_channels)
             elif value == 0.0:
+                self.log('[hold_to_record] RELEASE detected, stopping recording')
+                t0 = _time.time()
                 path = self.stop_recording()
                 self.nao.env.audioPlayer.post.playSine(392, 40, 0, 0.15)
                 if path:
                     self.nao.emit('audio_captured', path)
+                    self.log('[hold_to_record] audio_captured emitted ({:.3f}s release-to-ready)'.format(
+                        _time.time() - t0))
 
         self._hold_callback = on_touch
         memory.subscribeToEvent(event, on_touch)

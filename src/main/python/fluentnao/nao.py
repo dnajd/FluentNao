@@ -1,5 +1,6 @@
 '''Central class for controlling a NAO robot. @author: Don Najd'''
 import logging
+import os
 
 from naoutil.naoenv import NaoEnvironment, make_environment
 from fluentnao.core.arms import Arms
@@ -174,6 +175,19 @@ class Nao(object):
         # global duration
         self.set_duration(1.5)
 
+        # auto-connect bridge in server mode
+        if os.environ.get('FLUENTNAO_BRIDGE'):
+            self._connect_bridge()
+
+    def _connect_bridge(self):
+        """Wire up emit/emit_events via the bridge module."""
+        try:
+            import server
+            from fluentnao.core.bridge import Bridge
+            self._bridge = Bridge(self, server._push_event)
+        except Exception as e:
+            self.log('bridge: failed to connect: {}'.format(e))
+
     def hot_reload(self):
         import fluentnao.core.ssh
         import fluentnao.core.arms
@@ -281,6 +295,9 @@ class Nao(object):
         self.legs = Legs(self, self.feet)
         self.recorder = Recorder(self)
 
+        if os.environ.get('FLUENTNAO_BRIDGE'):
+            self._connect_bridge()
+
         self.log('hot_reload: complete')
         return self
 
@@ -353,19 +370,11 @@ class Nao(object):
         return self
 
     def emit(self, event, value=None):
-        """Push a custom event to the long poll queue.
+        """Push a custom event. No-op until bridge.connect() wires it up.
 
-        Args:
-            event: event name string (can be anything)
-            value: any value to include with the event
-
-        Examples:
-            nao.emit('greeting_complete', 'Don')
-            nao.emit('task_done')
-            nao.emit('object_found', {'name': 'mug', 'distance': 0.5})
+        The bridge module replaces this method with one that pushes to
+        the server's long poll queue. Without the bridge, calls are silent.
         """
-        import server
-        server._push_event(event, value)
         return self
 
     def ask(self, message, answers, confidence=0.15):
@@ -380,30 +389,145 @@ class Nao(object):
         if hasattr(self, '_event_callback') and self._event_callback:
             self._event_callback(event, value)
 
-    def listen(self, event_names=None):
-        """Subscribe to events and push them to the server's long poll queue.
+    # default events to log -- curated for NAO V4/V5
+    LOG_EVENTS = [
+        # touch
+        'FrontTactilTouched', 'MiddleTactilTouched', 'RearTactilTouched',
+        'LeftBumperPressed', 'RightBumperPressed', 'ChestButtonPressed',
+        'HandLeftBackTouched', 'HandLeftLeftTouched', 'HandLeftRightTouched',
+        'HandRightBackTouched', 'HandRightLeftTouched', 'HandRightRightTouched',
+        'TouchChanged',
+        'ALChestButton/DoubleClickOccurred', 'ALChestButton/SimpleClickOccurred',
+        'ALChestButton/TripleClickOccurred',
+        # vision
+        'FaceDetected', 'PictureDetected',
+        'MovementDetection/MovementDetected', 'MovementDetection/NoMovement',
+        'DarknessDetection/DarknessDetected',
+        'BacklightingDetection/BacklightingDetected',
+        'FaceCharacteristics/PersonSmiling',
+        # people
+        'PeoplePerception/JustArrived', 'PeoplePerception/JustLeft',
+        'PeoplePerception/PeopleDetected', 'PeoplePerception/PeopleList',
+        'PeoplePerception/VisiblePeopleList', 'PeoplePerception/NonVisiblePeopleList',
+        'PeoplePerception/PopulationUpdated', 'PeoplePerception/PopulationReset',
+        'EngagementZones/PersonApproached', 'EngagementZones/PersonMovedAway',
+        'EngagementZones/PersonEnteredZone1', 'EngagementZones/PersonEnteredZone2',
+        'EngagementZones/PersonEnteredZone3',
+        'GazeAnalysis/PersonStartsLookingAtRobot', 'GazeAnalysis/PersonStopsLookingAtRobot',
+        'GazeAnalysis/PeopleLookingAtRobot',
+        'SittingPeopleDetection/PersonSittingDown', 'SittingPeopleDetection/PersonStandingUp',
+        # audio
+        'WordRecognized', 'SoundDetected', 'SpeechDetected', 'NoiseRecognized',
+        'ALAudioSourceLocalization/SoundLocated', 'ALAudioSourceLocalization/SoundsLocated',
+        'ALSpeechRecognition/Status', 'ALSpeechRecognition/ActiveListening',
+        'ALSpeechRecognition/SignalTooLow',
+        # speech output
+        'ALTextToSpeech/TextStarted', 'ALTextToSpeech/TextDone',
+        'ALTextToSpeech/TextInterrupted', 'ALTextToSpeech/CurrentWord',
+        'ALTextToSpeech/CurrentSentence',
+        'ALAnimatedSpeech/EndOfAnimatedSpeech',
+        # sensors / hardware
+        'HotJointDetected', 'DeviceNoLongerHotDetected', 'HotDeviceDetected',
+        'SonarLeftDetected', 'SonarRightDetected',
+        'SonarLeftNothingDetected', 'SonarRightNothingDetected',
+        'TemperatureStatusChanged',
+        # motion / posture
+        'robotHasFallen', 'robotIsWakeUp',
+        'ALMotion/RobotIsFalling', 'ALMotion/RobotIsStand',
+        'ALMotion/Safety/RobotPushed', 'ALMotion/Safety/MoveFailed',
+        'ALMotion/Safety/PushRecovery',
+        'PostureChanged', 'PostureFamilyChanged',
+        # awareness
+        'ALBasicAwareness/HumanTracked', 'ALBasicAwareness/HumanLost',
+        'ALBasicAwareness/StimulusDetected',
+    ]
 
-        Events are available via GET /events (long poll endpoint).
-        Call with no args to listen to all events.
+    # modules that need an explicit .subscribe() call to generate events
+    _DETECTOR_MODULES = [
+        'ALFaceDetection', 'ALMovementDetection', 'ALDarknessDetection',
+        'ALBacklightingDetection', 'ALPeoplePerception', 'ALEngagementZones',
+        'ALGazeAnalysis', 'ALSittingPeopleDetection', 'ALSoundDetection',
+        'ALAudioSourceLocalization', 'ALFaceCharacteristics', 'ALSonar',
+    ]
+
+    def log_events(self, event_names=None, enable_detectors=True):
+        """Subscribe to events, activate their detectors, and log to bridge stderr.
 
         Args:
-            event_names: list of event strings, a category set, or None for all.
+            event_names: list of event strings, or None for the curated default.
+            enable_detectors: if True, subscribe detection modules so events fire.
 
         Returns:
             self
 
         Examples:
-            nao.listen()                        # all events
-            nao.listen(nao.events.touch)        # only touch
-            nao.listen(nao.events.all())        # explicit all
-            nao.listen([nao.events.vision.FaceDetected, nao.events.touch.ChestButtonPressed])
+            nao.log_events()                              # all curated events + detectors
+            nao.log_events(enable_detectors=False)        # log only, don't start detectors
+            nao.log_events(['FrontTactilTouched'])        # log specific events only
         """
         if event_names is None:
-            event_names = self.events.all()
+            event_names = self.LOG_EVENTS
 
-        import server
-        self.subscribe(event_names, lambda event, value: server._push_event(event, value))
-        self.log('listen: {} events -> /events endpoint'.format(len(list(event_names))))
+        import naoutil.memory as memory
+
+        if not hasattr(self, '_log_event_names'):
+            self._log_event_names = []
+        if not hasattr(self, '_log_detector_subs'):
+            self._log_detector_subs = []
+
+        # activate detection modules
+        if enable_detectors:
+            for mod_name in self._DETECTOR_MODULES:
+                try:
+                    self.env.add_proxy(mod_name)
+                    proxy = self.env.proxies[mod_name]
+                    sub_name = 'fluentnao_log_{}'.format(mod_name)
+                    proxy.subscribe(sub_name)
+                    self._log_detector_subs.append((mod_name, sub_name))
+                    self.log('log_events: activated {}'.format(mod_name))
+                except Exception as e:
+                    self.log('log_events: could not activate {}: {}'.format(mod_name, e))
+
+        # subscribe to ALMemory events
+        for event in event_names:
+            try:
+                memory.subscribeToEvent(event, lambda dn, v, m, e=event: self.log('[event] {} = {}'.format(e, v)))
+                self._log_event_names.append(event)
+            except Exception as e:
+                self.log('log_events: could not subscribe {}: {}'.format(event, e))
+
+        self.log('log_events: logging {} events, {} detectors active'.format(
+            len(self._log_event_names), len(self._log_detector_subs)))
+        return self
+
+    def stop_log_events(self):
+        """Unsubscribe from all logged events and deactivate detectors."""
+        import naoutil.memory as memory
+
+        for event in getattr(self, '_log_event_names', []):
+            try:
+                memory.unsubscribeToEvent(event)
+            except Exception:
+                pass
+
+        for mod_name, sub_name in getattr(self, '_log_detector_subs', []):
+            try:
+                self.env.proxies[mod_name].unsubscribe(sub_name)
+            except Exception:
+                pass
+
+        self._log_event_names = []
+        self._log_detector_subs = []
+        self.log('stop_log_events: done')
+        return self
+
+    def emit_events(self, event_names=None):
+        """Push NAO events to the long poll queue. No-op until bridge.connect().
+
+        The bridge module replaces this method. Without the bridge,
+        calls log a warning.
+        """
+        self.log('emit_events: bridge not connected, call has no effect')
         return self
 
     def shutdown(self):

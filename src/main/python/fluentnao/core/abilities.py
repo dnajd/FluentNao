@@ -551,7 +551,10 @@ class Abilities():
         import time as _time
 
         def on_front_tap(event):
-            self.nao.camera.snap_photo('tap_' + str(int(_time.time())), resolution=2)
+            self.log('[push_to_sense] front tap detected, starting snap_photo')
+            t0 = _time.time()
+            self.nao.camera.snap_photo('tap_' + str(int(t0)), resolution=2)
+            self.log('[push_to_sense] snap_photo complete ({:.3f}s total)'.format(_time.time() - t0))
 
         self.nao.sensors.on_head_front(on_front_tap)
         self.nao.audio.hold_to_record('RearTactilTouched')

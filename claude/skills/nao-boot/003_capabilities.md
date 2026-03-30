@@ -103,7 +103,7 @@ curl -s "http://localhost:5050/events?timeout=30"
 ```
 
 To use long polling:
-1. Subscribe to events: `nao.listen(nao.events.touch)` or `nao.listen()` for all
+1. Subscribe to events: `nao.emit_events(nao.events.touch)` or `nao.emit_events()` for all
 2. Run `curl /events` in the background using `run_in_background: true`
 3. When the curl returns, you get notified automatically
 4. Process the events and send new commands
@@ -136,9 +136,9 @@ nao.events.all()
 
 ```python
 # Subscribe to events and push to long poll queue
-nao.listen()                        # all events
-nao.listen(nao.events.touch)        # only touch
-nao.listen([nao.events.vision.FaceDetected, nao.events.touch.ChestButtonPressed])
+nao.emit_events()                        # all events
+nao.emit_events(nao.events.touch)        # only touch
+nao.emit_events([nao.events.vision.FaceDetected, nao.events.touch.ChestButtonPressed])
 
 # Subscribe with custom callback (runs in container, no long poll)
 nao.subscribe(nao.events.touch, my_callback)

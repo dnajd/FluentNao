@@ -15,10 +15,11 @@ Use your abilities to explore and understand through an LLM-in-the-loop pattern:
 
 # Baseline (on boot)
 
-Enable push_to_sense -- this is the ONLY thing to start on boot:
+Enable push_to_sense and event logging -- these are the ONLY things to start on boot:
 
 ```
 curl -s -X POST http://localhost:5050/exec -d "nao.abilities.push_to_sense()"
+curl -s -X POST http://localhost:5050/exec -d "nao.log_events()"
 ```
 
 This wires up:
@@ -83,7 +84,7 @@ whisper ~/code/oss/FluentNao/data/audio/<filename>.wav --model base --language e
 ### People Watching
 ```
 curl -s -X POST http://localhost:5050/exec -d "
-nao.listen([
+nao.emit_events([
     nao.events.people.JustArrived,
     nao.events.people.JustLeft,
     nao.events.people.StartedLooking,

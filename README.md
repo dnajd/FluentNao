@@ -390,9 +390,9 @@ nao.events.all()                                    # flat list of every event
 Subscribe and push events to the long poll queue:
 
 ```python
-nao.listen()                                        # all events -> /events endpoint
-nao.listen(nao.events.touch)                        # only touch events
-nao.listen([nao.events.vision.FaceDetected,         # specific mix
+nao.emit_events()                                   # all events -> /events endpoint
+nao.emit_events(nao.events.touch)                   # only touch events
+nao.emit_events([nao.events.vision.FaceDetected,    # specific mix
             nao.events.touch.ChestButtonPressed])
 nao.unsubscribe_all()                               # stop all
 ```

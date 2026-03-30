@@ -24,6 +24,7 @@ _event_condition = threading.Condition(_event_lock)
 
 
 def _push_event(event_name, value):
+    _log('[event] {} = {}'.format(event_name, value))
     with _event_condition:
         _event_queue.append({
             'event': event_name,

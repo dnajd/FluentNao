@@ -143,18 +143,24 @@ class Camera():
         Returns:
             File path on success, None on failure.
         """
+        t0 = time.time()
         cam = camera_index if camera_index is not None else self.camera_index
         res = resolution if resolution is not None else self.resolution
         cs = color_space if color_space is not None else self.color_space
 
+        self.log('[photo] subscribe cam={} res={}'.format(cam, res))
         sub = self.video.subscribeCamera('fluentnao_photo', cam, res, cs, self.fps)
+        t1 = time.time()
+        self.log('[photo] subscribed ({:.3f}s), capturing...'.format(t1 - t0))
         try:
             img = self.video.getImageRemote(sub)
         finally:
             self.video.unsubscribe(sub)
+        t2 = time.time()
+        self.log('[photo] captured ({:.3f}s)'.format(t2 - t1))
 
         if not img:
-            self.log('camera.photo: failed to capture')
+            self.log('[photo] FAILED to capture')
             return None
 
         width = img[0]
@@ -166,8 +172,9 @@ class Camera():
         with open(path, 'wb') as f:
             f.write(header)
             f.write(bytearray(data))
-
-        self.log('camera.photo: saved {}x{} to {}'.format(width, height, path))
+        t3 = time.time()
+        self.log('[photo] wrote {}x{} to {} ({:.3f}s write, {:.3f}s total)'.format(
+            width, height, path, t3 - t2, t3 - t0))
         return path
 
     def snap_photo(self, filename='photo', camera_index=None, resolution=None, color_space=None):
@@ -179,6 +186,8 @@ class Camera():
         Returns:
             File path on success, None on failure.
         """
+        t0 = time.time()
+        self.log('[snap] start countdown')
         prev_eye_color = getattr(self.nao, '_eye_color', 0x000000)
 
         # countdown tones: C major triad (C4, E4, G4)
@@ -188,16 +197,21 @@ class Camera():
         time.sleep(0.55)
         self.nao.env.audioPlayer.post.playSine(392, 40, 0, 0.25)
         time.sleep(0.55)
+        t1 = time.time()
+        self.log('[snap] countdown done ({:.3f}s), capturing...'.format(t1 - t0))
 
         # flash eyes red and capture
         self.nao.env.leds.fadeRGB("FaceLeds", 0xFF0000, 0)
         path = self.photo(filename, camera_index, resolution, color_space)
+        t2 = time.time()
+        self.log('[snap] photo done ({:.3f}s)'.format(t2 - t1))
 
         # snap eyes back instantly
         self.nao.env.leds.fadeRGB("FaceLeds", prev_eye_color, 0)
 
         if path:
             self.nao.emit('photo_captured', path)
+            self.log('[snap] emitted photo_captured ({:.3f}s total)'.format(time.time() - t0))
 
         return path
 

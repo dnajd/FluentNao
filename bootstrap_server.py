@@ -5,6 +5,8 @@ import naoutil.memory as memory
 import fluentnao.nao as nao
 from naoutil import broker
 
+os.environ['FLUENTNAO_BRIDGE'] = '1'
+
 naoIp = os.environ["NAO_IP"]
 broker.Broker('bootstrapBroker', naoIp=naoIp, naoPort=9559)
 env = naoenv.make_environment(None)
