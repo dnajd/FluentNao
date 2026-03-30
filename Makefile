@@ -69,3 +69,17 @@ serve: ## run http server (non-interactive)
         echo "NAO IP: $$NAO_IP"; \
     fi
 	docker compose run --service-ports -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap_server.sh"
+
+serve-log: stop ## restart server with request logging visible
+	@if [ -z "$$NAO_IP" ]; then \
+		echo "ERROR: provide NAO_IP environment variable"; \
+		exit 1; \
+	else \
+        echo "NAO IP: $$NAO_IP"; \
+    fi
+	docker compose run --service-ports -e NAO_IP=$$NAO_IP -e FLUENTNAO_LOG=1 fluentnao sh -c "./bootstrap_server.sh"
+
+stop: ## stop any running fluentnao containers
+	@docker compose down 2>/dev/null || true
+	@docker ps -q --filter ancestor=fluentnao:dev | xargs -r docker stop 2>/dev/null || true
+	@echo "Stopped"

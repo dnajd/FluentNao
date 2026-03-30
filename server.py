@@ -1,13 +1,21 @@
 import BaseHTTPServer
 import json
 import os
+import sys
 import threading
 import time
+import traceback
 
 from fluentnao.core.ssh import ssh, scp_to_nao
 
 AUDIO_DIR = '/data/audio'
 NAO_AUDIO_DIR = '/home/nao/audio_playback'
+
+
+def _log(msg):
+    if os.environ.get('FLUENTNAO_LOG'):
+        sys.stderr.write('{} {}\n'.format(time.strftime('%H:%M:%S'), msg))
+
 
 # event queue for long polling
 _event_queue = []
@@ -47,8 +55,12 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             body = self.rfile.read(length)
             script = body.strip()
             nao = self.nao_ref
+            t0 = time.time()
+            preview = script[:80].replace('\n', ' ')
+            _log('[exec] >> {}'.format(preview))
             try:
                 result = eval(script, {"nao": nao})
+                _log('[exec] << ok ({:.3f}s)'.format(time.time() - t0))
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
@@ -57,6 +69,7 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 try:
                     ns = {"nao": nao}
                     exec(script, ns)
+                    _log('[exec] << ok ({:.3f}s)'.format(time.time() - t0))
                     self.send_response(200)
                     self.send_header('Content-Type', 'application/json')
                     self.end_headers()
@@ -65,11 +78,15 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     else:
                         self.wfile.write(json.dumps({"ok": True}))
                 except Exception as e:
+                    _log('[exec] << ERROR ({:.3f}s) {}'.format(time.time() - t0, e))
+                    traceback.print_exc(file=sys.stderr)
                     self.send_response(500)
                     self.send_header('Content-Type', 'application/json')
                     self.end_headers()
                     self.wfile.write(json.dumps({"ok": False, "error": str(e)}))
             except Exception as e:
+                _log('[exec] << ERROR ({:.3f}s) {}'.format(time.time() - t0, e))
+                traceback.print_exc(file=sys.stderr)
                 self.send_response(500)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
@@ -226,7 +243,12 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
 
     def log_message(self, format, *args):
-        pass
+        import sys
+        if os.environ.get('FLUENTNAO_LOG'):
+            sys.stderr.write("%s - - [%s] %s\n" %
+                             (self.client_address[0],
+                              self.log_date_time_string(),
+                              format % args))
 
 def start(nao, port=5050, block=False):
     NaoHandler.nao_ref = nao
