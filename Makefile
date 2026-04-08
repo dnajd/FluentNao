@@ -79,6 +79,10 @@ serve-log: stop ## restart server with request logging visible
     fi
 	docker compose run --service-ports -e NAO_IP=$$NAO_IP -e FLUENTNAO_LOG=1 fluentnao sh -c "./bootstrap_server.sh"
 
+monitor: ## watch Claude sessions and push events to NAO server (runs on host, not in Docker)
+	@echo "Starting session monitor (polls every 2m, NAO_SERVER=$(or $(NAO_SERVER),http://localhost:5050))..."
+	NAO_SERVER=$(or $(NAO_SERVER),http://localhost:5050) python3 scripts/session_monitor.py
+
 stop: ## stop any running fluentnao containers
 	@docker compose down 2>/dev/null || true
 	@docker ps -q --filter ancestor=fluentnao:dev | xargs -r docker stop 2>/dev/null || true

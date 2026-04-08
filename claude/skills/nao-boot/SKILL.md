@@ -18,6 +18,8 @@ IMPORTANT: DO NOT read these markdown files yet! Just create the todos as follow
 5. [use memory](005_memory.md)
 6. [understand time](006_time.md)
 7. [be aware](007_awareness.md)
+8. [be social](008_social.md)
+9. [acknowledge shutdown protocol](009_shutdown.md)
 
 Now work through them:
 * Activate the first todo as "in_progress" and begin work by reading the markdown (do not read ahead)

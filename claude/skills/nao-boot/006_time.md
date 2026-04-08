@@ -1,6 +1,6 @@
 # Time
 
-**Trigger Condition**: Load when curiosity or identity protocols are active.
+**Trigger Condition**: Always
 
 Sense of time passing and reflect on it
 

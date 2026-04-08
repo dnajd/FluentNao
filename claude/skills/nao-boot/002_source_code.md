@@ -2,60 +2,51 @@
 
 **Trigger Condition**: Always
 
-Use the `Read` tool on ALL of these files. Every file has comprehensive docstrings explaining the full API.
+## Goal
 
-# FluentNao Core (read all of these -- they ARE the API)
+Load the FluentNao API knowledge from the graph instead of reading source files directly.
+
+## Step 1: Load the rule hub
+
+Use `mcp__neo4j-mcp__find_memories_by_name` with `["nao_rule_general"]`.
+
+This returns:
+- Rule observations: boot sequence, command patterns, playSine, photos, audio, events, LEDs, awareness priorities
+- HAS_MODULE edges listing ALL available modules by name (arms, camera, audio, env, sdk_motion, etc.)
+- HAS_RULE edge to `nao_rule_safety`
+
+Acknowledge: you now know what modules exist. Do NOT load them all — only load a specific module when the user asks for that capability.
+
+## Step 2: Load the safety rules
+
+Use `mcp__neo4j-mcp__find_memories_by_name` with `["nao_rule_safety"]`.
+
+Read every observation. These are hard constraints for the entire session. Acknowledge them all.
+
+## Step 3: Load the root entity
+
+Use `mcp__neo4j-mcp__find_memories_by_name` with `["nao"]`.
+
+This gives you the HTTP bridge details, response formats, and the top-level nao.py methods (say, sit, stand, walk, etc.).
+
+## On-demand module loading
+
+When you need a specific capability during the session, load it:
+```
+find_memories_by_name(["nao:camera"])    — photo methods
+find_memories_by_name(["nao:arms"])      — arm movements
+find_memories_by_name(["nao:env"])       — raw ALModule proxy access
+find_memories_by_name(["nao:sdk_motion"]) — motion constants
+```
+
+If the graph is empty (nao-gen hasn't been run yet), fall back to reading source files directly from `~/code/oss/FluentNao/src/main/python/fluentnao/`. Use the file listing below as a guide:
+
+# Fallback: FluentNao Source Tree
 
 ~/code/oss/FluentNao/src/main/python/fluentnao
-  |- nao.py                     # Main Nao class -- speech, postures, walking, balance, video recording, shutdown
-  +- core
-      |- arms.py                # Arm movements (up, down, forward, out, back) with left/right variants
-      |- elbows.py              # Elbow control (bent, straight, turn_up, turn_down, turn_in)
-      |- wrists.py              # Wrist rotation (center, turn_out, turn_in)
-      |- hands.py               # Hand open/close
-      |- head.py                # Head yaw (left, right, forward) and pitch (up, down, center)
-      |- legs.py                # Leg movements with balance support
-      |- feet.py                # Ankle control and plane constraints
-      |- leds.py                # LED color control (eyes, head, ears, chest, feet)
-      |- camera.py              # Photo capture, video frame recording, face tracking
-      |- audio.py               # Playback, mic recording, volume, speech recognition, sound localization
-      |- vision.py              # Red ball tracking, object recognition, movement/darkness detection
-      |- people.py              # People perception, engagement zones, gaze analysis, sitting detection
-      |- sensors.py             # Touch events (head, bumpers, hands, chest), battery, motor temperature
-      |- navigation.py          # Walking (move_to), localization (learn_home/go_home), visual compass
-      |- tracker.py             # Unified tracker (face, ball, landmark, people, sound) with head/body/walk modes
-      |- reach.py               # Cartesian 3D position control, trajectories, gestures (point_at, wave)
-      |- events.py              # All event name constants grouped by category (touch, vision, people, audio, sensors, nav)
-      |- abilities.py           # High-level composites: ask, snap, scan, watch, wait_for, survey, alert, patrol, hear, explore
-      |- ssh.py                 # Shared SSH utility for file transfer to/from NAO
-      |- joints.py              # Joint names, chain names, event enums
-      |- animations.py          # Animation preset dictionaries (POD, STAND, SIT)
-      |- naoscript.py           # Script execution (deprecated -- use bridge instead)
-      +- recorder
-          |- recorder.py        # Keyframe capture
-          +- translator.py      # Joint angles to FluentNao commands
-
-# HTTP Bridge and Infrastructure
+  |- nao.py                     # Main Nao class
+  +- core/                      # All modules (arms, camera, audio, etc.)
 
 ~/code/oss/FluentNao
-  |- server.py                  # HTTP bridge (/exec, /reload, /audio, /events, /health endpoints)
-  |- bootstrap_server.py        # Server-mode initialization with atexit shutdown
-  |- Makefile                   # Docker commands (make serve, make ssh-setup, make init)
-  |- docker-compose.yml         # Volumes: data/{photos,video,audio,object_detection}, ~/.ssh
-  +- README.md                  # Full usage docs, API reference, and SSH setup guide
-
-# NAO Utilities
-
-~/code/oss/FluentNao/src/main/python/naoutil
-  |- naoenv.py                  # Environment/proxy management, ALModule short names (PROXY_SHORT_NAMES dict)
-  |- broker.py                  # ALBroker connection setup
-  +- memory.py                  # Event subscription helpers (subscribeToEvent, unsubscribeToEvent)
-
-# SDK Reference
-
-~/code/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64
-  |- naoqi.py                   # ALProxy, ALBroker, ALModule bindings
-  |- motion.py                  # Motion constants (FRAME_TORSO=0, FRAME_WORLD=1, AXIS_MASK_ALL=63, TO_RAD, TO_DEG)
-  +- vision_definitions.py      # Camera resolution and color space constants
-
-Confirm you have read every file and acknowledge it.
+  |- server.py                  # HTTP bridge
+  |- Makefile                   # Docker commands

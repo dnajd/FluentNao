@@ -1,6 +1,7 @@
 import BaseHTTPServer
 import json
 import os
+import SocketServer
 import sys
 import threading
 import time
@@ -208,7 +209,7 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         with _event_condition:
             # if events already queued, return immediately
             if not _event_queue:
-                _event_condition.wait(timeout)
+                _event_condition.wait(timeout if timeout > 0 else None)
 
             # grab and clear the queue
             events = list(_event_queue)
@@ -251,9 +252,13 @@ class NaoHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                               self.log_date_time_string(),
                               format % args))
 
+class ThreadedHTTPServer(SocketServer.ThreadingMixIn, BaseHTTPServer.HTTPServer):
+    daemon_threads = True
+
+
 def start(nao, port=5050, block=False):
     NaoHandler.nao_ref = nao
-    httpd = BaseHTTPServer.HTTPServer(('0.0.0.0', port), NaoHandler)
+    httpd = ThreadedHTTPServer(('0.0.0.0', port), NaoHandler)
     print("FluentNao server listening on port %d" % port)
     if block:
         httpd.serve_forever()
