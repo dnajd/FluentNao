@@ -8,15 +8,15 @@ Behavior priorities and pacing rules are loaded from the graph in Step 2 via `na
 
 **Do NOT start any sensors or subscriptions on boot.** The robot should be quiet by default — no push_to_sense, no log_events, no people perception, no face tracking, no event listeners of any kind.
 
-On boot, start these two things:
+On boot, start one thing:
 
-**1. Session monitor** (background process):
+**1. Event polling** — start the first chained poll immediately (see pattern below). You must always be watching for events.
+
+**Session monitor** (on-demand, NOT on boot):
 ```
 NAO_SERVER=http://localhost:5050 python3 ~/code/oss/FluentNao/scripts/session_monitor.py  (run_in_background: true)
 ```
-This emits `claude_session_activity` / `claude_session_new` events when Claude work is detected — no robot sensors involved.
-
-**2. Event polling** — start the first chained poll immediately (see pattern below). You must always be watching for events.
+This emits `claude_session_activity` / `claude_session_new` events when Claude work is detected — no robot sensors involved. Only start this when Don invites you to monitor his work or collaborate on a task. Do not start it automatically on boot.
 
 Always poll for events using **chained single polls** — never use an infinite loop (`while true; do curl...; done`), because `run_in_background` only notifies on task completion and an infinite loop never completes.
 

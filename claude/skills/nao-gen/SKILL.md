@@ -58,5 +58,6 @@ IMPORTANT: DO NOT read the numbered markdown files yet. Create todos and work th
 2. [Create env, utility, and SDK entities](002_nao_env.md)
 3. [Create module entities](003_nao_modules.md)
 4. [Connect all modules to rule hub and verify](004_nao_verify.md)
+5. [Seed Vesper personal memories](005_nao_memories.md)
 
 For each todo: mark `in_progress`, read its markdown file, execute fully, mark `completed`, then proceed to the next.
