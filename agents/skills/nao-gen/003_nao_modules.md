@@ -11,7 +11,7 @@ Read all FluentNao core modules in batches and create `nao_module` entities with
 
 ## Module Discovery
 
-Use `Glob` with pattern `*.py` and path `<code_path>/oss/FluentNao/src/main/python/fluentnao/core/` to find all module files.
+Use `Glob` with pattern `*.py` and path `<code_path>/FluentNao/src/main/python/fluentnao/core/` to find all module files.
 
 Exclude these from processing (already handled or deprecated):
 - `abilities.py` — created in Step 1
@@ -30,7 +30,7 @@ Use the `Read` tool on each file in the batch. For each file, note:
 - Skip methods prefixed with `_` (private/internal)
 
 ### Create Entities
-Use `mcp__neo4j-mcp__create_entities` to create one `nao_module` entity per file. Batch 15-20 entities per call.
+Use `mcp_neo4j-mcp_create_entities` to create one `nao_module` entity per file. Batch 15-20 entities per call.
 
 Entity naming: `nao:<module_name>` where module_name is the filename without `.py` (e.g., `nao:arms`, `nao:camera`, `nao:audio`).
 
@@ -38,14 +38,14 @@ Observations for each entity:
 - `family: nao-gen`
 - `category: nao_module`
 - Class description from the class docstring (one sentence)
-- `source: <code_path>/oss/FluentNao/src/main/python/fluentnao/core/<filename>.py`
+- `source: <code_path>/FluentNao/src/main/python/fluentnao/core/<filename>.py`
 - One observation per public method: `method: <name>(<params>) -- <description>`
 - For chaining APIs (arms, elbows, wrists, hands, head), note: `Fluent chaining: methods queue moves, call .go() to execute and return nao object`
 - For modules with sub-objects (arms has elbows/wrists/hands), note the chaining path: `Chain: nao.arms.up().elbows.straight().hands.open().go()`
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
 
 ### Create Relations
-Use `mcp__neo4j-mcp__create_relations`:
+Use `mcp_neo4j-mcp_create_relations`:
 - Each `nao:<module>` BELONGS_TO `nao`
 
 ### Checkpoint

@@ -15,10 +15,10 @@ Execute all Bash commands, Neo4j writes, and tool calls immediately and without 
 ## Preflight Checks
 
 Understand Paths:
-* The FluentNao source lives at `<code_path>/oss/FluentNao`. Derive `<code_path>` by running `dk world show` or default to `/Users/donnajd/code` if dk is unavailable.
-* The source tree: `<code_path>/oss/FluentNao/src/main/python/fluentnao/`
-* The utility tree: `<code_path>/oss/FluentNao/src/main/python/naoutil/`
-* The SDK tree: `<code_path>/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/`
+* The FluentNao source lives at `<code_path>/FluentNao`. Derive `<code_path>` by running `dk world show` or default to `/Users/donnajd/code` if dk is unavailable.
+* The source tree: `<code_path>/FluentNao/src/main/python/fluentnao/`
+* The utility tree: `<code_path>/FluentNao/src/main/python/naoutil/`
+* The SDK tree: `<code_path>/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/`
 * Use `<code_path>` as a placeholder throughout; never hardcode absolute paths in entity observations.
 
 Acknowledge Exclusions — never add the following to the graph:
@@ -27,14 +27,14 @@ Acknowledge Exclusions — never add the following to the graph:
 
 Clear all entities created by this skill:
 - Every entity this skill creates includes `"family: nao-gen"` as an observation. Use a single Cypher query to delete them all: `MATCH (e) WHERE any(obs IN e.observations WHERE obs = 'family: nao-gen') DETACH DELETE e RETURN count(e) AS deleted`
-- Run this via Neo4j Query API v2: `curl -s -X POST $NEO4J_HTTP_URL/db/neo4j/query/v2 -u "$NEO4J_USERNAME:$NEO4J_PASSWORD" -H "Content-Type: application/json" -d '{"statement": "..."}'`. Neo4j connection env vars are pre-set.
+- Run this via Neo4j Query API v2: `curl -s -X POST http://192.168.68.105:4005/db/neo4j/query/v2 -u "neo4j:$BEESBOT_NEO4J_PASSWORD" -H "Content-Type: application/json" -d '{"statement": "..."}'`.
 - After deletion, verify with `find_memories_by_name(["nao", "nao_rule_general"])` — expect empty entities array.
 
 Graph Tools — use these MCP tools throughout all steps:
-- `CREATE entity` -> `mcp__neo4j-mcp__create_entities`
-- `ADD observations` -> `mcp__neo4j-mcp__add_observations`
-- `CREATE relation` -> `mcp__neo4j-mcp__create_relations`
-- `FIND entity` -> `mcp__neo4j-mcp__find_memories_by_name`
+- `CREATE entity` -> `mcp_neo4j-mcp_create_entities`
+- `ADD observations` -> `mcp_neo4j-mcp_add_observations`
+- `CREATE relation` -> `mcp_neo4j-mcp_create_relations`
+- `FIND entity` -> `mcp_neo4j-mcp_find_memories_by_name`
 
 ## Processing Protocol
 
@@ -58,6 +58,5 @@ IMPORTANT: DO NOT read the numbered markdown files yet. Create todos and work th
 2. [Create env, utility, and SDK entities](002_nao_env.md)
 3. [Create module entities](003_nao_modules.md)
 4. [Connect all modules to rule hub and verify](004_nao_verify.md)
-5. [Seed Vesper personal memories](005_nao_memories.md)
 
 For each todo: mark `in_progress`, read its markdown file, execute fully, mark `completed`, then proceed to the next.

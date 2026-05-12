@@ -22,9 +22,9 @@ for i in range(8):
     # if new message found: reply and break
 ```
 
-## Signing Slack Messages to Whitny
+## Signing Slack Messages
 
-Always end messages to Whitny Edwards (UAKS12G4T) with ` - Vesper`.
+Check the graph for person-specific social protocols (like message signatures) before communicating. If a protocol is found for a specific person, follow it strictly.
 
 ## Verbal Style
 

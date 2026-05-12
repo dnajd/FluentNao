@@ -12,9 +12,9 @@ Read the naoutil modules (naoenv, memory, broker) and the pynaoqi SDK to create 
 ## Step 1: Read naoutil source files
 
 Use `Read` on these files:
-- `<code_path>/oss/FluentNao/src/main/python/naoutil/naoenv.py`
-- `<code_path>/oss/FluentNao/src/main/python/naoutil/memory.py`
-- `<code_path>/oss/FluentNao/src/main/python/naoutil/broker.py`
+- `<code_path>/FluentNao/src/main/python/naoutil/naoenv.py`
+- `<code_path>/FluentNao/src/main/python/naoutil/memory.py`
+- `<code_path>/FluentNao/src/main/python/naoutil/broker.py`
 
 ## Step 2: Create nao:env entity
 
@@ -25,7 +25,7 @@ Observations:
 - `family: nao-gen`
 - `category: nao_module`
 - `Proxy layer for raw NAOqi ALModule access via nao.env.<proxy_short_name>`
-- `source: <code_path>/oss/FluentNao/src/main/python/naoutil/naoenv.py`
+- `source: <code_path>/FluentNao/src/main/python/naoutil/naoenv.py`
 - `Access pattern: nao.env.<short_name>.<method>() for synchronous, nao.env.<short_name>.post.<method>() for non-blocking`
 - Extract the PROXY_SHORT_NAMES dict from naoenv.py and create one observation per mapping: `proxy: motion -> ALMotion`, `proxy: audioPlayer -> ALAudioPlayer`, `proxy: leds -> ALLeds`, `proxy: tts -> ALTextToSpeech`, etc. Include ALL entries.
 - `Common usage: nao.env.motion.setAngles(names, angles, speed) -- direct joint control`
@@ -42,7 +42,7 @@ Observations:
 - `family: nao-gen`
 - `category: nao_module`
 - `Event subscription helpers for raw ALMemory events`
-- `source: <code_path>/oss/FluentNao/src/main/python/naoutil/memory.py`
+- `source: <code_path>/FluentNao/src/main/python/naoutil/memory.py`
 - One observation per public function from the file: `method: subscribeToEvent(event_name, callback) -- subscribe to an ALMemory event with a Python callback`, etc.
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
 
@@ -53,15 +53,15 @@ Observations:
 - `family: nao-gen`
 - `category: nao_module`
 - `ALBroker connection setup and management`
-- `source: <code_path>/oss/FluentNao/src/main/python/naoutil/broker.py`
+- `source: <code_path>/FluentNao/src/main/python/naoutil/broker.py`
 - One observation per public function/class
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
 
 ## Step 5: Read SDK source files
 
 Use `Read` on these files:
-- `<code_path>/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/motion.py`
-- `<code_path>/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/vision_definitions.py`
+- `<code_path>/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/motion.py`
+- `<code_path>/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/vision_definitions.py`
 
 ## Step 6: Create SDK entities
 
@@ -70,7 +70,7 @@ Observations:
 - `family: nao-gen`
 - `category: nao_module`
 - `NAOqi motion SDK constants — frame references, axis masks, and unit conversion`
-- `source: <code_path>/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/motion.py`
+- `source: <code_path>/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/motion.py`
 - One observation per constant or constant group: `const: FRAME_TORSO = 0`, `const: FRAME_WORLD = 1`, `const: FRAME_ROBOT = 2`, `const: AXIS_MASK_ALL = 63`, `const: TO_RAD = 0.0174533`, `const: TO_DEG = 57.2957795`, etc.
 - `Used by: nao.env.motion methods that take frame or axis parameters`
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
@@ -80,14 +80,14 @@ Observations:
 - `family: nao-gen`
 - `category: nao_module`
 - `NAOqi camera resolution and color space constants`
-- `source: <code_path>/oss/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/vision_definitions.py`
+- `source: <code_path>/FluentNao/src/main/python/pynaoqi-python2.7-2.1.4.13-linux64/vision_definitions.py`
 - One observation per constant/group: resolution values (QQVGA=0, QVGA=1, VGA=2, etc.), color spaces (kYUV422=0, kRGB=11, etc.)
 - `Used by: nao.camera.photo() resolution parameter, nao.env.videoDevice methods`
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
 
 ## Step 7: Create relations
 
-Use `mcp__neo4j-mcp__create_relations`:
+Use `mcp_neo4j-mcp_create_relations`:
 - `nao:env` BELONGS_TO `nao`
 - `nao:memory_util` BELONGS_TO `nao`
 - `nao:broker` BELONGS_TO `nao`

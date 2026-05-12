@@ -11,13 +11,13 @@ Connect all module entities to `nao_rule_general` as the hub, then verify the gr
 
 ## Step 1: Discover all module entities
 
-Use `mcp__neo4j-mcp__search_memories` with query `nao_module` to find all module entities created in Steps 1-3.
+Use `mcp_neo4j-mcp_search_memories` with query `nao_module` to find all module entities created in Steps 1-3.
 
 Build a list of all entity names (e.g., `nao:arms`, `nao:camera`, `nao:env`, `nao:sdk_motion`, etc.).
 
 ## Step 2: Connect all modules to the rule hub
 
-Use `mcp__neo4j-mcp__create_relations` to create a `HAS_MODULE` relation from `nao_rule_general` to EVERY module entity found in Step 1.
+Use `mcp_neo4j-mcp_create_relations` to create a `HAS_MODULE` relation from `nao_rule_general` to EVERY module entity found in Step 1.
 
 This is the key design: when nao-boot loads `find_memories_by_name(["nao_rule_general"])`, it gets back:
 - The rule observations (boot sequence, safety, command patterns)
@@ -56,7 +56,7 @@ nao_rule_general --HAS_MODULE--> nao:sdk_vision
 
 ## Step 3: Verify the hub
 
-Use `mcp__neo4j-mcp__find_memories_by_name` with `["nao_rule_general"]`.
+Use `mcp_neo4j-mcp_find_memories_by_name` with `["nao_rule_general"]`.
 
 Verify:
 - Entity exists with type `nao_rule`
@@ -67,7 +67,7 @@ Verify:
 
 ## Step 4: Spot-check 3 modules
 
-Use `mcp__neo4j-mcp__find_memories_by_name` with `["nao:camera", "nao:env", "nao:sdk_motion"]`.
+Use `mcp_neo4j-mcp_find_memories_by_name` with `["nao:camera", "nao:env", "nao:sdk_motion"]`.
 
 For each, verify:
 - Has `method:` or `proxy:` or `const:` observations (detailed content)
