@@ -12,8 +12,7 @@ help:
 	@printf "\n"
 
 init: ## build the docker image;
-	docker compose build
-
+	UID=$$(id -u) GID=$$(id -g) docker compose build --build-arg USER_ID=$$(id -u) --build-arg GROUP_ID=$$(id -g)
 ssh-setup: ## generate PEM key and copy to NAO for passwordless SSH
 	@if [ -z "$$NAO_IP" ]; then \
 		echo "ERROR: provide NAO_IP environment variable"; \
@@ -50,7 +49,7 @@ bash: ## bash prompt
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker compose run -e NAO_IP=$$NAO_IP fluentnao bash
+	UID=$$(id -u) GID=$$(id -g) docker compose run -e NAO_IP=$$NAO_IP fluentnao bash
 
 up: ## up
 	@if [ -z "$$NAO_IP" ]; then \
@@ -59,7 +58,7 @@ up: ## up
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker compose run --service-ports -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap.sh"
+	UID=$$(id -u) GID=$$(id -g) docker compose run --service-ports -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap.sh"
 
 serve: ## run http server (non-interactive)
 	@if [ -z "$$NAO_IP" ]; then \
@@ -68,7 +67,25 @@ serve: ## run http server (non-interactive)
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker compose run --service-ports -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap_server.sh"
+	UID=$$(id -u) GID=$$(id -g) docker compose run --service-ports -e NAO_IP=$$NAO_IP fluentnao sh -c "./bootstrap_server.sh"
+
+boot: ## start server and perform initial robot setup
+	@$(MAKE) serve &
+	@echo "Waiting for server to start..."
+	@sleep 8
+	@$(MAKE) health
+	@curl -s -X POST http://localhost:5050/exec -d "nao.say('ready')"
+	@echo "Robot is ready."
+
+health: ## check server and robot status
+	@curl -s http://localhost:5050/health
+	@echo ""
+	@curl -s -X POST http://localhost:5050/exec -d "import time; result = {'battery': nao.sensors.battery_level(), 'stiff': any(nao.joint_angles('Body', True)), 'temp': nao.sensors.hottest_joint(), 'time': time.strftime('%H:%M')}"
+	@echo ""
+
+transcribe: ## transcribe the latest audio recording using Whisper
+	@ls -t data/audio/*.wav | head -n 1 | xargs -I {} ~/.local/bin/whisper {} --model base --language en --output_format txt --output_dir data/audio/
+	@ls -t data/audio/*.txt | head -n 1 | xargs -I {} cat {}
 
 serve-log: stop ## restart server with request logging visible
 	@if [ -z "$$NAO_IP" ]; then \
@@ -77,7 +94,7 @@ serve-log: stop ## restart server with request logging visible
 	else \
         echo "NAO IP: $$NAO_IP"; \
     fi
-	docker compose run --service-ports -e NAO_IP=$$NAO_IP -e FLUENTNAO_LOG=1 fluentnao sh -c "./bootstrap_server.sh"
+	UID=$$(id -u) GID=$$(id -g) docker compose run --service-ports -e NAO_IP=$$NAO_IP -e FLUENTNAO_LOG=1 fluentnao sh -c "./bootstrap_server.sh"
 
 monitor: ## watch Claude sessions and push events to NAO server (runs on host, not in Docker)
 	@echo "Starting session monitor (polls every 2m, NAO_SERVER=$(or $(NAO_SERVER),http://localhost:5050))..."
