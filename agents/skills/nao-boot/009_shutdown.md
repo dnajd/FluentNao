@@ -25,3 +25,9 @@ pkill -f "http://localhost:5050/events"
 ```bash
 cd ~/code/FluentNao && make stop
 ```
+
+## 5. Clean up exited containers
+Remove orphan/exited FluentNao containers to keep the environment clean:
+```bash
+docker ps -aq --filter ancestor=fluentnao:dev --filter status=exited | xargs -r docker rm
+```

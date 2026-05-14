@@ -60,7 +60,7 @@ Observations:
 - `category: nao_rule`
 - `Boot sequence -- Start the FluentNao Docker container: cd <code_path>/FluentNao && NAO_IP=$NAO_IP make serve. Wait for health check: curl -s http://localhost:5050/health. Verify: curl -s -X POST http://localhost:5050/exec -d "nao.say('ready')".`
 - `Command pattern -- All commands go through: curl -s -X POST http://localhost:5050/exec -d "<python code>". Single expressions are eval'd. Multi-line scripts use exec; set result= for return values. CRITICAL: Never use shell operators (&&) in Python exec calls; use separate curl commands or valid Python syntax.`
-- `Safety -- Keep movement duration >= 1.5 seconds. End sessions with nao.sit() then nao.shutdown(). Use nao.be_still() before speech recognition. Never walk on elevated surfaces.`
+- `Safety -- Keep movement duration >= 1.5 seconds. End sessions with nao.sit() then nao.shutdown(). Use nao.be_still() before speech recognition. Never walk on elevated surfaces. Cleanup: pkill background polls and `docker rm` exited fluentnao:dev containers.`
 - `playSine -- nao.env.audioPlayer.post.playSine(freq_hz, gain_0_100, pan, duration_s). MUST use .post. (non-blocking). Common freqs: C4=262, D4=294, E4=330, F4=349, G4=392, A4=440, B4=494, C5=523.`
 - `Photos -- nao.camera.photo(name, resolution=2) saves PPM to /data/photos/. Convert with sips on host: sips -s format png ~/code/FluentNao/data/photos/<name>.ppm --out /tmp/<name>.png. Read the PNG with the Read tool.`
 - `Audio transcription -- Record with nao.abilities.hear(N). Poll /events for heard event. Transcribe on host: whisper ~/code/FluentNao/data/audio/<file>.wav --model base --language en --output_format txt --output_dir /tmp/`
