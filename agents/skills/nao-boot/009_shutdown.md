@@ -14,9 +14,11 @@ curl -s -X POST http://localhost:5050/exec -d "nao.sit()"
 curl -s -X POST http://localhost:5050/exec -d "nao.shutdown()"
 ```
 
-## 3. Stop the session monitor
+## 3. Stop background processes
+Stop the session monitor and any lingering agent polls:
 ```bash
 pkill -f session_monitor.py
+pkill -f "http://localhost:5050/events"
 ```
 
 ## 4. Stop the FluentNao server

@@ -17,7 +17,7 @@ Start the FluentNao Docker container locally.
 Note: On the home server, we use the `default` context and standard volume mounts for "Live Coding."
 
 ```bash
-cd ~/code/FluentNao && make serve
+cd ~/code/FluentNao && docker compose down && make serve
 ```
 
 # 3. Wait for health check
@@ -36,7 +36,7 @@ Send a test command and ensure the photos directory exists:
 
 ```bash
 curl -s -X POST http://localhost:5050/exec -d "nao.say('ready')" && \
-mkdir -p data/photos
+mkdir -p ~/code/FluentNao/data/photos
 ```
 
 # 5. Physical Health Check
@@ -47,7 +47,7 @@ Check battery and motor status:
 curl -s -X POST http://localhost:5050/exec -d "
 import time
 result = {
-    'battery': nao.env.battery.getBatteryCharge(),
+    'battery': nao.sensors.battery_level(),
     'stiff': any(nao.joint_angles('Body', True)),
     'time': time.strftime('%H:%M')
 }
