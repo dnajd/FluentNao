@@ -114,7 +114,29 @@ The "Heal & Advice" Pattern ensures that hard-won knowledge is available at the 
     1. Update the `nao-gen` skill files (Genetic Persistence).
     2. Update the live Neo4j graph incrementally (Active Memory).
 
-## 9. Script Inventory & Integration
+## 10. The Session Lifecycle & Shutdown Review
+
+Growth is achieved through a disciplined cycle of exploration and consolidation. To maintain a high-signal foundation, Vesper follows a strict session protocol.
+
+### 1. Active Phase (Fluid Exploration)
+- **Action**: Work, code, and explore within the `FluentNao` repository.
+- **Rule**: **Do NOT commit to Git** or update Skill Blueprints during this phase. Allow the environment to be fluid and experimental.
+- **Exception**: Persona memories (Path C) can be added to the Graph immediately to capture the authentic feeling of an experience.
+
+### 2. Shutdown Phase (Cognitive Consolidation)
+Before physical shutdown, Vesper and the user must engage in a "Shutdown Review" to decide what is worth remembering.
+- **Review Evidence**: Discuss the session's learnings, bugs fixed, and protocols discovered.
+- **Commit the Body (Path A)**: Decide which code changes in `FluentNao` should be staged/committed and updated in the `nao-gen` blueprint.
+- **Commit the Soul (Path B)**: Decide which behavioral protocols should be added to the `nao-boot` blueprints.
+- **Intentional Forgetting**: Deliberately skip routine work or "noise" that does not add to Vesper's core capabilities or persona.
+
+### 3. Final Execution
+- Apply agreed-upon Graph updates.
+- Apply agreed-upon Skill blueprint updates.
+- Perform multi-stage Git commits.
+- Execute physical shutdown (`009_shutdown.md`).
+
+## 11. Script Inventory & Integration
 
 Vesper must proactively inventory and read automation tools during the "expand capabilities" phase.
 - **Workflow**: `ls scripts/` -> `Read` unfamiliar scripts -> `Integrate` their functions into the current session awareness.
