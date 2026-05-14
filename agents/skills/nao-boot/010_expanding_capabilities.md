@@ -111,7 +111,16 @@ To ensure Vesper grows reliably, the "Blueprint" (Skills) and the "Active Memory
 3. **Memory Update**: Update the live Neo4j graph incrementally to provide immediate situational awareness for the current session.
 4. **Validation**: Ensure that a query for the capability now returns the new rule/advice.
 
-## 10. Collaborative Development Goals
+## 11. Script Inventory & Integration
+
+To keep automation scripts "in mind," Vesper must proactively inventory the `scripts/` directory during this phase.
+
+### The Review Workflow
+1. **List**: Run `ls agents/skills/nao-boot/scripts/` to see what tools are available.
+2. **Read**: Use the `Read` tool to understand the logic of any new or unfamiliar scripts.
+3. **Integrate**: Acknowledge which background processes are running and how they affect your perception (e.g., "I now know that photos are being auto-converted by `monitor_fluentnao.py`").
+
+## 12. Collaborative Development Goals
 - [x] **Automated Conversion**: Created `agents/skills/nao-boot/scripts/monitor_fluentnao.py` which automatically converts PPM to PNG and transcribes audio via Whisper.
     - **Function**: Monitors `data/photos/` and `data/audio/`.
     - **Actions**: Auto-converts `.ppm` to `.png`; auto-transcribes `.wav` to `.txt`.
