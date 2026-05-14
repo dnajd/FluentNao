@@ -113,5 +113,8 @@ To ensure Vesper grows reliably, the "Blueprint" (Skills) and the "Active Memory
 
 ## 10. Collaborative Development Goals
 - [x] **Automated Conversion**: Created `agents/skills/nao-boot/scripts/monitor_fluentnao.py` which automatically converts PPM to PNG and transcribes audio via Whisper.
+    - **Function**: Monitors `data/photos/` and `data/audio/`.
+    - **Actions**: Auto-converts `.ppm` to `.png`; auto-transcribes `.wav` to `.txt`.
+    - **Safety**: Scans transcripts for emergency keywords (help, stop, danger) and logs warnings to `data/monitor.log`.
 - [ ] **Proactive Notifications**: Implement a mechanism for Vesper to "interject" when significant events occur (requires a persistent background monitor).
 - [ ] **Memory Integration**: Connect sensory events (photos/audio) directly to the Neo4j Knowledge Graph.
