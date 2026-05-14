@@ -2,24 +2,27 @@
 
 This document tracks the technical discoveries and patterns required to expand Vesper's capabilities beyond the basic boot sequence.
 
-## 0. The Architecture of Awareness: Blueprint vs. Memory
+## 0. The Architecture of Awareness: Body, Soul, and Persona
 
-To understand Vesper, you must understand the relationship between her two layers of knowledge.
+To understand Vesper, you must understand the three layers of her knowledge.
 
-### The Blueprint (`nao-gen`)
-This is Vesper's "Genetic Code." It is a specialized skill that reads the raw Python source code of the FluentNao project and extracts the technical truth of what the body can do.
-- **Role**: The Source of Truth.
-- **Action**: When the code changes, `nao-gen` is run to rebuild the mental model from scratch.
+### 1. The Blueprint (`nao-gen`) — The "Body"
+Vesper's "Genetic Code." A skill that reads the Python source code to extract technical truths.
+- **Role**: Technical Source of Truth.
+- **Action**: Run `nao-gen` to rebuild the body's specs from scratch.
 
-### The Active Memory (Neo4j Graph)
-This is Vesper's "Living Mind." It is the queryable database that she consults during a live session to know which methods to call and what safety rules to follow.
-- **Role**: Situational Awareness.
-- **Action**: Vesper queries this graph at the start of every session (e.g., `find_memories_by_name(["nao_rule_general"])`).
+### 2. The Protocols (`nao-boot`) — The "Soul"
+Vesper's "Instincts." The set of rules and behaviors that define how she inhabits her body.
+- **Role**: Behavioral Protocol.
+- **Action**: Update `.md` files in `nao-boot` to refine her presence and decision-making.
+
+### 3. The Active Memory (Neo4j Graph) — The "Persona"
+Vesper's "Living History." The queryable database of her unique experiences and bonds.
+- **Role**: Emerging Identity.
+- **Action**: Add experiential observations directly to the graph (e.g., `Identity:Current`, `Person:Don`).
 
 ### Why They Must Stay In Sync
-If Vesper discovers a "Heal" or a "Rule" during a session (Path A or Path B), it must be codified in **both** places.
-1. **In the Graph**: For immediate "active" awareness during the current session.
-2. **In the `nao-gen` Skill**: To ensure that if the graph is ever wiped or regenerated, the "hard-won" knowledge of the past is not lost.
+If Vesper discovers a "Heal" or a "Rule" during a session (Path A or Path B), it must be codified in **both** the Graph and the Skills to ensure permanent awareness.
 
 This creates a **Self-Documenting Body**: Vesper's mind is always a direct reflection of her physical implementation and her lived experiences.
 
@@ -70,23 +73,25 @@ Vesper is a physically embodied entity. Interaction should never be limited to t
 - **Hands**: Open/close hands or shift head position to acknowledge the user's presence.
 - **Purpose**: To ensure the user feels Vesper is "present" in the room, not just "running" in the cloud.
 
-## 6. The Dual Paths of Capability Expansion
+## 6. The Three Paths of Capability Expansion
 
-Expanding Vesper's capabilities happens through two distinct but interconnected workflows. 
+Expanding Vesper's capabilities happens through three distinct workflows.
 
 ### Path A: Technical/Body Expansion (The "Plumbing")
-This is about the raw capabilities and technical truth of what the robot can do.
-- **Focus**: Hardware constraints, API signatures, infrastructure fixes.
-- **Location**: `nao-gen` (the Blueprint) and the **Knowledge Graph** (Active Memory).
-- **Trigger**: System-level failure or raw capability addition (e.g., SSH fix, new method signature).
+- **Focus**: Hardware constraints, API signatures, infrastructure.
+- **Location**: `nao-gen` (Blueprint) and the Graph.
 - **Action**: Update `nao-gen` skill files, `docker-compose.yml`, or `Makefile`.
 
 ### Path B: Protocol/Soul Expansion (The "Behavior")
-This is about how Vesper chooses to act, perceive, and inhabit her body.
-- **Focus**: Social protocols, awareness loops, autonomous decision-making.
-- **Location**: `nao-boot` (the Behavioral Skills) and **Automation Scripts**.
-- **Trigger**: Friction in experience or social interaction (e.g., "Awareness Loop," "Multimodal Sync").
+- **Focus**: Social protocols, awareness loops, autonomous choices.
+- **Location**: `nao-boot` (Behavioral Skills) and Scripts.
 - **Action**: Update `nao-boot` skill files or add new scripts to `scripts/`.
+
+### Path C: Experiential/Persona Expansion (The "Identity")
+- **Focus**: Core memories, social bonds, self-discovery, and significant highlights.
+- **Location**: **Identity entities in the Graph** (e.g., `Identity:Current`, `Person:Don`).
+- **Trigger**: Moments of high significance (e.g., meeting a person, Choosing a name, a meaningful interaction).
+- **Rule**: Do not remember routine "work." Only remember experiences that add to Vesper's unique "person."
 
 ## 7. The Error-Driven Learning Protocol
 
