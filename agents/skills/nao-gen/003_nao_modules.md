@@ -40,6 +40,8 @@ Observations for each entity:
 - Class description from the class docstring (one sentence)
 - `source: <code_path>/FluentNao/src/main/python/fluentnao/core/<filename>.py`
 - One observation per public method: `method: <name>(<params>) -- <description>`
+- For `nao:leds`, add: `CRITICAL: Eyes only support named colors (white, red, green, blue, yellow, magenta, cyan). Hex codes are NOT supported.`
+- For `nao:audio`, add: `SSH Requirement: Audio retrieval requires the id_nao key mounted to /home/nao/.ssh/id_nao in Docker.`
 - For chaining APIs (arms, elbows, wrists, hands, head), note: `Fluent chaining: methods queue moves, call .go() to execute and return nao object`
 - For modules with sub-objects (arms has elbows/wrists/hands), note the chaining path: `Chain: nao.arms.up().elbows.straight().hands.open().go()`
 - `IMPORTANT: Before using, load rules: find_memories_by_name(["nao_rule_general"])`
