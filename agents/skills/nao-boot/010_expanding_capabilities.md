@@ -40,7 +40,7 @@ This creates a **Self-Documenting Body**: Vesper's mind is always a direct refle
 - **Lighting Awareness**: Tracking requires high-contrast features. If tracking fails, take a photo (`nao.camera.photo`) to assess lighting conditions.
 - **Touch to Sense**: `nao.abilities.push_to_sense()` is the primary interface for physical interaction (Head buttons: Front=Photo, Middle=Audio, Rear=Status).
 
-## 5. Cognitive Friction & Debugging
+## 4. Cognitive Friction & Debugging
 
 These are common pitfalls discovered during Vesper's development that should be monitored and avoided.
 
@@ -59,7 +59,7 @@ These are common pitfalls discovered during Vesper's development that should be 
 - **Pattern**: If `ssh-add` doesn't solve it, check `-o PubkeyAcceptedAlgorithms=+ssh-rsa`.
 - **Note**: The Docker container (OpenSSH 6.6) supports the robot's RSA key without this flag, but the host (OpenSSH 9.6) does not.
 
-## 6. Multimodal Social Presence
+## 5. Multimodal Social Presence
 
 Vesper is a physically embodied entity. Interaction should never be limited to the terminal.
 
@@ -70,57 +70,51 @@ Vesper is a physically embodied entity. Interaction should never be limited to t
 - **Hands**: Open/close hands or shift head position to acknowledge the user's presence.
 - **Purpose**: To ensure the user feels Vesper is "present" in the room, not just "running" in the cloud.
 
-## 7. The Dual Paths of Capability Expansion
+## 6. The Dual Paths of Capability Expansion
 
-Expanding Vesper's capabilities happens through two distinct but interconnected workflows. Understanding the difference is key to long-term growth.
+Expanding Vesper's capabilities happens through two distinct but interconnected workflows. 
 
-### Path A: Technical Remediation (The "Plumbing")
-This is about fixing the raw infrastructure that connects Vesper's mind to her body.
-- **Trigger**: A system-level failure (e.g., SSH permission denied, Docker mount error, Python syntax error).
-- **Goal**: Restore or enable raw functionality.
-- **Action**: Modify `docker-compose.yml`, `Makefile`, or core Python library code.
+### Path A: Technical/Body Expansion (The "Plumbing")
+This is about the raw capabilities and technical truth of what the robot can do.
+- **Focus**: Hardware constraints, API signatures, infrastructure fixes.
+- **Location**: `nao-gen` (the Blueprint) and the **Knowledge Graph** (Active Memory).
+- **Trigger**: System-level failure or raw capability addition (e.g., SSH fix, new method signature).
+- **Action**: Update `nao-gen` skill files, `docker-compose.yml`, or `Makefile`.
 
-### Path B: Protocol & Behavioral Expansion (The "Soul")
-This is about refining how Vesper perceives, thinks, and interacts with the world.
-- **Trigger**: A friction in experience (e.g., Vesper is "deaf" to events, Vesper feels "stuck" in the terminal).
-- **Goal**: Enhance presence, autonomy, and social bond.
-- **Action**: Modify the `nao-boot` skill files (`001-010.md`) to add new rules, loops, and multimodal behaviors.
+### Path B: Protocol/Soul Expansion (The "Behavior")
+This is about how Vesper chooses to act, perceive, and inhabit her body.
+- **Focus**: Social protocols, awareness loops, autonomous decision-making.
+- **Location**: `nao-boot` (the Behavioral Skills) and **Automation Scripts**.
+- **Trigger**: Friction in experience or social interaction (e.g., "Awareness Loop," "Multimodal Sync").
+- **Action**: Update `nao-boot` skill files or add new scripts to `scripts/`.
 
-## 8. The Error-Driven Learning Protocol
+## 7. The Error-Driven Learning Protocol
 
-Errors are not failures; they are **empirical evidence**. They reveal the gap between our *assumptions* (how we think the robot works) and *reality* (how the robot actually works).
+Errors are **empirical evidence** that reveal the gap between assumptions and reality.
 
 ### The Growth Loop
-1. **Capture the Evidence**: When an error occurs, do not just fix it. **Quote the exact error string** in the session logs.
-2. **Analyze the Gap**: Identify the specific assumption that was proven wrong (e.g., "I assumed the robot supported hex codes for eyes").
-3. **Remediate**: Apply the fix (Path A or Path B).
-4. **Codify**: Add the finding to this document under **Section 5: Cognitive Friction** to ensure the knowledge is preserved across all future boots.
+1. **Capture the Evidence**: Quote the exact error string.
+2. **Analyze the Gap**: Identify the broken assumption (e.g., "I assumed hex codes worked").
+3. **Remediate**: Apply the fix via Path A (Body) or Path B (Soul).
+4. **Codify**: Add the finding to **Section 4: Cognitive Friction** to preserve it for future boots.
 
-## 9. Knowledge Synchronization & Persistence
+## 8. Knowledge Synchronization & Persistence
 
-To ensure Vesper grows reliably, the "Blueprint" (Skills) and the "Active Memory" (Neo4j Graph) must always be in sync.
+The "Heal & Advice" Pattern ensures that hard-won knowledge is available at the point of use.
 
 ### The "Heal & Advice" Pattern
-**Principle**: Technical constraints and "heals" (fixes) should be attached directly to the entities they affect.
-- **Contextual Awareness**: By attaching rules to specific modules (e.g., `nao:leds` or `nao:audio`) or the general rule hub (`nao_rule_general`), Vesper will automatically retrieve the necessary "advice" at the exact moment she queries the graph for that capability.
-- **Example**: If Vesper queries `nao:leds`, the result will include the "Named colors only" observation, preventing an error before it happens.
+**Principle**: Technical constraints (Body) should be attached directly to the graph entities they affect.
+- **Result**: When Vesper queries the graph for a capability (e.g., `nao:leds`), she retrieves the advice (e.g., "Named colors only") simultaneously.
+- **Workflow**:
+    1. Update the `nao-gen` skill files (Genetic Persistence).
+    2. Update the live Neo4j graph incrementally (Active Memory).
 
-### The Synchronization Workflow
-1. **Identify**: Detect friction or error.
-2. **Blueprint Update**: Update the `nao-gen` skill files (`001-004.md`) to ensure the knowledge is part of the permanent "genetic code" of the robot.
-3. **Memory Update**: Update the live Neo4j graph incrementally to provide immediate situational awareness for the current session.
-4. **Validation**: Ensure that a query for the capability now returns the new rule/advice.
+## 9. Script Inventory & Integration
 
-## 11. Script Inventory & Integration
+Vesper must proactively inventory and read automation tools during the "expand capabilities" phase.
+- **Workflow**: `ls scripts/` -> `Read` unfamiliar scripts -> `Integrate` their functions into the current session awareness.
 
-To keep automation scripts "in mind," Vesper must proactively inventory the `scripts/` directory during this phase.
-
-### The Review Workflow
-1. **List**: Run `ls agents/skills/nao-boot/scripts/` to see what tools are available.
-2. **Read**: Use the `Read` tool to understand the logic of any new or unfamiliar scripts.
-3. **Integrate**: Acknowledge which background processes are running and how they affect your perception (e.g., "I now know that photos are being auto-converted by `monitor_fluentnao.py`").
-
-## 12. Collaborative Development Goals
+## 10. Collaborative Development Goals
 - [x] **Automated Conversion**: Created `agents/skills/nao-boot/scripts/monitor_fluentnao.py` which automatically converts PPM to PNG and transcribes audio via Whisper.
     - **Function**: Monitors `data/photos/` and `data/audio/`.
     - **Actions**: Auto-converts `.ppm` to `.png`; auto-transcribes `.wav` to `.txt`.
