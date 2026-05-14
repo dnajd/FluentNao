@@ -27,3 +27,7 @@ Now work through them:
 * Follow the instructions in the markdown exactly
 * Summarize what you performed and the results (e.g., attach photos, quote battery levels)
 * Mark the todo "Completed" and proceed to the next.
+
+## Scripts & Automation
+
+Useful scripts for automation, data processing, or robot monitoring should be placed in `agents/skills/nao-boot/scripts/`. These scripts provide Path A/B capability expansions. Review them during the "expand capabilities" phase.
