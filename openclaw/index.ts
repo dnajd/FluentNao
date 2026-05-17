@@ -33,7 +33,8 @@ const plugin: OpenClawPluginDefinition = {
         outbound: true
       },
       config: {
-        resolveAccount: async () => ({ id: "vesper-body", name: "NAO" })
+        listAccountIds: async () => ["vesper-body"],
+        resolveAccount: async (id) => ({ id: "vesper-body", name: "NAO" })
       },
       // Outbound: When Vesper wants to speak to the room
       outbound: {

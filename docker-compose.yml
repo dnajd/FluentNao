@@ -5,7 +5,7 @@ services:
     image: fluentnao:dev
     platform: linux/amd64
     user: "${UID}:${GID}"
-    ports: ['127.0.0.1:5050:5050']
+    ports: ['5050:5050']
     environment:
       - NAO_IP=${NAO_IP}
     volumes:

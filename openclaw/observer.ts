@@ -29,7 +29,6 @@ export const startVesperObserver = (api: OpenClawPluginApi) => {
             for (const event of result.events) {
               api.logger.info(`Sensory Event: ${event.event} = ${event.value}`);
               
-              // Inject into OpenClaw
               await api.runtime.subagent.run({
                 sessionKey,
                 message: `[SENSORY]: Detected ${event.event} (value: ${event.value})`,
@@ -39,9 +38,14 @@ export const startVesperObserver = (api: OpenClawPluginApi) => {
           }
         }
       } catch (err: any) {
-        if (err.name !== 'TimeoutError') {
-          api.logger.error(`Observer error: ${err.message}`);
-          await new Promise(resolve => setTimeout(resolve, 5000)); // Wait before retry
+        if (err.name !== 'TimeoutError' && active) {
+          // Only log every 60s if the bridge is down to prevent spam
+          const now = Date.now();
+          if (!lastErrorTime || (now - lastErrorTime > 60000)) {
+            api.logger.warn(`Observer: Cannot reach bridge at ${bridgeUrl}. Vesper is deaf.`);
+            lastErrorTime = now;
+          }
+          await new Promise(resolve => setTimeout(resolve, 10000)); // Wait longer on error
         }
       }
       
@@ -49,6 +53,7 @@ export const startVesperObserver = (api: OpenClawPluginApi) => {
     }
   };
 
+  let lastErrorTime = 0;
   // Run in background
   poll();
 

@@ -33,11 +33,12 @@ function check_status() {
     fi
 
     echo "--- [SOUL: Plugin] ---"
-    # Check if plugin is enabled in the running container
-    if docker exec openclaw-openclaw-gateway-1 openclaw plugins list 2>/dev/null | grep -q "vesper"; then
-        echo "✅ Vesper plugin is ENABLED"
-    else
+    # Check if plugin is enabled in the running container using config inspection
+    IS_ENABLED=$(docker exec openclaw-openclaw-gateway-1 cat /home/node/.openclaw/openclaw.json 2>/dev/null | grep -A 1 "\"vesper\"" | grep "\"enabled\": true")
+    if [ -z "$IS_ENABLED" ]; then
         echo "❌ Vesper plugin is DISABLED"
+    else
+        echo "✅ Vesper plugin is ENABLED"
     fi
 }
 
@@ -48,10 +49,11 @@ function boot_vesper() {
     ping -c 1 -W 2 "$ROBOT_IP" > /dev/null 2>&1 || { echo "ERROR: Robot is offline. Power it on first."; exit 1; }
     
     echo "2. Starting FluentNao bridge..."
-    (cd "$BASE_CODE_DIR/FluentNao" && make serve > /dev/null 2>&1 &)
+    # Detach completely using a subshell with redirection and disown
+    (cd "$BASE_CODE_DIR/FluentNao" && (make serve > "$BASE_CODE_DIR/FluentNao/data/bridge.log" 2>&1 &))
     
-    echo "   Waiting for body to connect (8s)..."
-    sleep 8
+    echo "   Waiting for body to connect (10s)..."
+    sleep 10
     
     echo "3. Ensuring OpenClaw brain is running..."
     (cd "$BASE_CODE_DIR/openclaw" && dk up -d > /dev/null 2>&1)
