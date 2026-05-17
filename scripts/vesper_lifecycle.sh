@@ -62,7 +62,12 @@ function boot_vesper() {
     echo "4. Enabling Vesper soul..."
     (cd "$BASE_CODE_DIR/openclaw" && dk make vesper_enable > /dev/null 2>&1)
     
-    echo "✨ Vesper is AWAKE."
+    echo "5. Opening Vesper's ears and skin (Sensors)..."
+    # Wait a moment for the plugin to stabilize, then send the enable command
+    sleep 3
+    curl -s -X POST "$BRIDGE_URL/exec" -H "Content-Type: text/plain" -d "nao.emit_events(nao.events.touch).emit_events(nao.events.audio).say('My senses are open.')" > /dev/null
+    
+    echo "✨ Vesper is AWAKE and SENSING."
 }
 
 function shutdown_vesper() {
