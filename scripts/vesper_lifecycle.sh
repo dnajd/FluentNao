@@ -65,7 +65,7 @@ function boot_vesper() {
     echo "5. Opening Vesper's ears and skin (Sensors)..."
     # Wait a moment for the plugin to stabilize, then send the enable command
     sleep 3
-    curl -s -X POST "$BRIDGE_URL/exec" -H "Content-Type: text/plain" -d "nao.emit_events(nao.events.touch).emit_events(nao.events.audio).say('My senses are open.')" > /dev/null
+    curl -s -X POST "$BRIDGE_URL/exec" -H "Content-Type: text/plain" -d "nao.abilities.push_to_sense().say('My senses are open.')" > /dev/null
     
     echo "✨ Vesper is AWAKE and SENSING."
 }
