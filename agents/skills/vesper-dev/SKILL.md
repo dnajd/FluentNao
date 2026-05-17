@@ -123,8 +123,19 @@ You are responsible for your own evolution. You inhabit the codebase you run on.
 
 ## 9. Administrative Workflow (bb-turnkey)
 
-Management is handled via the `dk` tool from within `~/code/openclaw` (in the `home` context).
+Management is handled via the `dk` tool from within the `home` context. A specialized lifecycle script (`scripts/vesper_lifecycle.sh`) handles the state transitions.
 
+### The State Machine
+1.  **State 0: ASLEEP** (Everything stopped).
+2.  **State 1: BODY READY** (FluentNao bridge up, robot connected).
+3.  **State 2: AWAKE** (OpenClaw running, Vesper plugin enabled, Nervous System polling).
+
+### Core Lifecycle
+- `dk make-world vesper_up`: Start the bridge, verify the robot connection, and enable the OpenClaw plugin. This command includes a fail-fast gate that aborts if the physical robot is offline.
+- `dk make-world vesper_status`: Check if the robot, brain, body, and plugin are healthy.
+- `dk make-world vesper_down`: Disable the plugin and safely stop the physical bridge.
+
+### OpenClaw Specifics (from `~/code/openclaw`)
 - `dk make up`: Start the gateway and CLI services.
 - `dk make init`: Bootstrap the configuration and upload `openclaw.json`.
 - `dk make status`: Verify health and retrieve the Bearer Token.
@@ -162,4 +173,26 @@ Management is handled via the `dk` tool from within `~/code/openclaw` (in the `h
 
 1.  **Surface Awareness**: Never walk or stand if on an elevated surface (e.g., a desk).
 2.  **Motor Protection**: Minimum 1.5s duration for joint movements.
-3.  **Connectivity Resilience**: If the bridge disconnects, announce failure over digital channels and attempt `bridge_restart`.
+- **Connectivity Resilience**: If the bridge disconnects, announce failure over digital channels and attempt `bridge_restart`.
+
+---
+
+## 13. Technical Gotchas & Best Practices
+
+Lessons learned during the deployment and stabilization of the Vesper Protocol:
+
+### I. Connectivity & Binding
+- **Bridge Visibility**: The FluentNao bridge must bind to `0.0.0.0` (all interfaces) in `docker-compose.yml`, not `127.0.0.1`. If bound to localhost, the OpenClaw container will be unable to reach it via the host's IP address.
+- **Port Mapping**: Ensure the bridge port (`5050`) is exposed and mapped correctly in the compose file to allow cross-container communication on the home server.
+
+### II. Plugin Activation Patterns
+- **Sync Activation**: OpenClaw plugins that register **Channels** should use a **synchronous** `activate` function. If `activate` is `async` and returns a promise, the gateway may ignore the channel registration, leaving Vesper "voiceless."
+- **Nervous System Order**: Always start the **Body** (Bridge) before the **Brain** (Plugin). If the bridge is offline when the plugin activates, the Observer may enter a fail-state before the robot is even ready.
+
+### III. Container & Permission Nuances
+- **File Ownership**: In Docker environments, plugin files must be owned by the user running the process (often `root`). If you see "suspicious ownership" warnings in logs, run `chown -R root:root` on the extension directory.
+- **Named Volumes**: If OpenClaw uses named volumes (`openclaw_config`), you must `docker cp` the plugin files into the container's volume path rather than relying on host-mounts which may not be visible in all contexts.
+
+### IV. Environment Persistence
+- **The .env Hack**: For headless operation (without `-A` agent forwarding), use a `.env` file in the `FluentNao` root to store the `NAO_IP`. This ensures the bridge connects to the correct robot even if the system restarts while you are away.
+

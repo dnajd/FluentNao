@@ -14,7 +14,7 @@ const plugin: OpenClawPluginDefinition = {
   name: "Vesper",
   description: "Autonomous Robot Persona for NAO",
   
-  activate: async (api: OpenClawPluginApi) => {
+  activate: (api: OpenClawPluginApi) => {
     // 1. Register Tools
     api.registerTool(createNaoExecuteTool);
     api.registerTool(createNaoDiagnoseTool);
@@ -39,7 +39,8 @@ const plugin: OpenClawPluginDefinition = {
       outbound: {
         deliver: async (params) => {
           const script = `nao.say(${JSON.stringify(params.content)})`;
-          await fetch(`${api.config.vesper?.bridgeUrl || "http://192.168.68.105:5050"}/exec`, {
+          const bridgeUrl = (api.config as any)?.vesper?.bridgeUrl || "http://192.168.68.105:5050";
+          await fetch(`${bridgeUrl}/exec`, {
             method: "POST",
             body: script
           });
