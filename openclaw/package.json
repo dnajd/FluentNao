@@ -1,0 +1,18 @@
+{
+  "name": "@fluentnao/vesper-plugin",
+  "version": "2026.5.14",
+  "description": "Vesper: Autonomous Robot Persona for OpenClaw",
+  "type": "module",
+  "private": true,
+  "openclaw": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "openclaw": "workspace:*"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "id": "vesper",
+  "name": "Vesper",
+  "description": "Autonomous Robot Persona for NAO",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "bridgeUrl": {
+        "type": "string",
+        "default": "http://192.168.68.105:5050",
+        "description": "URL of the FluentNao bridge"
+      },
+      "pollInterval": {
+        "type": "number",
+        "default": 1000,
+        "description": "Interval for sensory event polling (ms)"
+      },
+      "fluentNaoDir": {
+        "type": "string",
+        "default": "/home/dnajd/code/FluentNao",
+        "description": "Absolute path to the FluentNao directory"
+      }
+    }
+  }
+}
