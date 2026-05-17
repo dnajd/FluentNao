@@ -531,20 +531,48 @@ class Nao(object):
         return self
 
     def shutdown(self):
-        self.abilities.stop_observing()
-        self.unsubscribe_all()
-        self.camera.stop_tracking()
-        self.camera.stop_recording()
-        self.vision.stop_on_ball()
-        self.vision.stop_on_object()
-        self.vision.stop_on_movement()
-        self.vision.stop_on_darkness()
-        self.people.stop_all()
-        self.tracker.stop()
-        self.audio.stop_listening()
-        self.audio.stop_sound_tracking()
-        self.sensors.stop_all_touch()
-        self.sit()
+        try: self.abilities.stop_observing()
+        except Exception: pass
+
+        try: self.unsubscribe_all()
+        except Exception: pass
+
+        try: self.camera.stop_tracking()
+        except Exception: pass
+
+        try: self.camera.stop_recording()
+        except Exception: pass
+
+        try: self.vision.stop_on_ball()
+        except Exception: pass
+
+        try: self.vision.stop_on_object()
+        except Exception: pass
+
+        try: self.vision.stop_on_movement()
+        except Exception: pass
+
+        try: self.vision.stop_on_darkness()
+        except Exception: pass
+
+        try: self.people.stop_all()
+        except Exception: pass
+
+        try: self.tracker.stop()
+        except Exception: pass
+
+        try: self.audio.stop_listening()
+        except Exception: pass
+
+        try: self.audio.stop_sound_tracking()
+        except Exception: pass
+
+        try: self.sensors.stop_all_touch()
+        except Exception: pass
+
+        try: self.sit()
+        except Exception: pass
+
         self.log('shutdown: complete')
         return self
 
