@@ -132,13 +132,17 @@ class Vision():
 
     def stop_on_ball(self):
         """Unsubscribe from ball detection events."""
-        if not self.ball_detect:
+        def stop_on_ball(self):
+            if not self.ball_detect:
+                return self
+            memory.unsubscribeToEvent(self.nao.events.vision.redBallDetected)
+            try:
+                self.ball_detect.unsubscribe("fluentnao_ball")
+            except Exception:
+                pass
+            self._on_ball_callback = None
+            self.log('vision.stop_on_ball: unsubscribed')
             return self
-        memory.unsubscribeToEvent(self.nao.events.vision.redBallDetected)
-        self.ball_detect.unsubscribe("fluentnao_ball")
-        self._on_ball_callback = None
-        self.log('vision.stop_on_ball: unsubscribed')
-        return self
 
     def _ball_event_cb(self, dataName, value, message):
         if self._on_ball_callback and value:
