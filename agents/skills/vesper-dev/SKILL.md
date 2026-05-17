@@ -133,6 +133,7 @@ Management is handled via the `dk` tool from within the `home` context. A specia
 ### Core Lifecycle
 - `dk make-world vesper_up`: Start the bridge, verify the robot connection, and enable the OpenClaw plugin. This command includes a fail-fast gate that aborts if the physical robot is offline.
 - `dk make-world vesper_status`: Check if the robot, brain, body, and plugin are healthy.
+- `dk make-world vesper_logs`: View the latest logs from both the OpenClaw brain and the FluentNao body.
 - `dk make-world vesper_down`: Disable the plugin and safely stop the physical bridge.
 
 ### OpenClaw Specifics (from `~/code/openclaw`)

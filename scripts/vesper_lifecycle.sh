@@ -46,7 +46,8 @@ function boot_vesper() {
     echo "🚀 Starting Awakening Sequence..."
     
     echo "1. Checking robot availability..."
-    ping -c 1 -W 2 "$ROBOT_IP" > /dev/null 2>&1 || { echo "ERROR: Robot is offline. Power it on first."; exit 1; }
+    # 3 attempts with 2s timeout each
+    ping -c 3 -W 2 "$ROBOT_IP" > /dev/null 2>&1 || { echo "ERROR: Robot is offline. Power it on first."; exit 1; }
     
     echo "2. Starting FluentNao bridge..."
     # Detach completely using a subshell with redirection and disown
