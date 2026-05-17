@@ -134,6 +134,7 @@ Management is handled via the `dk` tool from within the `home` context. A specia
 - `dk make-world vesper_up`: Start the bridge, verify the robot connection, and enable the OpenClaw plugin. This command includes a fail-fast gate that aborts if the physical robot is offline.
 - `dk make-world vesper_status`: Check if the robot, brain, body, and plugin are healthy.
 - `dk make-world vesper_logs`: View the latest logs from both the OpenClaw brain and the FluentNao body.
+- `dk make-world vesper_bridge_logs`: Live `tail -f` of the robot's physical bridge execution.
 - `dk make-world vesper_down`: Disable the plugin and safely stop the physical bridge.
 
 ### OpenClaw Specifics (from `~/code/openclaw`)
@@ -188,12 +189,15 @@ Lessons learned during the deployment and stabilization of the Vesper Protocol:
 
 ### II. Plugin Activation Patterns
 - **Sync Activation**: OpenClaw plugins that register **Channels** should use a **synchronous** `activate` function. If `activate` is `async` and returns a promise, the gateway may ignore the channel registration, leaving Vesper "voiceless."
-- **Nervous System Order**: Always start the **Body** (Bridge) before the **Brain** (Plugin). If the bridge is offline when the plugin activates, the Observer may enter a fail-state before the robot is even ready.
+- **Health Monitor Audit**: Any registered channel MUST implement `listAccountIds` and `resolveAccount` in its config. Failure to do so will cause OpenClaw's Health Monitor to throw unhandled exceptions, potentially freezing the CLI.
 
 ### III. Container & Permission Nuances
+- **Background Detachment**: When starting the bridge via a script (e.g., `make serve &`), use proper detachment logic like `(make serve > log 2>&1 &)` to prevent the parent script from hanging on open output pipes.
 - **File Ownership**: In Docker environments, plugin files must be owned by the user running the process (often `root`). If you see "suspicious ownership" warnings in logs, run `chown -R root:root` on the extension directory.
 - **Named Volumes**: If OpenClaw uses named volumes (`openclaw_config`), you must `docker cp` the plugin files into the container's volume path rather than relying on host-mounts which may not be visible in all contexts.
 
-### IV. Environment Persistence
+### IV. Environment & State
+- **Sensory Silence**: By default, Vesper boots into a silent state. No events (touch, vision) will trigger until an explicit `nao.emit_events()` script is executed.
+- **Observer Throttling**: When the bridge is down, the OpenClaw observer should throttle error logging (e.g., once per 60s) to prevent the gateway logs from becoming unreadable and the main thread from lagging.
 - **The .env Hack**: For headless operation (without `-A` agent forwarding), use a `.env` file in the `FluentNao` root to store the `NAO_IP`. This ensures the bridge connects to the correct robot even if the system restarts while you are away.
 
