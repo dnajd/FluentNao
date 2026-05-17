@@ -1,128 +1,87 @@
-"""Red ball tracking, object recognition, movement and darkness detection.
-
-Wraps ALRedBallTracker, ALRedBallDetection, ALMovementDetection,
-ALDarknessDetection, and ALVisionRecognition NAOqi proxies. Accessed via nao.vision.
-"""
-
-import glob
-import os
 import time
-
-import naoutil.memory as memory
+import os
+from naoutil import memory
 from fluentnao.core.ssh import ssh, scp_to_nao
 
-NAO_LEARN_DIR = '/home/nao/vision_learn'
+NAO_LEARN_DIR = '/home/nao/learn'
 
-
-class Vision():
-    """Red ball tracking, object/picture recognition, movement and darkness detection.
-
-    Wraps several NAOqi vision proxies to provide event-driven callbacks and
-    active tracking for the NAO robot.
-
-    Event Callback Cooldown:
-        All event callbacks (on_ball, on_object, on_movement, on_darkness)
-        enforce a 3-second cooldown between firings to prevent callback spam.
-
-    Important Notes:
-        - Object learning uses SCP to push images to /home/nao/vision_learn.
-        - learn_object() captures a VGA photo via nao.camera.
-        - Unavailable proxies are handled gracefully (methods log and return self/None).
-        - All chainable methods return self for fluent API usage.
-
-    Usage Examples::
-
-        nao.vision.track_ball()
-        pos = nao.vision.ball_position()
-        nao.vision.stop_tracking_ball()
-        nao.vision.on_ball(my_callback)
-        nao.vision.learn_object('coffee_mug')
-        nao.vision.learn_all('/data/object_detection')
-    """
-
+class Vision:
     def __init__(self, nao):
         self.nao = nao
         self.log = nao.log
+        self.env = nao.env
+        
+        # vision proxies
+        try:
+            self.env.add_proxy("ALFaceDetection")
+            self.face_detect = self.env.proxies["ALFaceDetection"]
+        except Exception:
+            self.face_detect = None
 
-        # proxies - gracefully handle unavailable services
-        self.ball_tracker = self._try_proxy("ALRedBallTracker")
-        self.ball_detect = self._try_proxy("ALRedBallDetection")
-        self.movement_detect = self._try_proxy("ALMovementDetection")
-        self.darkness_detect = self._try_proxy("ALDarknessDetection")
-        self.vision_recog = self._try_proxy("ALVisionRecognition")
+        try:
+            self.env.add_proxy("ALRedBallDetection")
+            self.ball_detect = self.env.proxies["ALRedBallDetection"]
+        except Exception:
+            self.ball_detect = None
 
-        # state
-        self._tracking_ball = False
+        try:
+            self.env.add_proxy("ALVisionRecognition")
+            self.vision_recog = self.env.proxies["ALVisionRecognition"]
+        except Exception:
+            self.vision_recog = None
+
+        try:
+            self.env.add_proxy("ALMovementDetection")
+            self.movement_detect = self.env.proxies["ALMovementDetection"]
+        except Exception:
+            self.movement_detect = None
+
+        try:
+            self.env.add_proxy("ALDarknessDetection")
+            self.darkness_detect = self.env.proxies["ALDarknessDetection"]
+        except Exception:
+            self.darkness_detect = None
+
         self._on_ball_callback = None
         self._last_ball_time = 0
+        self._on_picture_callback = None
+        self._last_picture_time = 0
         self._on_movement_callback = None
         self._last_movement_time = 0
         self._on_darkness_callback = None
         self._last_darkness_time = 0
-        self._on_object_callback = None
-        self._last_object_time = 0
 
-    def _try_proxy(self, name):
+    ###################################
+    # face detection
+    ###################################
+
+    def on_face(self, callback):
+        if not self.face_detect:
+            self.log('vision.on_face: not available')
+            return self
+        self.face_detect.subscribe("fluentnao_face")
+        memory.subscribeToEvent(self.nao.events.vision.faceDetected, callback)
+        self.log('vision.on_face: subscribed')
+        return self
+
+    def stop_on_face(self):
+        if not self.face_detect:
+            return self
+        memory.unsubscribeToEvent(self.nao.events.vision.faceDetected)
         try:
-            self.nao.env.add_proxy(name)
-            return self.nao.env.proxies[name]
-        except Exception as e:
-            self.log('vision: {} not available: {}'.format(name, e))
-            return None
+            self.face_detect.unsubscribe("fluentnao_face")
+        except Exception:
+            pass
+        self.log('vision.stop_on_face: unsubscribed')
+        return self
 
     ###################################
-    # red ball tracking
+    # red ball detection
     ###################################
-
-    def track_ball(self):
-        """Start head-only red ball tracking."""
-        if not self.ball_tracker:
-            self.log('vision.track_ball: tracker not available')
-            return self
-        self.nao.env.motion.setStiffnesses("Head", 1.0)
-        self.ball_tracker.setWholeBodyOn(False)
-        self.ball_tracker.startTracker()
-        self._tracking_ball = True
-        self.log('vision.track_ball: started')
-        return self
-
-    def track_ball_whole_body(self):
-        """Track red ball using head and full body movement."""
-        if not self.ball_tracker:
-            self.log('vision.track_ball_whole_body: tracker not available')
-            return self
-        self.nao.env.motion.setStiffnesses("Head", 1.0)
-        self.nao.env.motion.setStiffnesses("Body", 1.0)
-        self.ball_tracker.setWholeBodyOn(True)
-        self.ball_tracker.startTracker()
-        self._tracking_ball = True
-        self.log('vision.track_ball_whole_body: started')
-        return self
-
-    def stop_tracking_ball(self):
-        """Stop ball tracking and release head stiffness."""
-        if not self.ball_tracker:
-            return self
-        self.ball_tracker.stopTracker()
-        self.nao.env.motion.setStiffnesses("Head", 0)
-        self._tracking_ball = False
-        self.log('vision.stop_tracking_ball: stopped')
-        return self
-
-    def ball_position(self):
-        """Return the current tracked ball position, or None."""
-        if not self.ball_tracker:
-            return None
-        return self.ball_tracker.getPosition()
-
-    def is_tracking_ball(self):
-        """Return True if ball tracking is currently active."""
-        return self._tracking_ball
 
     def on_ball(self, callback):
-        """Subscribe to red ball detection events (3s cooldown)."""
         if not self.ball_detect:
-            self.log('vision.on_ball: detection not available')
+            self.log('vision.on_ball: not available')
             return self
         self._on_ball_callback = callback
         self.ball_detect.subscribe("fluentnao_ball")
@@ -131,18 +90,19 @@ class Vision():
         return self
 
     def stop_on_ball(self):
-        """Unsubscribe from ball detection events."""
-        def stop_on_ball(self):
-            if not self.ball_detect:
-                return self
-            memory.unsubscribeToEvent(self.nao.events.vision.redBallDetected)
-            try:
-                self.ball_detect.unsubscribe("fluentnao_ball")
-            except Exception:
-                pass
-            self._on_ball_callback = None
-            self.log('vision.stop_on_ball: unsubscribed')
+        if not self.ball_detect:
             return self
+        try:
+            memory.unsubscribeToEvent(self.nao.events.vision.redBallDetected)
+        except Exception:
+            pass
+        try:
+            self.ball_detect.unsubscribe("fluentnao_ball")
+        except Exception:
+            pass
+        self._on_ball_callback = None
+        self.log('vision.stop_on_ball: unsubscribed')
+        return self
 
     def _ball_event_cb(self, dataName, value, message):
         if self._on_ball_callback and value:
@@ -170,120 +130,74 @@ class Vision():
         return success
 
     def learn_object(self, name, countdown=True):
-        """Teach NAO to recognize an object by capturing a VGA photo.
-
-        If countdown is True, NAO speaks a countdown before capturing.
-        """
         if not self.vision_recog:
             self.log('vision.learn_object: not available')
             return self
-
+        
         if countdown:
-            self.nao.say_and_block('show me the {}'.format(name))
-            self.nao.say_and_block('3')
-            self.nao.say_and_block('2')
-            self.nao.say_and_block('1')
-
-        # take photo using camera module (VGA for detail)
-        photo_path = self.nao.camera.photo('_learn_{}'.format(name), resolution=2)
-        if not photo_path:
-            self.log('vision.learn_object: photo capture failed')
-            return self
-
-        self._push_and_learn(photo_path, name)
-
-        if countdown:
-            self.nao.say('got it, I learned the {}'.format(name))
-
-        return self
-
-    def learn_from_file(self, filepath, name=None):
-        """Learn an object from a local image file."""
-        if not self.vision_recog:
-            self.log('vision.learn_from_file: not available')
-            return self
-
-        if not name:
-            name = os.path.splitext(os.path.basename(filepath))[0]
-
-        self._push_and_learn(filepath, name)
-        return self
-
-    def learn_all(self, folder='/data/object_detection'):
-        """Learn all image files in a folder as named objects."""
-        if not self.vision_recog:
-            self.log('vision.learn_all: not available')
-            return self
-
-        files = glob.glob('{}/*'.format(folder))
-        count = 0
-        for f in files:
-            if os.path.isfile(f):
-                self.learn_from_file(f)
-                count += 1
-
-        self.log('vision.learn_all: learned {} objects from {}'.format(count, folder))
-        if count > 0:
-            self.nao.say('I learned {} objects'.format(count))
-        return self
-
-    def forget_all_objects(self):
-        """Clear the entire ALVisionRecognition database."""
-        if not self.vision_recog:
-            return self
-        self.vision_recog.clearCurrentDatabase()
-        self.log('vision.forget_all_objects: cleared')
+            self.nao.say("Ready in three, two, one. Snap!")
+            
+        local_path = self.nao.camera.photo('learn_{}'.format(name))
+        self._push_and_learn(local_path, name)
         return self
 
     def on_object(self, callback):
-        """Subscribe to object/picture detection events (3s cooldown)."""
         if not self.vision_recog:
             self.log('vision.on_object: not available')
             return self
-        self._on_object_callback = callback
+        self._on_picture_callback = callback
         self.vision_recog.subscribe("fluentnao_vision")
-        memory.subscribeToEvent(self.nao.events.vision.PictureDetected, self._object_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.pictureDetected, self._picture_event_cb)
         self.log('vision.on_object: subscribed')
         return self
 
     def stop_on_object(self):
-        """Unsubscribe from object detection events."""
         if not self.vision_recog:
             return self
-        memory.unsubscribeToEvent(self.nao.events.vision.PictureDetected)
-        self.vision_recog.unsubscribe("fluentnao_vision")
-        self._on_object_callback = None
+        try:
+            memory.unsubscribeToEvent(self.nao.events.vision.pictureDetected)
+        except Exception:
+            pass
+        try:
+            self.vision_recog.unsubscribe("fluentnao_vision")
+        except Exception:
+            pass
+        self._on_picture_callback = None
         self.log('vision.stop_on_object: unsubscribed')
         return self
 
-    def _object_event_cb(self, dataName, value, message):
-        if self._on_object_callback and value:
+    def _picture_event_cb(self, dataName, value, message):
+        if self._on_picture_callback and value:
             now = time.time()
-            if now - self._last_object_time > 3:
-                self._last_object_time = now
-                self._on_object_callback(value)
+            if now - self._last_picture_time > 3:
+                self._last_picture_time = now
+                self._on_picture_callback(value)
 
     ###################################
     # movement detection
     ###################################
 
     def on_movement(self, callback):
-        """Subscribe to movement detection events (3s cooldown)."""
         if not self.movement_detect:
             self.log('vision.on_movement: not available')
             return self
         self._on_movement_callback = callback
         self.movement_detect.subscribe("fluentnao_movement")
-        memory.subscribeToEvent(self.nao.events.vision.MovementDetected, self._movement_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.movementDetected, self._movement_event_cb)
         self.log('vision.on_movement: subscribed')
         return self
 
     def stop_on_movement(self):
-        """Unsubscribe from movement detection events."""
         if not self.movement_detect:
             return self
-        memory.unsubscribeToEvent(self.nao.events.vision.MovementDetected)
-        self.movement_detect.unsubscribe("fluentnao_movement")
+        try:
+            memory.unsubscribeToEvent(self.nao.events.vision.movementDetected)
+        except Exception:
+            pass
+        try:
+            self.movement_detect.unsubscribe("fluentnao_movement")
+        except Exception:
+            pass
         self._on_movement_callback = None
         self.log('vision.stop_on_movement: unsubscribed')
         return self
@@ -300,34 +214,29 @@ class Vision():
     ###################################
 
     def on_darkness(self, callback):
-        """Subscribe to darkness detection events (3s cooldown)."""
         if not self.darkness_detect:
             self.log('vision.on_darkness: not available')
             return self
         self._on_darkness_callback = callback
         self.darkness_detect.subscribe("fluentnao_darkness")
-        memory.subscribeToEvent(self.nao.events.vision.DarknessDetected, self._darkness_event_cb)
+        memory.subscribeToEvent(self.nao.events.vision.darknessDetected, self._darkness_event_cb)
         self.log('vision.on_darkness: subscribed')
         return self
 
     def stop_on_darkness(self):
-        """Unsubscribe from darkness detection events."""
         if not self.darkness_detect:
             return self
-        memory.unsubscribeToEvent(self.nao.events.vision.DarknessDetected)
-        self.darkness_detect.unsubscribe("fluentnao_darkness")
+        try:
+            memory.unsubscribeToEvent(self.nao.events.vision.darknessDetected)
+        except Exception:
+            pass
+        try:
+            self.darkness_detect.unsubscribe("fluentnao_darkness")
+        except Exception:
+            pass
         self._on_darkness_callback = None
         self.log('vision.stop_on_darkness: unsubscribed')
         return self
-
-    def is_dark(self):
-        """Return the current darkness state, or None if unavailable."""
-        if not self.darkness_detect:
-            return None
-        try:
-            return self.nao.env.memory.getData(self.nao.events.vision.DarknessDetected)
-        except Exception:
-            return None
 
     def _darkness_event_cb(self, dataName, value, message):
         if self._on_darkness_callback and value:
