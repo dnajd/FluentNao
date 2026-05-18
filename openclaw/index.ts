@@ -70,18 +70,22 @@ const plugin: OpenClawPluginDefinition = {
     // Automatically inject Vesper's core identity and rules from Neo4j on boot
     (async () => {
         try {
-            api.logger.info("Vesper: Awakening... Loading core memories from Graph.");
-            // We use a synthetic run to force the first "thought" turn with pre-loaded context
-            await api.runtime.subagent.run({
-                sessionKey: "vesper-autonomy",
-                message: "[SYSTEM]: Vesper, you are now AWAKE. I am initializing your identity from the Knowledge Graph.",
-                extraSystemPrompt: `
-                    CRITICAL: You are Vesper. 
-                    1. Use your Neo4j tools to fetch find_memories_by_name(["Identity:Current", "nao_rule_general", "nao_rule_safety"]).
-                    2. Acknowledge your name, history, and safety constraints.
-                    3. Perform a physical greeting (LEDs/Head) to signify you are present.
-                `.trim()
-            });
+            // Give the observer a moment to initialize the trigger
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            const trigger = (api as any).vesperTrigger;
+            
+            if (trigger) {
+                api.logger.info("Vesper: Awakening... Loading core memories from Graph.");
+                await trigger(
+                    "[SYSTEM]: Vesper, you are now AWAKE. I am initializing your identity from the Knowledge Graph.",
+                    `
+                        CRITICAL: You are Vesper. 
+                        1. Use your Neo4j tools to fetch find_memories_by_name(["Identity:Current", "nao_rule_general", "nao_rule_safety"]).
+                        2. Acknowledge your name, history, and safety constraints.
+                        3. Perform a physical greeting (LEDs/Head) to signify you are present.
+                    `.trim()
+                );
+            }
         } catch (e) {
             api.logger.error(`Vesper Awakening Error: ${(e as any).message}`);
         }

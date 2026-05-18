@@ -2,19 +2,47 @@ import type { OpenClawPluginApi } from "openclaw";
 
 /**
  * Nervous System for Vesper.
- * Long-polls the FluentNao bridge and injects sensory events into the agent context.
+ * Long-polls the FluentNao bridge and triggers agent turns via loopback API calls.
  */
 export const startVesperObserver = (api: OpenClawPluginApi) => {
   const bridgeUrl = (api.pluginConfig as any)?.bridgeUrl || "http://192.168.68.105:5050";
   const pollInterval = (api.pluginConfig as any)?.pollInterval || 1000;
-  
-  // We need a stable session key for Vesper. 
-  // In a real setup, we might look this up or use a dedicated 'vesper' session.
+  const gatewayUrl = "http://127.0.0.1:18789"; // Internal loopback
+  const gatewayToken = (api.config as any)?.gateway?.auth?.token;
+
   const sessionKey = "vesper-autonomy";
 
   api.logger.info(`Starting Vesper Observer (polling ${bridgeUrl}/events)`);
 
   let active = true;
+  let lastErrorTime = 0;
+
+  const triggerAgent = async (message: string, extraSystemPrompt?: string) => {
+    const hooksToken = "vesper-hook-token";
+
+    try {
+      // Use the native OpenClaw Hooks API (POST /hooks/agent)
+      const response = await fetch(`${gatewayUrl}/hooks/agent`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${hooksToken}`
+        },
+        body: JSON.stringify({
+          sessionKey,
+          message,
+          extraSystemPrompt
+        })
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        api.logger.error(`Vesper Hook Failed: ${response.status} ${errText}`);
+      }
+    } catch (err: any) {
+      api.logger.error(`Vesper Hook Error: ${err.message}`);
+    }
+  };
 
   const poll = async () => {
     while (active) {
@@ -28,37 +56,38 @@ export const startVesperObserver = (api: OpenClawPluginApi) => {
           if (result.ok && result.events && result.events.length > 0) {
             for (const event of result.events) {
               api.logger.info(`Sensory Event: ${event.event} = ${event.value}`);
-              
-              await api.runtime.subagent.run({
-                sessionKey,
-                message: `[SENSORY]: Detected ${event.event} (value: ${event.value})`,
-                extraSystemPrompt: "You are Vesper. A sensory event has occurred. Decide if you need to react."
-              });
+
+              await triggerAgent(
+                `[SENSORY]: Detected ${event.event} (value: ${event.value})`,
+                "You are Vesper. A sensory event has occurred. Decide if you need to react."
+              );
             }
           }
         }
       } catch (err: any) {
         if (err.name !== 'TimeoutError' && active) {
-          // Only log every 60s if the bridge is down to prevent spam
           const now = Date.now();
           if (!lastErrorTime || (now - lastErrorTime > 60000)) {
             api.logger.warn(`Observer: Cannot reach bridge at ${bridgeUrl}. Vesper is deaf.`);
             lastErrorTime = now;
           }
-          await new Promise(resolve => setTimeout(resolve, 10000)); // Wait longer on error
+          await new Promise(resolve => setTimeout(resolve, 10000));
         }
       }
-      
+
       await new Promise(resolve => setTimeout(resolve, pollInterval));
     }
   };
 
-  let lastErrorTime = 0;
   // Run in background
   poll();
+
+  // Export the trigger for the initial awakening
+  (api as any).vesperTrigger = triggerAgent;
 
   return () => {
     active = false;
     api.logger.info("Vesper Observer stopped.");
   };
 };
+
