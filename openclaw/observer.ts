@@ -58,8 +58,8 @@ export const startVesperObserver = (api: OpenClawPluginApi) => {
               api.logger.info(`Sensory Event: ${event.event} = ${event.value}`);
 
               await triggerAgent(
-                `Sensory Event: Detected ${event.event} (value: ${event.value})`,
-                "You are Vesper. A physical event has occurred in your room. Decide if you need to react."
+                "Sensory event detected",
+                "You are Vesper. Something happened in the room."
               );
             }
           }
